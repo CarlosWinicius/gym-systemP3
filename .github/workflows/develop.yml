@@ -3,6 +3,8 @@ name: CI/CD Pipeline
 on:
   push:
     branches: [ "develop", "ci-test" ]
+    tags :
+      - 'v*'
   pull_request:
     branches: [ "develop" ]
 
