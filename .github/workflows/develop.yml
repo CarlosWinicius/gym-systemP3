@@ -2,9 +2,7 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ "develop", "ci-test" ]
-    tags :
-      - 'v*'
+    branches: [ "develop","ci-test" ]
   pull_request:
     branches: [ "develop" ]
 
@@ -76,40 +74,35 @@ jobs:
             -Dsonar.host.url=https://sonarcloud.io \
             -Dsonar.login=$SONAR_TOKEN
   
-  create_tag:
-    name: Create Git Tag
+  tag_and_release:
+    name: Create Tag and Release
     runs-on: ubuntu-latest
     needs: analyze
-    if: github.ref == 'refs/heads/ci-test' # cria tag só da branch de teste
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
       
-      - name: Create Git Tag
-        run: |
-          VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
-          git config user.name "github-actions"
-          git config user.email "github-actions@github.com"
-          git tag -a "v$VERSION" -m "Release v$VERSION"
-          git push origin "v$VERSION"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  
-  release:
-    name: Create GitHub Release
-    runs-on: ubuntu-latest
-    needs: create_tag
-    if: startsWith(github.ref, 'refs/tags/')
-    steps:
+      - name: Bump version and push tag
+        id: tag_version
+        uses: mathieudutour/github-tag-action@v6.1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          default_bump: "patch"
+      
       - name: Download artifacts
         uses: actions/download-artifact@v4
         with:
           name: build-artifacts
-          path: target/
+          path: .
       
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ github.ref_name }}
-          name: Release ${{ github.ref_name }}
+
+          tag_name: ${{ steps.tag_version.outputs.new_tag }}
+          name: Release ${{ steps.tag_version.outputs.new_tag }}
           body: Release automática gerada pela pipeline de CI/CD.
-          files: target/*.jar
+          files: '*.jar'
