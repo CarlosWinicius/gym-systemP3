@@ -38,9 +38,8 @@ jobs:
           name: build-artifacts
           path: target/*.jar
   
-  
   analyze:
-    name: SonarQube Analysis
+    name: SonarCloud Analysis
     runs-on: ubuntu-latest
     needs: build_and_test
     steps:
@@ -62,35 +61,35 @@ jobs:
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
       
-      - name: Cache Maven
-        uses: actions/cache@v4
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
         with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
+          name: build-artifacts
+          path: target/
       
-      - name: Run SonarQube Analysis
+      - name: Run SonarCloud Analysis
         env:
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn -B verify sonar:sonar \
-          -Dsonar.projectKey=carloswinicius_gym-systemp3 \
-          -Dsonar.host.url=${{ env.SONAR_HOST_URL }} \
-          -Dsonar.login=${{ env.SONAR_TOKEN }}
-  
+          SONAR_PROJECT_KEY: ${{ secrets.SONAR_PROJECT_KEY }}
+          SONAR_ORGANIZATION: ${{ secrets.SONAR_ORGANIZATION }}
+        run: |
+          mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
+            -Dsonar.projectKey=$SONAR_PROJECT_KEY \
+            -Dsonar.organization=$SONAR_ORGANIZATION \
+            -Dsonar.host.url=https://sonarcloud.io \
+            -Dsonar.login=$SONAR_TOKEN
   
   release:
-    name: Create Release
+    name: Create GitHub Release
     runs-on: ubuntu-latest
     needs: analyze
     if: startsWith(github.ref, 'refs/tags/')
     steps:
-      - name: Download artifact
+      - name: Download artifacts
         uses: actions/download-artifact@v4
         with:
           name: build-artifacts
-          path: ./release/
+          path: target/
       
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
@@ -99,5 +98,4 @@ jobs:
           name: Release ${{ github.ref_name }}
           body: |
             Release automática gerada pela pipeline de CI/CD.
-          files: ./release/*.jar
-
+          files: target/*.jar
