@@ -89,6 +89,7 @@ jobs:
         id: tag_version
         uses: mathieudutour/github-tag-action@v6.1
         with:
+          release_branches: 'ci-test'
           github_token: ${{ secrets.GITHUB_TOKEN }}
           default_bump: "patch"
       

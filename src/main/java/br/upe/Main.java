@@ -6,7 +6,7 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
         Scanner scGlobal = new Scanner(System.in);
-        //teste pipeline
+
         // Exibir menu e iniciar
         MenuPrincipal menuPrincipal = new MenuPrincipal(scGlobal);
         menuPrincipal.exibirMenuInicial();
