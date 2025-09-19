@@ -1,4 +1,4 @@
-name: SonarCloud
+name: Build and Analyze with SonarCloud
 
 on:
   push:
@@ -10,20 +10,21 @@ on:
 
 jobs:
   build:
-    name: Build and analyze
+    name: Build and Analyze
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
+          # Desabilita o clone superficial, necessário para a análise do SonarCloud
           fetch-depth: 0
 
       - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
           java-version: 21
-          distribution: temurin
+          distribution: 'temurin' # 'temurin' é uma ótima escolha de distribuição Java
 
       - name: Cache SonarCloud packages
         uses: actions/cache@v4
@@ -39,14 +40,13 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
 
-      - name: Build and analyze with SonarCloud
+      - name: Build and Analyze with Maven
         env:
+          # Tokens e chaves são passados como 'secrets' do GitHub para segurança
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_PROJECT_KEY: ${{ secrets.SONAR_PROJECT_KEY }}
           SONAR_ORGANIZATION: ${{ secrets.SONAR_ORGANIZATION }}
         run: |
           mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
             -Dsonar.projectKey=$SONAR_PROJECT_KEY \
-            -Dsonar.organization=$SONAR_ORGANIZATION \
-            -Dsonar.host.url=https://sonarcloud.io \
-            -Dsonar.login=$SONAR_TOKEN
+            -Dsonar.organization=$SONAR_ORGANIZATION
