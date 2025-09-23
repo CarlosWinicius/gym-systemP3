@@ -44,7 +44,9 @@ public class SessaoTreinoRepositoryImpl implements ISessaoTreinoRepository {
             try {
                 // Garante que os diretórios pais existam
                 Files.createDirectories(arquivo.getParentFile().toPath());
-                arquivo.createNewFile();
+                if (!arquivo.createNewFile()) {
+                    System.out.println("Arquivo " + getArquivoCSV() + " já existia e não foi recriado.");
+                }
             } catch (IOException e) {
                 System.err.println("Erro crítico ao criar arquivo CSV: " + e.getMessage());
             }
