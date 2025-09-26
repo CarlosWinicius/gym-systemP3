@@ -38,7 +38,9 @@ public class PlanoTreinoRepositoryImpl implements IPlanoTreinoRepository {
         if (!file.exists()) {
             System.out.println("Arquivo " + ARQUIVO_CSV + " não encontrado. Será criado vazio no primeiro salvamento.");
             try {
-                file.createNewFile();
+                if (!file.createNewFile()) {
+                    System.out.println("Arquivo " + ARQUIVO_CSV + " já existia e não foi recriado.");
+                }
             }
             catch (IOException e) {
                 System.err.println("Erro ao criar o arquivo CSV vazio: " + e.getMessage());
