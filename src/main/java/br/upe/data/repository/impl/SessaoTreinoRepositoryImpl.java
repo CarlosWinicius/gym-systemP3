@@ -6,7 +6,6 @@ import br.upe.data.repository.ISessaoTreinoRepository;
 
 import java.io.*;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
