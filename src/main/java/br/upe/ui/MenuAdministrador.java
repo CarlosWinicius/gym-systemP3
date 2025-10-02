@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Scanner;
 
 public class MenuAdministrador {
+    private static final String INVALID_ID_MESSAGE = "ID inválido. Por favor, digite um número.";
+    private static final String ERROR_PREFIX = "Erro: ";
     private final IUsuarioService usuarioService;
     private final Scanner scanner;
 
@@ -75,9 +77,8 @@ public class MenuAdministrador {
             id = Integer.parseInt(scanner.nextLine());
             usuarioService.promoverUsuarioAAdmin(id);
         } catch (NumberFormatException e) {
-            System.err.println("ID inválido. Por favor, digite um número.");
         } catch (IllegalArgumentException e) {
-            System.err.println("Erro: " + e.getMessage());
+            System.err.println(ERROR_PREFIX + e.getMessage());
         }
     }
 
@@ -89,10 +90,9 @@ public class MenuAdministrador {
             id = Integer.parseInt(scanner.nextLine());
             usuarioService.rebaixarUsuarioAComum(id);
         } catch (NumberFormatException e) {
-            System.err.println("ID inválido. Por favor, digite um número.");
-        }
-        catch (IllegalArgumentException e) {
-            System.err.println("Erro: " + e.getMessage());
+            System.err.println(INVALID_ID_MESSAGE);
+        } catch (IllegalArgumentException e) {
+            System.err.println(ERROR_PREFIX + e.getMessage());
         }
     }
 
@@ -105,9 +105,9 @@ public class MenuAdministrador {
             usuarioService.removerUsuario(id);
             System.out.println("Usuário removido com sucesso!");
         } catch (NumberFormatException e) {
-            System.err.println("ID inválido. Por favor, digite um número.");
+            System.err.println(INVALID_ID_MESSAGE);
         } catch (IllegalArgumentException e) {
-            System.err.println("Erro: " + e.getMessage());
+            System.err.println(ERROR_PREFIX + e.getMessage());
         }
     }
 }
