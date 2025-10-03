@@ -1,4 +1,4 @@
-import br.upe.business.RelatorioDiferencaIndicadores;
+import br.upe.controller.business.RelatorioDiferencaIndicadores;
 import br.upe.data.beans.IndicadorBiomedico;
 import org.junit.jupiter.api.*;
 import java.io.*;
