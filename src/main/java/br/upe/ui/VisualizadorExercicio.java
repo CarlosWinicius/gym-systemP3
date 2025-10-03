@@ -13,7 +13,7 @@ public class VisualizadorExercicio {
 
         // Cria uma janela com o gif
         JFrame frame = new JFrame("Detalhes do Exercício");
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         frame.setSize(400, 500);
         frame.setLocationRelativeTo(null);
 
