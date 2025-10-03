@@ -1,9 +1,9 @@
 package br.upe.ui;
 
-import br.upe.business.IExercicioService;
-import br.upe.business.ExercicioService;
-import br.upe.business.IPlanoTreinoService;
-import br.upe.business.PlanoTreinoService;
+import br.upe.controller.business.IExercicioService;
+import br.upe.controller.business.ExercicioService;
+import br.upe.controller.business.IPlanoTreinoService;
+import br.upe.controller.business.PlanoTreinoService;
 import br.upe.data.beans.Exercicio;
 import br.upe.data.beans.ItemPlanoTreino;
 import br.upe.data.beans.PlanoTreino;
