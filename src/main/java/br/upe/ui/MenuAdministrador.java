@@ -77,6 +77,7 @@ public class MenuAdministrador {
             id = Integer.parseInt(scanner.nextLine());
             usuarioService.promoverUsuarioAAdmin(id);
         } catch (NumberFormatException e) {
+            System.err.println(INVALID_ID_MESSAGE);
         } catch (IllegalArgumentException e) {
             System.err.println(ERROR_PREFIX + e.getMessage());
         }
