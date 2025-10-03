@@ -1,20 +1,15 @@
-name: CI Pipeline
+name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ 'main', 'develop', 'ci-test' ]
+    branches: [ "develop","ci-test" ]
   pull_request:
-    branches: [ 'main', 'develop' ]
+    branches: [ "develop" ]
 
 jobs:
   build_and_test:
     name: Build and Test
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest]
-    
-    runs-on: ${{ matrix.os }}
-    
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
       
@@ -37,19 +32,13 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: build-artifacts-${{ matrix.os }}
+          name: build-artifacts
           path: target/*.jar
   
   analyze:
     name: SonarCloud Analysis
+    runs-on: ubuntu-latest
     needs: build_and_test
-    
-    strategy:
-      matrix:
-        os: [ubuntu-latest]
-    
-    runs-on: ${{ matrix.os }}
-    
     steps:
       - uses: actions/checkout@v5
         with:
@@ -70,7 +59,7 @@ jobs:
       - name: Download artifacts
         uses: actions/download-artifact@v4
         with:
-          name: build-artifacts-ubuntu-latest
+          name: build-artifacts
           path: target/
       
       - name: Run SonarCloud Analysis
@@ -78,8 +67,43 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_PROJECT_KEY: ${{ secrets.SONAR_PROJECT_KEY }}
           SONAR_ORGANIZATION: ${{ secrets.SONAR_ORGANIZATION }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
             -Dsonar.projectKey=$SONAR_PROJECT_KEY \
-            -Dsonar.organization=$SONAR_ORGANIZATION
+            -Dsonar.organization=$SONAR_ORGANIZATION \
+            -Dsonar.host.url=https://sonarcloud.io \
+            -Dsonar.login=$SONAR_TOKEN
+  
+  tag_and_release:
+    name: Create Tag and Release
+    runs-on: ubuntu-latest
+    needs: analyze
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      
+      - name: Bump version and push tag
+        id: tag_version
+        uses: mathieudutour/github-tag-action@v6.1
+        with:
+          release_branches: 'ci-test'
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          default_bump: "patch"
+      
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
+          path: .
+      
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+
+          tag_name: ${{ steps.tag_version.outputs.new_tag }}
+          name: Release ${{ steps.tag_version.outputs.new_tag }}
+          body: Release automática gerada pela pipeline de CI/CD.
+          files: '*.jar'
