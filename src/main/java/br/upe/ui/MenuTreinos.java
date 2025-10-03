@@ -124,9 +124,9 @@ public class MenuTreinos {
             if (!sugestoes.isEmpty()) {
                 System.out.println("\n--- Sugestões de Atualização do Plano ---");
                 for (SessaoTreinoService.SugestaoAtualizacaoPlano sugestao : sugestoes) {
-                    System.out.printf("O exercício '%s' (ID: %d) teve alterações.\n", sugestao.nomeExercicio, sugestao.idExercicio);
-                    System.out.printf("  Repetições: Planejado %d -> Realizado %d\n", sugestao.repPlanejadas, sugestao.repRealizadas);
-                    System.out.printf("  Carga: Planejado %.0fkg -> Realizado %.0fkg\n", sugestao.cargaPlanejada, sugestao.cargaRealizada);
+                    System.out.printf("O exercício '%s' (ID: %d) teve alterações.%n", sugestao.nomeExercicio, sugestao.idExercicio);
+                    System.out.printf("  Repetições: Planejado %d -> Realizado %d%n", sugestao.repPlanejadas, sugestao.repRealizadas);
+                    System.out.printf("  Carga: Planejado %.0fkg -> Realizado %.0fkg%n", sugestao.cargaPlanejada, sugestao.cargaRealizada);
                     System.out.print("Deseja atualizar o plano com os novos valores? (s/n): ");
                     String resposta = sc.nextLine();
                     if (resposta.equalsIgnoreCase("s")) {
