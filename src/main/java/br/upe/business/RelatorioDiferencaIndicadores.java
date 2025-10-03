@@ -38,7 +38,7 @@ public class RelatorioDiferencaIndicadores {
     @Override
     public String toString() {
         if (!indicadorInicial.isPresent() || !indicadorFinal.isPresent()) {
-            return String.format("Relatório de Evolução (%s a %s)\nNenhum dado encontrado no período.",
+            return String.format("Relatório de Evolução (%s a %s)%nNenhum dado encontrado no período.",
                                  dataInicio.format(DATE_FORMATTER), dataFim.format(DATE_FORMATTER)); // Use formatter here
         }
 
@@ -46,13 +46,13 @@ public class RelatorioDiferencaIndicadores {
         IndicadorBiomedico finalObj = indicadorFinal.get();
 
         return String.format(
-            "--- Relatório de Evolução: %s a %s ---\n" +
-            "| Indicador              | %-15s | %-15s | %-17s |\n" + // Increased width
-            "|------------------------|-----------------|-----------------|-------------------|\n" +
-            "| Peso (kg)              | %-15.1f | %-15.1f | %+-17.1f |\n" + // Increased width
-            "| Gordura (%%)            | %-15.1f | %-15.1f | %+-17.1f |\n" + // Increased width
-            "| Massa Magra (%%)       | %-15.1f | %-15.1f | %+-17.1f |\n" + // Increased width
-            "| IMC                    | %-15.2f | %-15.2f | %+-17.2f |\n" + // Increased width
+            "--- Relatório de Evolução: %s a %s ---%n" +
+            "| Indicador              | %-15s | %-15s | %-17s |%n" + // Increased width
+            "|------------------------|-----------------|-----------------|-------------------|%n" +
+            "| Peso (kg)              | %-15.1f | %-15.1f | %+-17.1f |%n" + // Increased width
+            "| Gordura (%%)            | %-15.1f | %-15.1f | %+-17.1f |%n" + // Increased width
+            "| Massa Magra (%%)       | %-15.1f | %-15.1f | %+-17.1f |%n" + // Increased width
+            "| IMC                    | %-15.2f | %-15.2f | %+-17.2f |%n" + // Increased width
             "-----------------------------------------------------------------------------------", // Adjusted separator
             dataInicio.format(DATE_FORMATTER), dataFim.format(DATE_FORMATTER), // Use formatter here
             "Inicial", "Final", "Diferença",
@@ -69,22 +69,22 @@ public void exportarParaCsv(String caminhoArquivo) throws IOException {
     }
     try (FileWriter writer = new FileWriter(caminhoArquivo)) {
         writer.append("Indicador,Inicial,Final,Diferença\n");
-        writer.append(String.format("Peso (kg),%.1f,%.1f,%+.1f\n",
+        writer.append(String.format("Peso (kg),%.1f,%.1f,%+.1f%n",
                 indicadorInicial.get().getPesoKg(),
                 indicadorFinal.get().getPesoKg(),
                 diferencaPeso));
 
-        writer.append(String.format("Gordura (%%),%.1f,%.1f,%+.1f\n",
+        writer.append(String.format("Gordura (%%),%.1f,%.1f,%+.1f%n",
                 indicadorInicial.get().getPercentualGordura(),
                 indicadorFinal.get().getPercentualGordura(),
                 diferencaPercentualGordura));
 
-        writer.append(String.format("Massa Magra (%%),%.1f,%.1f,%+.1f\n",
+        writer.append(String.format("Massa Magra (%%),%.1f,%.1f,%+.1f%n",
                 indicadorInicial.get().getPercentualMassaMagra(),
                 indicadorFinal.get().getPercentualMassaMagra(),
                 diferencaPercentualMassaMagra));
 
-        writer.append(String.format("IMC,%.2f,%.2f,%+.2f\n",
+        writer.append(String.format("IMC,%.2f,%.2f,%+.2f%n",
                 indicadorInicial.get().getImc(),
                 indicadorFinal.get().getImc(),
                 diferencaImc));
