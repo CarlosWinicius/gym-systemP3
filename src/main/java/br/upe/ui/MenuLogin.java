@@ -5,8 +5,13 @@ import br.upe.business.UsuarioService;
 import br.upe.data.beans.Usuario;
 
 import java.util.Scanner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MenuLogin {
+
+    private static final Logger logger = LoggerFactory.getLogger(MenuLogin.class);
+
     private final IUsuarioService usuarioService;
     private final Scanner scanner;
 
@@ -27,14 +32,14 @@ public class MenuLogin {
         try {
             Usuario usuarioLogado = usuarioService.autenticarUsuario(email, senha);
             if (usuarioLogado != null) {
-                System.out.println("Login bem-sucedido! Bem-vindo(a), " + usuarioLogado.getNome() + "!");
+                logger.info("Login bem-sucedido! Bem-vindo(a), {}!", usuarioLogado.getNome());
                 return usuarioLogado;
             } else {
-                System.out.println("Credenciais inválidas. Tente novamente.");
+                logger.warn("Credenciais inválidas para o e-mail '{}'.", email);
                 return null;
             }
         } catch (IllegalArgumentException e) {
-            System.err.println("Erro de login: " + e.getMessage());
+            logger.error("Erro de login para o e-mail '{}': {}", email, e.getMessage(), e);
             return null;
         }
     }

@@ -54,6 +54,13 @@
       <version>${mysql.connector.version}</version>
     </dependency>
 
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <version>1.5.19</version>
+      <scope>compile</scope>
+    </dependency>
+
 <dependency>
   <groupId>net.sf.jasperreports</groupId>
   <artifactId>jasperreports</artifactId>
