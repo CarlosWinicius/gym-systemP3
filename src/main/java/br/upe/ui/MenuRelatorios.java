@@ -1,7 +1,7 @@
 package br.upe.ui;
 
-import br.upe.business.IndicadorBiomedicoService;
-import br.upe.business.RelatorioDiferencaIndicadores;
+import br.upe.controller.business.IndicadorBiomedicoService;
+import br.upe.controller.business.RelatorioDiferencaIndicadores;
 
 import java.time.LocalDate;
 import java.util.Scanner;
