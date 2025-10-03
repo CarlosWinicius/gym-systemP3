@@ -13,6 +13,8 @@ import br.upe.data.repository.impl.ExercicioRepositoryImpl;
 import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MenuPlanoTreino {
 
@@ -21,6 +23,8 @@ public class MenuPlanoTreino {
     private IExercicioRepository exercicioRepository;
     private Scanner sc;
     private int idUsuarioLogado;
+
+    private static final Logger logger = LoggerFactory.getLogger(MenuPlanoTreino.class);
 
     public MenuPlanoTreino(int idUsuarioLogado) {
         this.planoTreinoService = new PlanoTreinoService();
@@ -73,10 +77,10 @@ public class MenuPlanoTreino {
                     verDetalhesDoPlano();
                     break;
                 case 8:
-                    System.out.println("Direcionando ao menu principal...");
+                    logger.info("Usuário {} voltando ao menu principal.", idUsuarioLogado);
                     break;
                 default:
-                    System.out.println("Opção inválida. Por favor, escolha uma das opções válidas.");
+                    logger.warn("Opção inválida selecionada: {}", opcao);
             }
         } while (opcao != 8);
     }
@@ -88,9 +92,9 @@ public class MenuPlanoTreino {
 
         try {
             PlanoTreino novoPlano = planoTreinoService.criarPlano(idUsuarioLogado, nome);
-            System.out.println("Plano de Treino '" + novoPlano.getNome() + "' criado com sucesso! ID: " + novoPlano.getIdPlano());
+            logger.info("Plano de Treino '{}' criado com sucesso! ID: {}", novoPlano.getNome(), novoPlano.getIdPlano());
         } catch (IllegalArgumentException e) {
-            System.err.println("Erro ao criar plano: " + e.getMessage());
+            logger.error("Erro ao criar plano para usuário {}: {}", idUsuarioLogado, e.getMessage(), e);
         }
     }
 
@@ -98,7 +102,7 @@ public class MenuPlanoTreino {
         System.out.println("\n===== MEUS PLANOS DE TREINO =====");
         List<PlanoTreino> planos = planoTreinoService.listarMeusPlanos(idUsuarioLogado);
         if (planos.isEmpty()) {
-            System.out.println("Nenhum plano de treino cadastrado por você ainda.");
+            logger.info("Nenhum plano de treino cadastrado para usuário {}.", idUsuarioLogado);
         } else {
             planos.forEach(System.out::println);
         }
@@ -112,7 +116,7 @@ public class MenuPlanoTreino {
         try {
             Optional<PlanoTreino> planoOpt = planoTreinoService.buscarPlanoPorNomeEUsuario(idUsuarioLogado, nomeAtualPlano);
             if (!planoOpt.isPresent()) {
-                System.out.println("Plano '" + nomeAtualPlano + "' não encontrado ou não pertence a você.");
+                logger.warn("Plano '{}' não encontrado ou não pertence ao usuário {}.", nomeAtualPlano, idUsuarioLogado);
                 return;
             }
             PlanoTreino plano = planoOpt.get();
@@ -124,10 +128,10 @@ public class MenuPlanoTreino {
             String novoNome = sc.nextLine();
 
             planoTreinoService.editarPlano(idUsuarioLogado, nomeAtualPlano, novoNome.isEmpty() ? null : novoNome);
-            System.out.println("Plano '" + nomeAtualPlano + "' atualizado com sucesso!");
+            logger.info("Plano '{}' atualizado com sucesso pelo usuário {}.", nomeAtualPlano, idUsuarioLogado);
 
         } catch (IllegalArgumentException e) {
-            System.err.println("Erro ao editar plano: " + e.getMessage());
+            logger.error("Erro ao editar plano '{}' para usuário {}: {}", nomeAtualPlano, idUsuarioLogado, e.getMessage(), e);
         }
     }
 
@@ -139,12 +143,12 @@ public class MenuPlanoTreino {
         try {
             boolean deletado = planoTreinoService.deletarPlano(idUsuarioLogado, nomePlano);
             if (deletado) {
-                System.out.println("Plano '" + nomePlano + "' deletado com sucesso!");
+                logger.info("Plano '{}' deletado com sucesso pelo usuário {}.", nomePlano, idUsuarioLogado);
             } else {
-                System.out.println("Plano '" + nomePlano + "' não encontrado ou não pertence a você.");
+                logger.warn("Plano '{}' não encontrado ou não pertence ao usuário {}.", nomePlano, idUsuarioLogado);
             }
         } catch (IllegalArgumentException e) {
-            System.err.println("Erro ao deletar plano: " + e.getMessage());
+            logger.error("Erro ao deletar plano '{}' para usuário {}: {}", nomePlano, idUsuarioLogado, e.getMessage(), e);
         }
     }
 
@@ -155,9 +159,10 @@ public class MenuPlanoTreino {
 
         List<Exercicio> meusExercicios = exercicioService.listarExerciciosDoUsuario(idUsuarioLogado);
         if (meusExercicios.isEmpty()) {
-            System.out.println("Você não possui exercícios cadastrados. Cadastre um exercício primeiro.");
+            logger.info("Usuário {} tentou adicionar exercício mas não possui exercícios cadastrados.", idUsuarioLogado);
             return;
         }
+
         System.out.println("\n--- Seus Exercícios Disponíveis ---");
         meusExercicios.forEach(e -> System.out.println("ID: " + e.getIdExercicio() + ", Nome: " + e.getNome()));
         System.out.print("Digite o ID do exercício que deseja adicionar: ");
@@ -165,7 +170,7 @@ public class MenuPlanoTreino {
         try {
             idExercicio = Integer.parseInt(sc.nextLine());
         } catch (NumberFormatException e) {
-            System.err.println("ID de exercício inválido. Por favor, digite um número.");
+            logger.warn("ID de exercício inválido informado pelo usuário {}.", idUsuarioLogado);
             return;
         }
 
@@ -174,7 +179,7 @@ public class MenuPlanoTreino {
         try {
             carga = Integer.parseInt(sc.nextLine());
         } catch (NumberFormatException e) {
-            System.err.println("Carga inválida. Por favor, digite um número.");
+            logger.warn("Carga inválida informada pelo usuário {}.", idUsuarioLogado);
             return;
         }
 
@@ -183,15 +188,15 @@ public class MenuPlanoTreino {
         try {
             repeticoes = Integer.parseInt(sc.nextLine());
         } catch (NumberFormatException e) {
-            System.err.println("Repetições inválidas. Por favor, digite um número.");
+            logger.warn("Repetições inválidas informadas pelo usuário {}.", idUsuarioLogado);
             return;
         }
 
         try {
             planoTreinoService.adicionarExercicioAoPlano(idUsuarioLogado, nomePlano, idExercicio, carga, repeticoes);
-            System.out.println("Exercício adicionado ao plano '" + nomePlano + "' com sucesso!");
+            logger.info("Exercício {} adicionado ao plano '{}' pelo usuário {}.", idExercicio, nomePlano, idUsuarioLogado);
         } catch (IllegalArgumentException e) {
-            System.err.println("Erro ao adicionar exercício ao plano: " + e.getMessage());
+            logger.error("Erro ao adicionar exercício {} ao plano '{}' para usuário {}: {}", idExercicio, nomePlano, idUsuarioLogado, e.getMessage(), e);
         }
     }
 
@@ -202,13 +207,13 @@ public class MenuPlanoTreino {
 
         Optional<PlanoTreino> planoOpt = planoTreinoService.buscarPlanoPorNomeEUsuario(idUsuarioLogado, nomePlano);
         if (!planoOpt.isPresent()) {
-            System.out.println("Plano '" + nomePlano + "' não encontrado ou não pertence a você.");
+            logger.warn("Plano '{}' não encontrado para usuário {}.", nomePlano, idUsuarioLogado);
             return;
         }
         PlanoTreino plano = planoOpt.get();
 
         if (plano.getItensTreino().isEmpty()) {
-            System.out.println("Este plano não possui exercícios para remover.");
+            logger.info("Plano '{}' não possui exercícios para remover.", nomePlano);
             return;
         }
 
@@ -227,7 +232,7 @@ public class MenuPlanoTreino {
         try {
             idExercicio = Integer.parseInt(sc.nextLine());
         } catch (NumberFormatException e) {
-            System.err.println("ID de exercício inválido. Por favor, digite um número.");
+            logger.warn("ID de exercício inválido informado para remoção pelo usuário {}.", idUsuarioLogado);
             return;
         }
 
@@ -235,7 +240,7 @@ public class MenuPlanoTreino {
             planoTreinoService.removerExercicioDoPlano(idUsuarioLogado, nomePlano, idExercicio);
             System.out.println("Exercício ID " + idExercicio + " removido do plano '" + nomePlano + "' com sucesso!");
         } catch (IllegalArgumentException e) {
-            System.err.println("Erro ao remover exercício do plano: " + e.getMessage());
+            logger.error("Erro ao remover exercício {} do plano '{}' para usuário {}: {}", idExercicio, nomePlano, idUsuarioLogado, e.getMessage(), e);
         }
     }
 
@@ -246,7 +251,7 @@ public class MenuPlanoTreino {
 
         Optional<PlanoTreino> planoOpt = planoTreinoService.buscarPlanoPorNomeEUsuario(idUsuarioLogado, nomePlano);
         if (!planoOpt.isPresent()) {
-            System.out.println("Plano '" + nomePlano + "' não encontrado ou não pertence a você.");
+            logger.warn("Plano '{}' não encontrado para usuário {}.", nomePlano, idUsuarioLogado);
             return;
         }
         PlanoTreino plano = planoOpt.get();
@@ -261,9 +266,9 @@ public class MenuPlanoTreino {
                 if (exercicioDoItemOpt.isPresent() && exercicioDoItemOpt.get().getIdUsuario() == idUsuarioLogado) {
                     nomeExercicio = exercicioDoItemOpt.get().getNome();
                 }
-                System.out.println(String.format("    - %s (ID: %d): Carga %dkg, %d repetições",
+                logger.info("    - {} (ID: {}): Carga {}kg, {} repetições",
                         nomeExercicio, item.getIdExercicio(),
-                        item.getCargaKg(), item.getRepeticoes()));
+                        item.getCargaKg(), item.getRepeticoes());
             }
         }
     }
