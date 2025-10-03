@@ -3,7 +3,6 @@ package br.upe.business;
 import br.upe.data.beans.IndicadorBiomedico;
 import br.upe.data.repository.IIndicadorBiomedicoRepository;
 import br.upe.data.repository.impl.IndicadorBiomedicoRepositoryImpl;
-import br.upe.business.CalculadoraIMC;
 
 import java.io.*;
 import java.time.LocalDate;
@@ -11,7 +10,6 @@ import java.time.format.DateTimeParseException;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class IndicadorBiomedicoService implements IIndicadorBiomedicoService {
 
