@@ -46,15 +46,17 @@ public class RelatorioDiferencaIndicadores {
         IndicadorBiomedico finalObj = indicadorFinal.get();
 
         return String.format(
-            "--- Relatório de Evolução: %s a %s ---%n" +
-            "| Indicador              | %-15s | %-15s | %-17s |%n" + // Increased width
-            "|------------------------|-----------------|-----------------|-------------------|%n" +
-            "| Peso (kg)              | %-15.1f | %-15.1f | %+-17.1f |%n" + // Increased width
-            "| Gordura (%%)            | %-15.1f | %-15.1f | %+-17.1f |%n" + // Increased width
-            "| Massa Magra (%%)       | %-15.1f | %-15.1f | %+-17.1f |%n" + // Increased width
-            "| IMC                    | %-15.2f | %-15.2f | %+-17.2f |%n" + // Increased width
-            "-----------------------------------------------------------------------------------", // Adjusted separator
-            dataInicio.format(DATE_FORMATTER), dataFim.format(DATE_FORMATTER), // Use formatter here
+            """
+            --- Relatório de Evolução: %s a %s ---%n\
+            | Indicador              | %-15s | %-15s | %-17s |%n\
+            |------------------------|-----------------|-----------------|-------------------|%n\
+            | Peso (kg)              | %-15.1f | %-15.1f | %+-17.1f |%n\
+            | Gordura (%%)            | %-15.1f | %-15.1f | %+-17.1f |%n\
+            | Massa Magra (%%)       | %-15.1f | %-15.1f | %+-17.1f |%n\
+            | IMC                    | %-15.2f | %-15.2f | %+-17.2f |%n\
+            -----------------------------------------------------------------------------------\
+            """,
+            dataInicio.format(DATE_FORMATTER), dataFim.format(DATE_FORMATTER),
             "Inicial", "Final", "Diferença",
             inicial.getPesoKg(), finalObj.getPesoKg(), diferencaPeso,
             inicial.getPercentualGordura(), finalObj.getPercentualGordura(), diferencaPercentualGordura,
