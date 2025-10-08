@@ -98,7 +98,7 @@
         <artifactId>javafx-maven-plugin</artifactId>
         <version>0.0.8</version>
         <configuration>
-          <mainClass>br.upe.Main</mainClass>
+          <mainClass>br.upe.controller.ui.Main</mainClass>
         </configuration>
       </plugin>
 
@@ -110,7 +110,7 @@
           <archive>
             <manifest>
               <addClasspath>true</addClasspath>
-              <mainClass>br.upe.Main</mainClass>
+              <mainClass>br.upe.controller.ui.Main</mainClass>
             </manifest>
           </archive>
         </configuration>
