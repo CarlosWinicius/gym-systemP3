@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<?import javafx.scene.effect.Glow?>
+<AnchorPane prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.upe.controller.ui.SignInScreenController">
+    <children>
+        <!-- Left / hero -->
+        <VBox fx:id="leftPane" alignment="TOP_LEFT" prefHeight="600.0" prefWidth="525.0" spacing="18.0" style="-fx-background-color: #8C7B6D;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <padding>
+                <Insets bottom="28" left="32" right="20" top="28" />
+            </padding>
+
+            <!-- Logo + Title -->
+            <HBox alignment="CENTER_LEFT" spacing="12.0">
+                <children>
+                    <ImageView fitHeight="52.0" fitWidth="73.0" pickOnBounds="true" preserveRatio="true">
+                        <Image url="@../images/halter.png" />
+                    </ImageView>
+                    <Label prefHeight="73.0" prefWidth="373.0" style="-fx-font-family: 'Inter'; -fx-font-size: 50px; -fx-font-weight: 700; -fx-text-fill: white;" text="SYSFIT" />
+                </children>
+            </HBox>
+
+            <!-- Subtitle lines -->
+            <Label prefHeight="51.0" prefWidth="310.0" style="-fx-font-family: 'Inter'; -fx-font-size: 35px; -fx-font-weight: 400; -fx-text-fill: #D3CFCB;" text="Focado nos seus" wrapText="true">
+                <font>
+                    <Font size="67.0" />
+                </font>
+            </Label>
+            <Label graphicTextGap="2.0" prefHeight="42.0" prefWidth="239.0" style="-fx-font-family: 'Inter'; -fx-font-size: 44px; -fx-font-weight: 800; -fx-text-fill: white;" text="resultados" wrapText="true" />
+            <ImageView fitHeight="284.0" fitWidth="391.0" pickOnBounds="true" preserveRatio="true">
+                <Image url="@../images/peopletraining.png" />
+                <effect>
+                    <Glow/>
+                </effect>
+                <cursor>
+                    <Cursor fx:constant="V_RESIZE" />
+                </cursor>
+            </ImageView>
+
+            <Region prefHeight="8.0" />
+        </VBox>
+
+           <!-- Right / form -->
+        <VBox fx:id="rightPane" alignment="TOP_CENTER" prefHeight="600.0" prefWidth="375.0" spacing="12.0" style="-fx-background-color: #36393F;" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <padding>
+                <Insets bottom="28" left="32" right="32" top="48" />
+            </padding>
+
+               <Label style="-fx-font-family: 'Inter'; -fx-font-size: 34px; -fx-font-weight: 800; -fx-text-fill: white;" text="Bem-vindo!" />
+            <Label style="-fx-font-family: 'Inter'; -fx-font-size: 14px; -fx-text-fill: #D3CFCB;" text="Acesse sua conta" />
+
+               <Region prefHeight="12.0" />
+
+               <!-- Email input box -->
+            <HBox alignment="CENTER_LEFT" prefWidth="320.0" spacing="10" style="-fx-background-color: #4A4D52; -fx-border-color: rgba(108,112,117,0.5); -fx-border-width: 1; -fx-background-radius: 6; -fx-padding: 10;">
+                <children>
+                    <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
+                        <Image url="@../images/user.png" />
+                    </ImageView>
+                    <TextField fx:id="nameField" prefWidth="260.0" promptText="nome" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-prompt-text-fill: #D3CFCB; -fx-font-family: 'Inter'; -fx-font-size: 13px;" />
+                </children>
+            </HBox>
+         <HBox alignment="CENTER_LEFT" prefWidth="320.0" spacing="10" style="-fx-background-color: #4A4D52; -fx-border-color: rgba(108,112,117,0.5); -fx-border-width: 1; -fx-background-radius: 6; -fx-padding: 10;">
+            <children>
+               <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
+                  <image>
+                     <Image url="@../images/mail.png" />
+                  </image>
+               </ImageView>
+               <TextField fx:id="emailField" prefWidth="260.0" promptText="email" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-prompt-text-fill: #D3CFCB; -fx-font-family: 'Inter'; -fx-font-size: 13px;" />
+            </children>
+         </HBox>
+         <HBox alignment="CENTER_LEFT" prefWidth="320.0" spacing="10" style="-fx-background-color: #4A4D52; -fx-border-color: rgba(108,112,117,0.5); -fx-border-width: 1; -fx-background-radius: 6; -fx-padding: 10;">
+            <children>
+               <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
+                  <image>
+                     <Image url="@../images/password.png" />
+                  </image>
+               </ImageView>
+               <TextField fx:id="passwordField" prefWidth="260.0" promptText="senha" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-prompt-text-fill: #D3CFCB; -fx-font-family: 'Inter'; -fx-font-size: 13px;" />
+            </children>
+         </HBox>
+         <HBox alignment="CENTER_LEFT" prefWidth="320.0" spacing="10" style="-fx-background-color: #4A4D52; -fx-border-color: rgba(108,112,117,0.5); -fx-border-width: 1; -fx-background-radius: 6; -fx-padding: 10;">
+            <children>
+               <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
+                  <image>
+                     <Image url="@../images/password.png" />
+                  </image>
+               </ImageView>
+               <TextField fx:id="confirmPasswordField" prefWidth="260.0" promptText="confirmar senha" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-prompt-text-fill: #D3CFCB; -fx-font-family: 'Inter'; -fx-font-size: 13px;" />
+            </children>
+         </HBox>
+
+               <!-- Entrar button -->
+            <Button fx:id="SignInButton" prefHeight="40.0" prefWidth="320.0" style="-fx-background-color: #A6917E; -fx-text-fill: white; -fx-font-weight: 700; -fx-background-radius: 8; -fx-font-family: 'Inter'; -fx-font-size: 14px;" text="Cadastrar" />
+
+               <!-- Label de erro -->
+            <Label fx:id="errorMessage" style="-fx-text-fill: red;" text="" visible="false" />
+
+               <!-- Link para criar conta -->
+            <HBox alignment="CENTER" spacing="6.0">
+                <children>
+                    <Label style="-fx-text-fill: #D3CFCB; -fx-font-family: 'Inter'; -fx-font-size: 12px;" text="já tem uma conta?" />
+                    <Label fx:id="LoginAccountLabel" style="-fx-text-fill: #D3CFCB; -fx-underline: true; -fx-font-family: 'Inter'; -fx-font-size: 12px;" text="Entre agora!" />
+                </children>
+            </HBox>
+
+               <Region VBox.vgrow="ALWAYS" />
+        </VBox>
+    </children>
+</AnchorPane>
