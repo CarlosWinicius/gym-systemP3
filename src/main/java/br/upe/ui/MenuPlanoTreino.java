@@ -16,6 +16,8 @@ import java.util.Scanner;
 
 public class MenuPlanoTreino {
 
+    private static final String PLANO_PREFIX = "Plano '";
+    private static final String PLANO_NAO_ENCONTRADO_SUFFIX = "' não encontrado ou não pertence a você.";
     private IPlanoTreinoService planoTreinoService;
     private IExercicioService exercicioService;
     private IExercicioRepository exercicioRepository;
@@ -112,7 +114,7 @@ public class MenuPlanoTreino {
         try {
             Optional<PlanoTreino> planoOpt = planoTreinoService.buscarPlanoPorNomeEUsuario(idUsuarioLogado, nomeAtualPlano);
             if (!planoOpt.isPresent()) {
-                System.out.println("Plano '" + nomeAtualPlano + "' não encontrado ou não pertence a você.");
+                System.out.println(PLANO_PREFIX + nomeAtualPlano + PLANO_NAO_ENCONTRADO_SUFFIX);
                 return;
             }
             PlanoTreino plano = planoOpt.get();
@@ -124,7 +126,7 @@ public class MenuPlanoTreino {
             String novoNome = sc.nextLine();
 
             planoTreinoService.editarPlano(idUsuarioLogado, nomeAtualPlano, novoNome.isEmpty() ? null : novoNome);
-            System.out.println("Plano '" + nomeAtualPlano + "' atualizado com sucesso!");
+            System.out.println(PLANO_PREFIX + nomeAtualPlano + "' atualizado com sucesso!");
 
         } catch (IllegalArgumentException e) {
             System.err.println("Erro ao editar plano: " + e.getMessage());
@@ -139,9 +141,9 @@ public class MenuPlanoTreino {
         try {
             boolean deletado = planoTreinoService.deletarPlano(idUsuarioLogado, nomePlano);
             if (deletado) {
-                System.out.println("Plano '" + nomePlano + "' deletado com sucesso!");
+                System.out.println(PLANO_PREFIX + nomePlano + "' deletado com sucesso!");
             } else {
-                System.out.println("Plano '" + nomePlano + "' não encontrado ou não pertence a você.");
+                System.out.println(PLANO_PREFIX + nomePlano + PLANO_NAO_ENCONTRADO_SUFFIX);
             }
         } catch (IllegalArgumentException e) {
             System.err.println("Erro ao deletar plano: " + e.getMessage());
@@ -202,7 +204,7 @@ public class MenuPlanoTreino {
 
         Optional<PlanoTreino> planoOpt = planoTreinoService.buscarPlanoPorNomeEUsuario(idUsuarioLogado, nomePlano);
         if (!planoOpt.isPresent()) {
-            System.out.println("Plano '" + nomePlano + "' não encontrado ou não pertence a você.");
+            System.out.println(PLANO_PREFIX + nomePlano + PLANO_NAO_ENCONTRADO_SUFFIX);
             return;
         }
         PlanoTreino plano = planoOpt.get();
@@ -246,7 +248,7 @@ public class MenuPlanoTreino {
 
         Optional<PlanoTreino> planoOpt = planoTreinoService.buscarPlanoPorNomeEUsuario(idUsuarioLogado, nomePlano);
         if (!planoOpt.isPresent()) {
-            System.out.println("Plano '" + nomePlano + "' não encontrado ou não pertence a você.");
+            System.out.println(PLANO_PREFIX + nomePlano + PLANO_NAO_ENCONTRADO_SUFFIX);
             return;
         }
         PlanoTreino plano = planoOpt.get();

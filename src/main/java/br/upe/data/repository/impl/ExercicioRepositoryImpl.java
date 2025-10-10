@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 public class ExercicioRepositoryImpl implements IExercicioRepository {
 
@@ -37,7 +36,9 @@ public class ExercicioRepositoryImpl implements IExercicioRepository {
         if (!file.exists()) {
             System.out.println("Arquivo CSV não encontrado. Será criado vazio no primeiro salvamento.");
             try {
-                file.createNewFile();
+                if (!file.createNewFile()) {
+                    System.out.println("Arquivo " + ARQUIVO_CSV + " já existia e não foi recriado.");
+                }
             } catch (IOException e) {
                 System.err.println("Erro ao criar o arquivo CSV vazio: " + e.getMessage());
             }

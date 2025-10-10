@@ -44,7 +44,12 @@ public class IndicadorBiomedicoRepositoryImpl implements IIndicadorBiomedicoRepo
 
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String linha;
-            reader.readLine(); // Pular cabeçalho
+            // Ler e armazenar a primeira linha (cabeçalho). Evita descartar o valor lido.
+            String header = reader.readLine();
+            if (header == null) {
+                // Arquivo vazio além do que já foi tratado; nada a carregar.
+                return;
+            }
             int maxId = 0;
             while ((linha = reader.readLine()) != null) {
                 IndicadorBiomedico indicador = parseLinhaCsv(linha);

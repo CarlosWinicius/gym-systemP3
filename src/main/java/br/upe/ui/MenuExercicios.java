@@ -10,6 +10,8 @@ import java.util.Scanner;
 
 public class MenuExercicios {
 
+    private static final String EXERCICIO_PREFIX = "Exercício '";
+    private static final String NAO_ENCONTRADO_SUFFIX = "' não encontrado entre os seus exercícios.";
     private IExercicioService exercicioService;
     private Scanner sc;
     private int idUsuarioLogado;
@@ -74,7 +76,7 @@ public class MenuExercicios {
 
         try {
             Exercicio novo = exercicioService.cadastrarExercicio(idUsuarioLogado, nome, descricao, caminhoGif);
-            System.out.println("Exercício '" + novo.getNome() + "' cadastrado com sucesso!");
+            System.out.println(EXERCICIO_PREFIX + novo.getNome() + "' cadastrado com sucesso!");
         } catch (IllegalArgumentException e) {
             System.err.println("Erro ao cadastrar: " + e.getMessage());
         }
@@ -115,12 +117,12 @@ public class MenuExercicios {
                         novoNome.isEmpty() ? null : novoNome,
                         novaDescricao.isEmpty() ? null : novaDescricao,
                         novoCaminhoGif.isEmpty() ? null : novoCaminhoGif);
-                System.out.println("Exercício '" + nomeAtualExercicio + "' atualizado com sucesso!");
+                System.out.println(EXERCICIO_PREFIX + nomeAtualExercicio + "' atualizado com sucesso!");
             } catch (IllegalArgumentException e) {
                 System.err.println("Erro ao atualizar: " + e.getMessage());
             }
         } else {
-            System.out.println("Exercício com nome '" + nomeAtualExercicio + "' não encontrado entre os seus exercícios.");
+            System.out.println("Exercício com nome '" + nomeAtualExercicio + NAO_ENCONTRADO_SUFFIX);
         }
     }
 
@@ -132,9 +134,9 @@ public class MenuExercicios {
         try {
             boolean deletado = exercicioService.deletarExercicioPorNome(idUsuarioLogado, nomeExercicio);
             if (deletado) {
-                System.out.println("Exercício '" + nomeExercicio + "' excluído com sucesso!");
+                System.out.println(EXERCICIO_PREFIX + nomeExercicio + "' excluído com sucesso!");
             } else {
-                System.out.println("Exercício '" + nomeExercicio + "' não encontrado entre os seus exercícios.");
+                System.out.println(EXERCICIO_PREFIX + nomeExercicio + NAO_ENCONTRADO_SUFFIX);
             }
         } catch (IllegalArgumentException e) {
             System.err.println("Erro ao excluir: " + e.getMessage());
@@ -154,7 +156,7 @@ public class MenuExercicios {
             visualizador.exibirDetalhes(exercicio);
 
         } else {
-            System.out.println("Exercício com nome '" + nomeExercicio + "' não encontrado entre os seus exercícios.");
+            System.out.println("Exercício com nome '" + nomeExercicio + NAO_ENCONTRADO_SUFFIX);
         }
     }
 }
