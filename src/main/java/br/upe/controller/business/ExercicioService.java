@@ -1,4 +1,4 @@
-package br.upe.business;
+package br.upe.controller.business;
 
 import br.upe.data.beans.Exercicio;
 import br.upe.data.repository.IExercicioRepository;
