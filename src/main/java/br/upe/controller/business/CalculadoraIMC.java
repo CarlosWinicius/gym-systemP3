@@ -2,6 +2,10 @@ package br.upe.controller.business;
 
 public class CalculadoraIMC {
 
+    private CalculadoraIMC() {
+        throw new UnsupportedOperationException("Utility class");
+    }
+
     // Metodo para verificar as condições
     // Adicionado um comentário para forçar a recompilação
     public static double calcular(double pesoKg, double alturaCm) {
