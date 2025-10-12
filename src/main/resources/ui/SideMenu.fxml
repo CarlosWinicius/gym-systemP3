@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.Cursor?>
+
+<VBox prefHeight="400.0" prefWidth="140.0" spacing="20" style="-fx-font-family: Inter; -fx-background-color: #8A806F; -fx-padding: 15;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.upe.controller.ui.SideMenuController">
+    <children>
+        <Label graphicTextGap="8.0" style="-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 18px;" text="SYSFIT">
+            <graphic>
+                <ImageView fitHeight="20.0" fitWidth="20.0" preserveRatio="true">
+                    <Image url="@../images/halter.png" />
+                </ImageView>
+            </graphic>
+            <VBox.margin>
+                <Insets bottom="10.0" />
+            </VBox.margin>
+        </Label>
+
+        <Label fx:id="homeButton" onMouseClicked="#handleNavigation" style="-fx-text-fill: white; -fx-cursor: hand;" text="Home" graphicTextGap="8.0">
+            <graphic>
+                <ImageView fitHeight="20.0" fitWidth="20.0" preserveRatio="true">
+                    <Image url="@../images/solar_graph-bold.png" />
+                </ImageView>
+            </graphic>
+        </Label>
+        <Label fx:id="perfilButton" onMouseClicked="#handleNavigation" style="-fx-text-fill: white; -fx-cursor: hand;" text="Meu Perfil" graphicTextGap="8.0">
+            <graphic>
+                <ImageView fitHeight="20.0" fitWidth="20.0" preserveRatio="true">
+                    <Image url="@../images/solar_user-bold.png" />
+                </ImageView>
+            </graphic>
+        </Label>
+        <Label fx:id="planosButton" onMouseClicked="#handleNavigation" style="-fx-text-fill: white; -fx-cursor: hand;" text="Meus Planos" graphicTextGap="8.0">
+            <graphic>
+                <ImageView fitHeight="20.0" fitWidth="20.0" preserveRatio="true">
+                    <Image url="@../images/mingcute_clipboard-fill.png" />
+                </ImageView>
+            </graphic>
+        </Label>
+        <Label fx:id="exerciciosButton" onMouseClicked="#handleNavigation" style="-fx-text-fill: white; -fx-cursor: hand;" text="Exercicios" graphicTextGap="8.0">
+            <graphic>
+                <ImageView fitHeight="20.0" fitWidth="20.0" preserveRatio="true">
+                    <Image url="@../images/material-symbols_exercise.png" />
+                </ImageView>
+            </graphic>
+        </Label>
+        <Label fx:id="metricasButton" onMouseClicked="#handleNavigation" style="-fx-text-fill: white; -fx-cursor: hand;" text="Métricas" graphicTextGap="8.0">
+            <graphic>
+                <ImageView fitHeight="20.0" fitWidth="20.0" preserveRatio="true">
+                    <Image url="@../images/material-symbols_health-metrics-rounded.png" />
+                </ImageView>
+            </graphic>
+        </Label>
+    </children>
+</VBox>
