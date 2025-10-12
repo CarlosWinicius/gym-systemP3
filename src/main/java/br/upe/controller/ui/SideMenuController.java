@@ -34,7 +34,7 @@ public class SideMenuController extends BaseController {
                 fxmlFile = "/ui/PlanosScreen.fxml";
                 break;
             case "exerciciosButton":
-                fxmlFile = "/ui/ExerciciosScreen.fxml";
+                fxmlFile = "/ui/ExerciseScreen.fxml";
                 break;
             case "metricasButton":
                 fxmlFile = "/ui/MetricasScreen.fxml";
