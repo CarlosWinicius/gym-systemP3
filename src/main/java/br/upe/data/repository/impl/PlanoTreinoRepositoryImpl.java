@@ -143,7 +143,7 @@ public class PlanoTreinoRepositoryImpl implements IPlanoTreinoRepository {
     public List<PlanoTreino> buscarTodosDoUsuario(int idUsuario) {
         return planos.stream()
                 .filter(p -> p.getIdUsuario() == idUsuario)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     // Verifica condições e altera o plano de treino

@@ -37,8 +37,7 @@ public class SessaoTreinoService {
             throw new IllegalArgumentException("Plano de treino com ID " + idPlano + " não encontrado ou não pertence a você.");
         }
 
-        SessaoTreino sessao = new SessaoTreino(idUsuario, idPlano);
-        return sessao;
+        return new SessaoTreino(idUsuario, idPlano);
     }
 
     // Registra a execucao de um exercicio
@@ -77,7 +76,7 @@ public class SessaoTreinoService {
                 ItemPlanoTreino planejado = planejadoOpt.get();
 
                 boolean mudouRepeticoes = executado.getRepeticoesRealizadas() != planejado.getRepeticoes();
-                boolean mudouCarga = executado.getCargaRealizada() != (double)planejado.getCargaKg(); // Cast para double
+                boolean mudouCarga = executado.getCargaRealizada() != planejado.getCargaKg(); // Cast para double é automático no java
 
                 if (mudouRepeticoes || mudouCarga) {
                     Optional<Exercicio> exercicioDetalhesOpt = exercicioRepo.buscarPorId(executado.getIdExercicio());

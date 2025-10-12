@@ -121,7 +121,7 @@ public class ExercicioRepositoryImpl implements IExercicioRepository {
     public List<Exercicio> buscarTodosDoUsuario(int idUsuario) {
         return exercicios.stream()
                 .filter(e -> e.getIdUsuario() == idUsuario)
-                .collect(java.util.stream.Collectors.toList());
+                .toList();
     }
 
     // Editar o exercicio no arquivo CSV
