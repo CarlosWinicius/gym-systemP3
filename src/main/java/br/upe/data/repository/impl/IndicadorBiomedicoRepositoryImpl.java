@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 public class IndicadorBiomedicoRepositoryImpl implements IIndicadorBiomedicoRepository {
 
@@ -92,7 +91,16 @@ public class IndicadorBiomedicoRepositoryImpl implements IIndicadorBiomedicoRepo
                 double percentualGordura = Double.parseDouble(partes[5]);
                 double percentualMassaMagra = Double.parseDouble(partes[6]);
                 double imc = Double.parseDouble(partes[7]);
-                return new IndicadorBiomedico(id, idUsuario, data, pesoKg, alturaCm, percentualGordura, percentualMassaMagra, imc);
+                return IndicadorBiomedico.builder()
+                        .id(id)
+                        .idUsuario(idUsuario)
+                        .data(data)
+                        .pesoKg(pesoKg)
+                        .alturaCm(alturaCm)
+                        .percentualGordura(percentualGordura)
+                        .percentualMassaMagra(percentualMassaMagra)
+                        .imc(imc)
+                        .build();
             } catch (Exception e) {
                 System.err.println("Erro ao parsear linha CSV de indicador: " + linha + " - " + e.getMessage());
                 return null;
@@ -148,17 +156,17 @@ public class IndicadorBiomedicoRepositoryImpl implements IIndicadorBiomedicoRepo
     public List<IndicadorBiomedico> listarPorUsuario(int idUsuario) {
         return indicadores.stream()
                 .filter(i -> i.getIdUsuario() == idUsuario)
-                .collect(Collectors.toList());
+                .toList();
     }
 
-    // Listar indicadores de um usuario pelo periodo
+    // Listar indicadores de um usuário pelo período
     @Override
     public List<IndicadorBiomedico> buscarPorPeriodo(int idUsuario, LocalDate dataInicio, LocalDate dataFim) {
         return indicadores.stream()
                 .filter(i -> i.getIdUsuario() == idUsuario &&
                               !i.getData().isBefore(dataInicio) &&
                               !i.getData().isAfter(dataFim))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     // Verifica condições e altera indicadores
