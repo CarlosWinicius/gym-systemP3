@@ -103,6 +103,7 @@
             </children>
          </HBox>
 
+
                <!-- Entrar button -->
             <Button fx:id="signInButton" prefHeight="40.0" prefWidth="320.0" style="-fx-background-color: #A6917E; -fx-text-fill: white; -fx-font-weight: 700; -fx-background-radius: 8; -fx-font-family: 'Inter'; -fx-font-size: 14px;" text="Cadastrar" />
 
