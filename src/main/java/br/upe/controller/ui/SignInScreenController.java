@@ -4,14 +4,13 @@ import br.upe.controller.business.IUsuarioService;
 import br.upe.controller.business.UsuarioService;
 import br.upe.data.TipoUsuario;
 import br.upe.data.beans.Usuario;
-import br.upe.utils.SceneLoader;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.VBox;
 
-public class SignInScreenController {
+public class SignInScreenController extends BaseController {
+
     @FXML
     private TextField nameField;
 
@@ -19,61 +18,68 @@ public class SignInScreenController {
     private TextField emailField;
 
     @FXML
-    private TextField passwordField;
+    private TextField passwordField; // Correto: Usar PasswordField para senhas
 
     @FXML
-    private TextField confirmPasswordField;
+    private TextField confirmPasswordField; // Correto: Usar PasswordField para senhas
 
     @FXML
-    private Button SignInButton;
+    private Button signInButton;
 
     @FXML
-    private Label LoginAccountLabel;
-
-    @FXML
-    private Label errorMessage;
+    private Label loginAccountLabel;
 
     private final IUsuarioService usuarioService = new UsuarioService();
 
     @FXML
     public void initialize() {
-        Platform.runLater(() -> emailField.requestFocus());
+        // Coloca o foco no campo de nome quando a tela abre
+        Platform.runLater(() -> nameField.requestFocus());
 
-        // adiciona eventos aos botões e labels
-        SignInButton.setOnAction(e -> handleSignIn());
-//        LoginAccountLabel.setOnMouseClicked(this::handleCreateAccount);
+        // Associa a ação de clique do botão ao método handleSignIn
+        signInButton.setOnAction(e -> handleSignIn());
 
     }
+
+    @FXML
     private void handleSignIn() {
         String nome = nameField.getText();
         String email = emailField.getText();
         String senha = passwordField.getText();
+        String confirmarSenha = confirmPasswordField.getText();
+
+        if (nome.trim().isEmpty() || email.trim().isEmpty() || senha.isEmpty() || confirmarSenha.isEmpty()) {
+            showAlert(Alert.AlertType.ERROR, "Erro de Cadastro", "Todos os campos são obrigatórios.");
+            return;
+        }
+
+        if (!senha.equals(confirmarSenha)) {
+            showAlert(Alert.AlertType.ERROR, "Erro de Cadastro", "As senhas não coincidem. Tente novamente.");
+            return;
+        }
 
         try {
-            Usuario usuario = usuarioService.cadastrarUsuario(nome,email,senha, TipoUsuario.COMUM);
+            Usuario usuario = usuarioService.cadastrarUsuario(nome, email, senha, TipoUsuario.COMUM);
 
             if (usuario != null) {
-                // Aqui você pode salvar o usuário em uma sessão
-                // e trocar de tela, por exemplo:
-                System.out.println("Cadastro bem-sucedido! Usuário: " + usuario.getNome());
-                // SceneLoader.loadScene("/org/upe/ui/telaInicio.fxml", "Home", rightPane);
+
+                showAlert(Alert.AlertType.INFORMATION, "Cadastro Realizado", "Usuário " + usuario.getNome() + " cadastrado com sucesso!");
+
+                BaseController.usuarioLogado = usuario;
+
+                navigateTo(signInButton, "/ui/HomeScreen.fxml");
             } else {
-                showError("Credenciais inválidas. Tente novamente.");
+                showAlert(Alert.AlertType.ERROR, "Erro de Cadastro", "Não foi possível completar o cadastro. Tente novamente.");
             }
-        } catch (IllegalArgumentException e) {
-            showError("Erro ao cadastrar: " + e.getMessage());
         } catch (Exception e) {
-            showError("Erro inesperado: " + e.getMessage());
+
+            showAlert(Alert.AlertType.ERROR, "Erro de Cadastro", "Ocorreu um erro: " + e.getMessage());
         }
     }
 
-
-    private void showError(String message) {
-        if (errorMessage != null) {
-            errorMessage.setText(message);
-            errorMessage.setVisible(true);
-        } else {
-            System.err.println(message);
-        }
+    @FXML
+    private void handleGoToLogin(MouseEvent event) {
+        System.out.println("Navegando para a tela de Login...");
+        navigateTo(loginAccountLabel, "/ui/LoginScreen.fxml");
     }
 }

@@ -104,7 +104,7 @@
          </HBox>
 
                <!-- Entrar button -->
-            <Button fx:id="SignInButton" prefHeight="40.0" prefWidth="320.0" style="-fx-background-color: #A6917E; -fx-text-fill: white; -fx-font-weight: 700; -fx-background-radius: 8; -fx-font-family: 'Inter'; -fx-font-size: 14px;" text="Cadastrar" />
+            <Button fx:id="signInButton" prefHeight="40.0" prefWidth="320.0" style="-fx-background-color: #A6917E; -fx-text-fill: white; -fx-font-weight: 700; -fx-background-radius: 8; -fx-font-family: 'Inter'; -fx-font-size: 14px;" text="Cadastrar" />
 
                <!-- Label de erro -->
             <Label fx:id="errorMessage" style="-fx-text-fill: red;" text="" visible="false" />
@@ -113,7 +113,7 @@
             <HBox alignment="CENTER" spacing="6.0">
                 <children>
                     <Label style="-fx-text-fill: #D3CFCB; -fx-font-family: 'Inter'; -fx-font-size: 12px;" text="já tem uma conta?" />
-                    <Label fx:id="LoginAccountLabel" style="-fx-text-fill: #D3CFCB; -fx-underline: true; -fx-font-family: 'Inter'; -fx-font-size: 12px;" text="Entre agora!" />
+                    <Label fx:id="LoginAccountLabel" onMouseClicked="#handleGoToLogin" style="-fx-text-fill: #D3CFCB; -fx-underline: true; -fx-font-family: 'Inter'; -fx-font-size: 12px;-fx-cursor: hand " text="Entre agora!" />
                 </children>
             </HBox>
 
