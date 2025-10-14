@@ -1,81 +1,51 @@
 package br.upe.controller.ui;
 
-import br.upe.controller.business.IUsuarioService;
 import br.upe.controller.business.UsuarioService;
 import br.upe.data.beans.Usuario;
-import br.upe.utils.SceneLoader;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.VBox;
 
+public class LoginScreenController extends BaseController {
 
-public class LoginScreenController {
+    @FXML private TextField emailField;
+    @FXML private PasswordField passwordField;
+    @FXML private Button loginButton;
+    @FXML private Label createAccountLabel;
 
-    @FXML
-    private TextField emailField;
-
-    @FXML
-    private PasswordField passwordField;
-
-    @FXML
-    private Button loginButton;
-
-    @FXML
-    private Label createAccountLabel;
-
-    @FXML
-    private Label errorMessage;
-
-    @FXML
-    private VBox rightPane; // ou o AnchorPane principal, dependendo do seu FXML
-
-    private final IUsuarioService usuarioService = new UsuarioService();
+    private final UsuarioService usuarioService = new UsuarioService();
 
     @FXML
     public void initialize() {
         Platform.runLater(() -> emailField.requestFocus());
-
-        // adiciona eventos aos botões e labels
-        loginButton.setOnAction(e -> handleLogin());
-        createAccountLabel.setOnMouseClicked(this::handleCreateAccount);
+        passwordField.setOnAction(e -> handleLogin());
     }
 
+    @FXML
     private void handleLogin() {
         String email = emailField.getText();
         String senha = passwordField.getText();
-
         try {
             Usuario usuario = usuarioService.autenticarUsuario(email, senha);
-
             if (usuario != null) {
-                // Aqui você pode salvar o usuário em uma sessão
-                // e trocar de tela, por exemplo:
-                System.out.println("Login bem-sucedido! Usuário: " + usuario.getNome());
-                // SceneLoader.loadScene("/org/upe/ui/telaInicio.fxml", "Home", rightPane);
+                BaseController.usuarioLogado = usuario;
+                navigateTo(loginButton, "/ui/HomeScreen.fxml");
             } else {
-                showError("Credenciais inválidas. Tente novamente.");
+                showAlert(Alert.AlertType.ERROR, "Erro de Login", "Credenciais inválidas. Tente novamente.");
             }
-        } catch (IllegalArgumentException e) {
-            showError("Erro: " + e.getMessage());
         } catch (Exception e) {
-            showError("Erro inesperado: " + e.getMessage());
+            showAlert(Alert.AlertType.ERROR, "Erro Inesperado", "Ocorreu um erro inesperado: " + e.getMessage());
         }
     }
 
-    private void handleCreateAccount(MouseEvent e) {
-        // trocar tela para cadastro
-        System.out.println("Ir para tela de cadastro...");
-        SceneLoader.loadScene("/ui/SignInScreen.fxml", "Cadastro", rightPane);
-    }
-
-    private void showError(String message) {
-        if (errorMessage != null) {
-            errorMessage.setText(message);
-            errorMessage.setVisible(true);
-        } else {
-            System.err.println(message);
-        }
+    @FXML
+    private void handleGoToSignIn(MouseEvent event) {
+        System.out.println("Navegando para a tela de cadastro...");
+        navigateTo(createAccountLabel, "/ui/SignInScreen.fxml");
     }
 }
