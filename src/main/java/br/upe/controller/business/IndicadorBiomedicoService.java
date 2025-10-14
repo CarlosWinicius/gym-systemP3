@@ -1,4 +1,4 @@
-package br.upe.business;
+package br.upe.controller.business;
 
 import br.upe.data.beans.IndicadorBiomedico;
 import br.upe.data.repository.IIndicadorBiomedicoRepository;
@@ -38,7 +38,15 @@ public class IndicadorBiomedicoService implements IIndicadorBiomedicoService {
 
         double imc = CalculadoraIMC.calcular(pesoKg, alturaCm);
 
-        IndicadorBiomedico novoIndicador = new IndicadorBiomedico(idUsuario, data, pesoKg, alturaCm, percentualGordura, percentualMassaMagra, imc);
+        IndicadorBiomedico novoIndicador = IndicadorBiomedico.builder()
+                .idUsuario(idUsuario)
+                .data(data)
+                .pesoKg(pesoKg)
+                .alturaCm(alturaCm)
+                .percentualGordura(percentualGordura)
+                .percentualMassaMagra(percentualMassaMagra)
+                .imc(imc)
+                .build();
         return indicadorRepository.salvar(novoIndicador);
     }
 
@@ -52,24 +60,7 @@ public class IndicadorBiomedicoService implements IIndicadorBiomedicoService {
                 linhaNum++;
                 if (linhaNum == 1) continue;
 
-                String[] partes = linha.split(";");
-                if (partes.length == 5) {
-                    try {
-                        LocalDate data = LocalDate.parse(partes[0].trim());
-                        double pesoKg = Double.parseDouble(partes[1].trim());
-                        double alturaCm = Double.parseDouble(partes[2].trim());
-                        double percentualGordura = Double.parseDouble(partes[3].trim());
-                        double percentualMassaMagra = Double.parseDouble(partes[4].trim());
-
-                        cadastrarIndicador(idUsuario, data, pesoKg, alturaCm, percentualGordura, percentualMassaMagra);
-                    } catch (NumberFormatException | DateTimeParseException e) {
-                        System.err.println("Erro de formato na linha " + linhaNum + " do CSV: " + linha + " - " + e.getMessage());
-                    } catch (IllegalArgumentException e) {
-                        System.err.println("Erro de validação na linha " + linhaNum + " do CSV: " + linha + " - " + e.getMessage());
-                    }
-                } else {
-                    System.err.println("Formato inválido na linha " + linhaNum + " do CSV (esperado 5 colunas): " + linha);
-                }
+                processarLinhaCsv(linha, linhaNum, idUsuario);
             }
             System.out.println("Importação de indicadores concluída (verifique mensagens no console).");
         } catch (FileNotFoundException e) {
@@ -107,12 +98,12 @@ public class IndicadorBiomedicoService implements IIndicadorBiomedicoService {
         indicadoresNoPeriodo.sort(Comparator.comparing(IndicadorBiomedico::getData));
 
         RelatorioDiferencaIndicadores relatorio = new RelatorioDiferencaIndicadores();
-        relatorio.dataInicio = dataInicio;
-        relatorio.dataFim = dataFim;
+        relatorio.setDataInicio(dataInicio);
+        relatorio.setDataFim(dataFim);
 
         if (!indicadoresNoPeriodo.isEmpty()) {
-            relatorio.indicadorInicial = Optional.of(indicadoresNoPeriodo.get(0));
-            relatorio.indicadorFinal = Optional.of(indicadoresNoPeriodo.get(indicadoresNoPeriodo.size() - 1));
+            relatorio.setIndicadorInicial(Optional.of(indicadoresNoPeriodo.get(0)));
+            relatorio.setIndicadorFinal(Optional.of(indicadoresNoPeriodo.get(indicadoresNoPeriodo.size() - 1)));
 
             relatorio.calcularDiferencas();
         }
@@ -150,4 +141,24 @@ public class IndicadorBiomedicoService implements IIndicadorBiomedicoService {
         }
     }
 
+    private void processarLinhaCsv(String linha, int linhaNum, int idUsuario) {
+        String[] partes = linha.split(";");
+        if (partes.length == 5) {
+            try {
+                LocalDate data = LocalDate.parse(partes[0].trim());
+                double pesoKg = Double.parseDouble(partes[1].trim());
+                double alturaCm = Double.parseDouble(partes[2].trim());
+                double percentualGordura = Double.parseDouble(partes[3].trim());
+                double percentualMassaMagra = Double.parseDouble(partes[4].trim());
+
+                cadastrarIndicador(idUsuario, data, pesoKg, alturaCm, percentualGordura, percentualMassaMagra);
+            } catch (NumberFormatException | DateTimeParseException e) {
+                System.err.println("Erro de formato na linha " + linhaNum + " do CSV: " + linha + " - " + e.getMessage());
+            } catch (IllegalArgumentException e) {
+                System.err.println("Erro de validação na linha " + linhaNum + " do CSV: " + linha + " - " + e.getMessage());
+            }
+        } else {
+            System.err.println("Formato inválido na linha " + linhaNum + " do CSV (esperado 5 colunas): " + linha);
+        }
+    }
 }

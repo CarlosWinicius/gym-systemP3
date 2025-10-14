@@ -1,4 +1,4 @@
-//import br.upe.business.RelatorioDiferencaIndicadores;
+//import br.upe.controller.business.RelatorioDiferencaIndicadores;
 //import br.upe.data.beans.IndicadorBiomedico;
 //import org.junit.jupiter.api.*;
 //import java.io.*;
@@ -18,38 +18,21 @@
 //    public void setup() {
 //        relatorio = new RelatorioDiferencaIndicadores();
 //
-//        // --- CORREÇÃO 1: Declarar as variáveis de data ANTES de usar ---
-//        LocalDate dataInicial = LocalDate.of(2025, 1, 1);
-//        LocalDate dataFinal = LocalDate.of(2025, 1, 31);
+//        relatorio.dataInicio = LocalDate.of(2025, 1, 1);
+//        relatorio.dataFim = LocalDate.of(2025, 1, 31);
 //
-//        // Atribuir as datas ao relatório
-//        relatorio.dataInicio = dataInicial;
-//        relatorio.dataFim = dataFinal;
+//        // Criar Indicadores de exemplo
+//        inicial = new IndicadorBiomedico();
+//        inicial.setPesoKg(70.0);
+//        inicial.setPercentualGordura(20.0);
+//        inicial.setPercentualMassaMagra(75.0);
+//        inicial.setImc(22.0);
 //
-//        // --- CORREÇÃO 2: Usar o construtor correto para IndicadorBiomedico ---
-//        // Em vez de new IndicadorBiomedico() e vários setters, passamos os dados diretamente.
-//        // Assumindo um construtor como: (id, idUsuario, data, peso, gordura, massaMagra, imc, ...)
-//        inicial = new IndicadorBiomedico(
-//                1,                  // ID do indicador (exemplo)
-//                1,                  // ID do usuário (exemplo)
-//                dataInicial,        // Data da medição
-//                70.0,               // Peso em Kg
-//                20.0,               // Percentual de Gordura
-//                75.0,               // Percentual de Massa Magra
-//                22.0,               // IMC
-//                0.0                 // Outro campo double, se houver (placeholder)
-//        );
-//
-//        finalObj = new IndicadorBiomedico(
-//                2,                  // ID do indicador (exemplo)
-//                1,                  // ID do usuário (exemplo)
-//                dataFinal,          // Data da medição
-//                68.0,               // Peso em Kg
-//                18.0,               // Percentual de Gordura
-//                77.0,               // Percentual de Massa Magra
-//                21.5,               // IMC
-//                0.0                 // Outro campo double, se houver (placeholder)
-//        );
+//        finalObj = new IndicadorBiomedico();
+//        finalObj.setPesoKg(68.0);
+//        finalObj.setPercentualGordura(18.0);
+//        finalObj.setPercentualMassaMagra(77.0);
+//        finalObj.setImc(21.5);
 //
 //        relatorio.indicadorInicial = Optional.of(inicial);
 //        relatorio.indicadorFinal = Optional.of(finalObj);
@@ -93,4 +76,5 @@
 //
 //        Files.deleteIfExists(Paths.get(caminho));
 //    }
+//
 //}

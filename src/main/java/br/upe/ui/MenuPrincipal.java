@@ -1,7 +1,7 @@
 package br.upe.ui;
 
-import br.upe.business.IUsuarioService;
-import br.upe.business.UsuarioService;
+import br.upe.controller.business.IUsuarioService;
+import br.upe.controller.business.UsuarioService;
 import br.upe.data.beans.Usuario;
 import br.upe.data.TipoUsuario;
 

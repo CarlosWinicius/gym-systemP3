@@ -1,4 +1,4 @@
-package br.upe.business;
+package br.upe.controller.business;
 
 import br.upe.data.beans.Exercicio;
 import br.upe.data.repository.IExercicioRepository;
@@ -86,37 +86,49 @@ public class ExercicioService implements IExercicioService {
     // Alterar exercicios
     @Override
     public void atualizarExercicio(int idUsuario, String nomeAtualExercicio, String novoNome, String novaDescricao, String novoCaminhoGif) {
-        if (nomeAtualExercicio == null || nomeAtualExercicio.trim().isEmpty()) {
-            throw new IllegalArgumentException("O nome atual do exercício não pode ser vazio.");
-        }
+        validarNomeAtual(nomeAtualExercicio);
 
         Optional<Exercicio> exercicioOpt = buscarExercicioDoUsuarioPorNome(idUsuario, nomeAtualExercicio);
 
         if (exercicioOpt.isPresent()) {
             Exercicio exercicio = exercicioOpt.get();
 
-            if (novoNome != null && !novoNome.trim().isEmpty() && !novoNome.trim().equalsIgnoreCase(exercicio.getNome())) {
-                List<Exercicio> exerciciosDoUsuario = exercicioRepository.buscarTodosDoUsuario(idUsuario);
-                boolean nomeJaExiste = exerciciosDoUsuario.stream()
-                        .anyMatch(e -> e.getNome().equalsIgnoreCase(novoNome.trim()));
-                if (nomeJaExiste) {
-                    throw new IllegalArgumentException("Você já possui um exercício com o novo nome '" + novoNome + "'.");
-                }
-            }
+            validarNovoNome(exercicio, novoNome, idUsuario);
 
-            if (novoNome != null && !novoNome.trim().isEmpty()) {
-                exercicio.setNome(novoNome.trim());
-            }
-            if (novaDescricao != null) {
-                exercicio.setDescricao(novaDescricao);
-            }
-            if (novoCaminhoGif != null) {
-                exercicio.setCaminhoGif(novoCaminhoGif);
-            }
+            atualizarCampos(exercicio, novoNome, novaDescricao, novoCaminhoGif);
 
             exercicioRepository.editar(exercicio);
         } else {
             throw new IllegalArgumentException("Erro: Exercício '" + nomeAtualExercicio + "' não encontrado entre os seus exercícios para atualização.");
+        }
+    }
+
+    private void validarNomeAtual(String nomeAtualExercicio) {
+        if (nomeAtualExercicio == null || nomeAtualExercicio.trim().isEmpty()) {
+            throw new IllegalArgumentException("O nome atual do exercício não pode ser vazio.");
+        }
+    }
+
+    private void validarNovoNome(Exercicio exercicio, String novoNome, int idUsuario) {
+        if (novoNome != null && !novoNome.trim().isEmpty() && !novoNome.trim().equalsIgnoreCase(exercicio.getNome())) {
+            List<Exercicio> exerciciosDoUsuario = exercicioRepository.buscarTodosDoUsuario(idUsuario);
+            boolean nomeJaExiste = exerciciosDoUsuario.stream()
+                    .anyMatch(e -> e.getNome().equalsIgnoreCase(novoNome.trim()));
+            if (nomeJaExiste) {
+                throw new IllegalArgumentException("Você já possui um exercício com o novo nome '" + novoNome + "'.");
+            }
+        }
+    }
+
+    private void atualizarCampos(Exercicio exercicio, String novoNome, String novaDescricao, String novoCaminhoGif) {
+        if (novoNome != null && !novoNome.trim().isEmpty()) {
+            exercicio.setNome(novoNome.trim());
+        }
+        if (novaDescricao != null) {
+            exercicio.setDescricao(novaDescricao);
+        }
+        if (novoCaminhoGif != null) {
+            exercicio.setCaminhoGif(novoCaminhoGif);
         }
     }
 }
