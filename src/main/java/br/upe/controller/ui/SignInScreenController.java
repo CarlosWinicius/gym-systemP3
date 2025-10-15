@@ -9,7 +9,13 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 
+import java.util.logging.Logger;
+
 public class SignInScreenController extends BaseController {
+
+    private static final Logger logger = Logger.getLogger(SignInScreenController.class.getName());
+
+    private static final String ERRO_CADASTRO_TITULO = "Erro de Cadastro";
 
     @FXML
     private TextField nameField;
@@ -49,12 +55,12 @@ public class SignInScreenController extends BaseController {
         String confirmarSenha = confirmPasswordField.getText();
 
         if (nome.trim().isEmpty() || email.trim().isEmpty() || senha.isEmpty() || confirmarSenha.isEmpty()) {
-            showAlert(Alert.AlertType.ERROR, "Erro de Cadastro", "Todos os campos são obrigatórios.");
+            showAlert(Alert.AlertType.ERROR, ERRO_CADASTRO_TITULO, "Todos os campos são obrigatórios.");
             return;
         }
 
         if (!senha.equals(confirmarSenha)) {
-            showAlert(Alert.AlertType.ERROR, "Erro de Cadastro", "As senhas não coincidem. Tente novamente.");
+            showAlert(Alert.AlertType.ERROR, ERRO_CADASTRO_TITULO, "As senhas não coincidem. Tente novamente.");
             return;
         }
 
@@ -69,17 +75,17 @@ public class SignInScreenController extends BaseController {
 
                 navigateTo(signInButton, "/ui/HomeScreen.fxml");
             } else {
-                showAlert(Alert.AlertType.ERROR, "Erro de Cadastro", "Não foi possível completar o cadastro. Tente novamente.");
+                showAlert(Alert.AlertType.ERROR, ERRO_CADASTRO_TITULO, "Não foi possível completar o cadastro. Tente novamente.");
             }
         } catch (Exception e) {
 
-            showAlert(Alert.AlertType.ERROR, "Erro de Cadastro", "Ocorreu um erro: " + e.getMessage());
+            showAlert(Alert.AlertType.ERROR, ERRO_CADASTRO_TITULO, "Ocorreu um erro: " + e.getMessage());
         }
     }
 
     @FXML
     private void handleGoToLogin(MouseEvent event) {
-        System.out.println("Navegando para a tela de Login...");
+        logger.info("Navegando para a tela de Login...");
         navigateTo(loginAccountLabel, "/ui/LoginScreen.fxml");
     }
 }

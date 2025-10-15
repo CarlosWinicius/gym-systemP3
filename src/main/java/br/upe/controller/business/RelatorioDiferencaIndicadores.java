@@ -120,22 +120,22 @@ public void exportarParaCsv(String caminhoArquivo) throws IOException {
     }
     try (FileWriter writer = new FileWriter(caminhoArquivo)) {
         writer.append("Indicador,Inicial,Final,Diferença\n");
-        writer.append(String.format("Peso (kg),%.1f,%.1f,%+.1f\n",
+        writer.append(String.format("Peso (kg),%.1f,%.1f,%+.1f%n",
                 indicadorInicial.get().getPesoKg(),
                 indicadorFinal.get().getPesoKg(),
                 diferencaPeso));
 
-        writer.append(String.format("Gordura (%%),%.1f,%.1f,%+.1f\n",
+        writer.append(String.format("Gordura (%%),%.1f,%.1f,%+.1f%n",
                 indicadorInicial.get().getPercentualGordura(),
                 indicadorFinal.get().getPercentualGordura(),
                 diferencaPercentualGordura));
 
-        writer.append(String.format("Massa Magra (%%),%.1f,%.1f,%+.1f\n",
+        writer.append(String.format("Massa Magra (%%),%.1f,%.1f,%+.1f%n",
                 indicadorInicial.get().getPercentualMassaMagra(),
                 indicadorFinal.get().getPercentualMassaMagra(),
                 diferencaPercentualMassaMagra));
 
-        writer.append(String.format("IMC,%.2f,%.2f,%+.2f\n",
+        writer.append(String.format("IMC,%.2f,%.2f,%+.2f%n",
                 indicadorInicial.get().getImc(),
                 indicadorFinal.get().getImc(),
                 diferencaImc));

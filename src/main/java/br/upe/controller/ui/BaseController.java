@@ -9,7 +9,12 @@ import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 import java.io.IOException;
 
+import java.util.logging.Logger;
+
 public abstract class BaseController {
+
+    private static final Logger logger = Logger.getLogger(BaseController.class.getName());
+
     protected static final double APP_WIDTH = 900;
     protected static final double APP_HEIGHT = 600;
 
@@ -24,7 +29,7 @@ public abstract class BaseController {
 
             stage.show();
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.severe("Erro ao carregar o arquivo FXML: " + fxmlFile + "." + e.getMessage());
             showAlert(Alert.AlertType.ERROR, "Erro de Navegação", "Não foi possível carregar a tela: " + fxmlFile);
         }
     }

@@ -13,7 +13,11 @@ import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import java.util.List;
 
+import java.util.logging.Logger;
+
 public class ExerciseScreenController extends BaseController {
+
+    private static final Logger logger = Logger.getLogger(ExerciseScreenController.class.getName());
 
     @FXML
     private TilePane exerciciosTilePane;
@@ -52,7 +56,7 @@ public class ExerciseScreenController extends BaseController {
             imageView.setImage(image);
         } catch (Exception e) {
             imageView.setImage(new Image(getClass().getResourceAsStream("/images/material-symbols_exercise.png")));
-            System.err.println("Não foi possível carregar o GIF: " + exercicio.getCaminhoGif());
+            logger.warning("Não foi possível carregar o GIF: " + exercicio.getCaminhoGif());
         }
         imageView.setFitHeight(80);
         imageView.setFitWidth(80);
@@ -68,7 +72,7 @@ public class ExerciseScreenController extends BaseController {
 
     @FXML
     private void handleAdicionarExercicio() {
-        System.out.println("Navegando para a tela de adicionar exercício...");
+        logger.info("Navegando para a tela de adicionar exercício...");
         showAlert(Alert.AlertType.INFORMATION, "Em Construção", "A tela para adicionar/editar exercícios ainda será implementada.");
     }
 }
