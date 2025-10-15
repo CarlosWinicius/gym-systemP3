@@ -1,0 +1,3 @@
+id;nome;email;senha;tipo
+1;Administrador;adm;adm;ADMIN
+2;Usuario;usuario@email.com;usuario;COMUM

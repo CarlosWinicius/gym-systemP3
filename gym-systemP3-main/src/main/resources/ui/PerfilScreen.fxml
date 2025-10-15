@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.*?>
+
+<AnchorPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="br.upe.controller.ui.PerfilController"
+            prefWidth="900" prefHeight="600"
+            style="-fx-background-color: #dcdcdc;">
+
+    <children>
+
+        <!-- Sidebar com navegação funcional -->
+        <fx:include source="SideMenu.fxml">
+            <AnchorPane.leftAnchor>0.0</AnchorPane.leftAnchor>
+            <AnchorPane.topAnchor>0.0</AnchorPane.topAnchor>
+            <AnchorPane.bottomAnchor>0.0</AnchorPane.bottomAnchor>
+        </fx:include>
+
+        <!-- Conteúdo principal -->
+        <VBox layoutX="160" layoutY="20" spacing="15" prefWidth="700">
+            <Label text="Perfil" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+
+            <!-- Foto e nome -->
+            <HBox spacing="20" alignment="CENTER_LEFT">
+                <StackPane style="-fx-background-color: #b3a89c; -fx-min-width: 100; -fx-min-height: 100; -fx-max-width: 100; -fx-max-height: 100;"/>
+                <TextField fx:id="txtNome" promptText="Nome completo" prefWidth="400"/>
+            </HBox>
+
+            <!-- Altura e peso -->
+            <HBox spacing="20">
+                <Label text="Altura:"/>
+                <TextField fx:id="txtAltura" prefWidth="80"/>
+                <Label text="cm"/>
+
+                <Label text="Peso:"/>
+                <TextField fx:id="txtPeso" prefWidth="80"/>
+                <Label text="Kg"/>
+            </HBox>
+
+            <!-- Percentuais -->
+            <HBox spacing="20">
+                <Label text="Percentual de gordura:"/>
+                <TextField fx:id="txtGordura" prefWidth="80"/>
+                <Label text="%"/>
+
+                <Label text="Massa magra:"/>
+                <TextField fx:id="txtMassaMagra" prefWidth="80"/>
+                <Label text="%"/>
+            </HBox>
+
+            <!-- IMC -->
+            <HBox spacing="10">
+                <Label text="IMC:"/>
+                <TextField fx:id="txtIMC" editable="false" prefWidth="80"/>
+                <Label fx:id="lblIMCStatus" text="normal"/>
+            </HBox>
+
+            <!-- Botões -->
+            <HBox spacing="20">
+                <Button text="Importar Indicadores" />
+                <Button text="Salvar" onMouseClicked="#onSalvar"
+                        style="-fx-background-color: #333; -fx-text-fill: white;"/>
+            </HBox>
+        </VBox>
+
+    </children>
+</AnchorPane>
