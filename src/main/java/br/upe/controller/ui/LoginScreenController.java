@@ -11,7 +11,11 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 
+import java.util.logging.Logger;
+
 public class LoginScreenController extends BaseController {
+
+    private static final Logger logger = Logger.getLogger(LoginScreenController.class.getName());
 
     @FXML private TextField emailField;
     @FXML private PasswordField passwordField;
@@ -45,7 +49,7 @@ public class LoginScreenController extends BaseController {
 
     @FXML
     private void handleGoToSignIn(MouseEvent event) {
-        System.out.println("Navegando para a tela de cadastro...");
+        logger.info("Navegando para a tela de cadastro...");
         navigateTo(createAccountLabel, "/ui/SignInScreen.fxml");
     }
 }
