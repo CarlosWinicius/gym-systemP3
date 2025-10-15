@@ -12,6 +12,9 @@ public class IndicadorBiomedico {
     private double percentualMassaMagra;
     private double imc;
 
+    //O mockito precisou de um construtor padrão para poder realizar os mocks
+    public IndicadorBiomedico(){}
+
     public IndicadorBiomedico(int id, int idUsuario, LocalDate data, double pesoKg, double alturaCm, double percentualGordura, double percentualMassaMagra, double imc) {
         this.id = id;
         this.idUsuario = idUsuario;

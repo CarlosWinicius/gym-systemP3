@@ -7,6 +7,10 @@ public class Exercicio {
     private String descricao;
     private String caminhoGif;
 
+    //O mockito precisou de um construtor padrão para poder realizar os mocks
+    public Exercicio() {
+    }
+
     public Exercicio(int idExercicio, int idUsuario, String nome, String descricao, String caminhoGif) {
         this.idExercicio = idExercicio;
         this.idUsuario = idUsuario;
