@@ -87,7 +87,7 @@ jobs:
       
       - name: Bump version and push tag
         id: tag_version
-        uses: mathieudutour/github-tag-action@v6.1
+        uses: mathieudutour/github-tag-action@aacd18f07c808c12edb372dc9f9e7160f06c72e8
         with:
           release_branches: 'ci-test'
           github_token: ${{ secrets.GITHUB_TOKEN }}
@@ -100,7 +100,7 @@ jobs:
           path: .
       
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@6da8fa9354ddfdc4aeace5fc48d7f679b5214090
         with:
 
           tag_name: ${{ steps.tag_version.outputs.new_tag }}

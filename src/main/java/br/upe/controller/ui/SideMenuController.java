@@ -5,7 +5,12 @@ import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class SideMenuController extends BaseController {
+
+    private static final Logger logger = Logger.getLogger(SideMenuController.class.getName());
 
     @FXML
     private Label homeButton;
@@ -40,7 +45,9 @@ public class SideMenuController extends BaseController {
                 fxmlFile = "/ui/MetricasScreen.fxml";
                 break;
             default:
-                System.out.println("Nenhuma ação de navegação definida para o ID: " + sourceId);
+                if (logger.isLoggable(Level.INFO)) {
+                    logger.info(String.format("Nenhuma ação de navegação definida para o ID: %s", sourceId));
+                }
                 break;
         }
 
