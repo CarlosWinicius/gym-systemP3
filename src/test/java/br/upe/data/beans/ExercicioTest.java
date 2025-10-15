@@ -85,7 +85,7 @@ class ExercicioTest {
         assertNull(exercicioNull.getCaminhoGif());
     }
 
-    //testar o método toString
+    //testar o toString
     @Test
     @DisplayName("Teste do método toString do exercício completo")
     void testToString() {

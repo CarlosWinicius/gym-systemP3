@@ -103,7 +103,7 @@ class IndicadorBiomedicoTest {
         assert indicadorNull.getImc() == -20.0;
     }
 
-    //testar para método toString
+    //testar o toString
     @Test
     @DisplayName("Teste do método toString")
     void testToString() {
