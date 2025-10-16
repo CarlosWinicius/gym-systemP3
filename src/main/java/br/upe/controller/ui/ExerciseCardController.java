@@ -9,6 +9,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 
+import java.util.logging.Logger;
+
 // Herdar de BaseController é uma boa prática para ter acesso ao logger e outros utilitários.
 public class ExerciseCardController extends BaseController {
 
@@ -33,28 +35,30 @@ public class ExerciseCardController extends BaseController {
     public void setData(Exercicio exercicio) {
         this.exercicio = exercicio;
         this.exerciseName.setText(exercicio.getNome());
-        // Lógica para carregar a imagem real do exercício
-        // try {
-        //     Image img = new Image(getClass().getResourceAsStream(exercicio.getCaminhoGif()));
-        //     this.exerciseImage.setImage(img);
-        // } catch (Exception e) {
-        //     logger.warning("Não foi possível carregar a imagem para o exercício: " + exercicio.getNome());
-        //     // A imagem placeholder definida no FXML será mantida
-        // }
-    }
 
+         try {
+             String caminho = exercicio.getCaminhoGif();
+             if (caminho.contains("resources/")) {
+                 caminho = caminho.substring(caminho.indexOf("resources/") + "resources/".length());
+             }
+             if (!caminho.startsWith("/")) {
+                 caminho = "/" + caminho;
+             }
+             Image img = new Image(getClass().getResourceAsStream(caminho));
+             this.exerciseImage.setImage(img);
+         } catch (Exception e) {
+             logger.warning("Não foi possível carregar a imagem para o exercício: " + exercicio.getNome() + exercicio.getCaminhoGif());
+         }
+    }
     public Exercicio getExercicio() {
         return this.exercicio;
     }
-
     public void toggleSelection() {
         selected.set(!selected.get());
     }
-
     public boolean isSelected() {
         return selected.get();
     }
-
     public void setSelected(boolean isSelected) {
         selected.set(isSelected);
     }
