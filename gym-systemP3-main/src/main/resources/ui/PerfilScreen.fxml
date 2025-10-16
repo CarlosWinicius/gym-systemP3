@@ -2,11 +2,12 @@
 
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
-
 
 <AnchorPane xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.upe.controller.ui.HomeScreenController">
    <children>
@@ -25,7 +26,7 @@
                               <Font name="System Bold" size="17.0" />
                            </font>
                         </Text>
-                            <Label fx:id="welcomeLabel" layoutX="52.0" layoutY="50.0" style="-fx-font-family: Inter; -fx-font-size: 28px; -fx-font-weight: regular; -fx-text-fill: #2c3e50;" text="Perfil">
+                            <Label fx:id="welcomeLabel" layoutX="71.0" layoutY="41.0" prefHeight="70.0" prefWidth="106.0" style="-fx-font-family: Inter; -fx-font-size: 28px; -fx-font-weight: regular; -fx-text-fill: #2c3e50;" text="Perfil">
                                 <font>
                                     <Font name="Arial Black" size="12.0" />
                                 </font>
@@ -40,27 +41,57 @@
                               <Font name="System Bold" size="17.0" />
                            </font>
                         </Text>
-                        <Text layoutX="83.0" layoutY="395.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Percentual de gordura:">
+                        <Text layoutX="83.0" layoutY="396.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Percentual de gordura:">
                            <font>
                               <Font name="System Bold" size="17.0" />
                            </font>
                         </Text>
-                        <Text layoutX="83.0" layoutY="446.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Percentual de massa magra:">
+                        <Text layoutX="79.0" layoutY="446.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Percentual de massa magra:">
                            <font>
                               <Font name="System Bold" size="17.0" />
                            </font>
                         </Text>
-                        <Text layoutX="83.0" layoutY="490.0" strokeType="OUTSIDE" strokeWidth="0.0" text="IMC: ">
+                        <Text layoutX="83.0" layoutY="491.0" strokeType="OUTSIDE" strokeWidth="0.0" text="IMC: ">
                            <font>
                               <Font name="System Bold" size="17.0" />
                            </font>
                         </Text>
                         <TextField layoutX="409.0" layoutY="179.0" prefHeight="26.0" prefWidth="318.0" />
-                        <TextField layoutX="409.0" layoutY="249.0" />
-                        <TextField layoutX="397.0" layoutY="310.0" />
-                        <TextField layoutX="278.0" layoutY="377.0" />
-                        <TextField layoutX="319.0" layoutY="427.0" />
-                        <TextField layoutX="129.0" layoutY="472.0" />
+                        <TextField layoutX="409.0" layoutY="247.0" />
+                        <TextField layoutX="397.0" layoutY="309.0" />
+                        <TextField layoutX="278.0" layoutY="376.0" />
+                        <TextField layoutX="310.0" layoutY="427.0" />
+                        <TextField layoutX="128.0" layoutY="472.0" />
+                        <ImageView fitHeight="204.0" fitWidth="255.0" layoutX="83.0" layoutY="147.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../../../../../rectangleperfil.png.png" />
+                           </image>
+                        </ImageView>
+                        <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="116.0" layoutY="196.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../../../../../perfildesign.png.png" />
+                           </image>
+                        </ImageView>
+                        <Text layoutX="465.0" layoutY="446.0" strokeType="OUTSIDE" strokeWidth="0.0" text="\%">
+                           <font>
+                              <Font size="17.0" />
+                           </font>
+                        </Text>
+                        <Text layoutX="434.0" layoutY="396.0" strokeType="OUTSIDE" strokeWidth="0.0" text="\%">
+                           <font>
+                              <Font size="17.0" />
+                           </font>
+                        </Text>
+                        <Text layoutX="568.0" layoutY="266.0" strokeType="OUTSIDE" strokeWidth="0.0" text="cm">
+                           <font>
+                              <Font size="17.0" />
+                           </font>
+                        </Text>
+                        <Text layoutX="558.0" layoutY="328.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Kg">
+                           <font>
+                              <Font size="17.0" />
+                           </font>
+                        </Text>
                      </children>
                   </AnchorPane>
                 </center>
