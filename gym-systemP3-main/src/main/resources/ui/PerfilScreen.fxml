@@ -12,7 +12,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.upe.controller.ui.HomeScreenController">
+<AnchorPane xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.upe.controller.ui.PerfilController">
    <children>
       <AnchorPane>
          <children>
@@ -21,7 +21,7 @@
                     <fx:include fx:id="sideMenu" source="SideMenu.fxml" />
                 </left>
                 <center>
-                  <AnchorPane style="-fx-background-color: #D4D5D6;">
+                  <AnchorPane fx:id="NivelIMC" style="-fx-background-color: #D4D5D6;">
                      <children>
                         <AnchorPane style="-fx-background-color: #D4D5D6;" />
                         <Text layoutX="341.0" layoutY="198.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Nome:">
@@ -59,12 +59,12 @@
                               <Font name="System Bold" size="17.0" />
                            </font>
                         </Text>
-                        <TextField layoutX="409.0" layoutY="179.0" prefHeight="26.0" prefWidth="318.0" />
-                        <TextField layoutX="409.0" layoutY="247.0" />
-                        <TextField layoutX="397.0" layoutY="309.0" />
-                        <TextField layoutX="278.0" layoutY="376.0" />
-                        <TextField layoutX="310.0" layoutY="427.0" />
-                        <TextField layoutX="128.0" layoutY="472.0" />
+                        <TextField fx:id="Nome" layoutX="409.0" layoutY="179.0" prefHeight="26.0" prefWidth="318.0" />
+                        <TextField fx:id="Altura" layoutX="409.0" layoutY="247.0" />
+                        <TextField fx:id="Peso" layoutX="397.0" layoutY="309.0" />
+                        <TextField fx:id="PercentualGordura" layoutX="278.0" layoutY="376.0" />
+                        <TextField fx:id="PercentualMM" layoutX="310.0" layoutY="427.0" />
+                        <TextField fx:id="IMC" layoutX="128.0" layoutY="472.0" />
                         <ImageView fitHeight="204.0" fitWidth="255.0" layoutX="83.0" layoutY="147.0" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@../../../../../../rectangleperfil.png.png" />
@@ -95,7 +95,7 @@
                               <Font size="17.0" />
                            </font>
                         </Text>
-                        <Button fx:id="adicionarButton" layoutX="525.0" layoutY="505.0" onAction="#handleAdicionarExercicio" prefHeight="30.0" prefWidth="158.0" style="-fx-background-color: black; -fx-text-fill: white; -fx-font-weight: bold; -fx-border-width: 2; -fx-border-radius: 50;" text="Salvar">
+                        <Button fx:id="adicionarButton" layoutX="525.0" layoutY="505.0" prefHeight="30.0" prefWidth="158.0" style="-fx-background-color: black; -fx-text-fill: white; -fx-font-weight: bold; -fx-border-width: 2; -fx-border-radius: 50;" text="Salvar">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -105,7 +105,11 @@
                               <Insets left="20.0" top="20.0" />
                            </padding>
                         </VBox>
-                        <Button fx:id="adicionarButton1" layoutX="487.0" layoutY="59.0" onAction="#handleAdicionarExercicio" prefHeight="30.0" prefWidth="208.0" style="-fx-background-color: transparent; -fx-text-fill: #8A806F; -fx-font-weight: bold; -fx-border-width: 2; -fx-border-color: #8A806F; -fx-border-radius: 6;" styleClass="border" text="Importar Bioindicadores" />
+                        <Button fx:id="adicionarButton1" layoutX="487.0" layoutY="59.0" prefHeight="30.0" prefWidth="208.0" style="-fx-background-color: transparent; -fx-text-fill: #8A806F; -fx-font-weight: bold; -fx-border-width: 2; -fx-border-color: #8A806F; -fx-border-radius: 6;" styleClass="border" text="Importar Bioindicadores" />
+                        <Text fx:id="W" layoutX="289.0" layoutY="489.0" strokeType="OUTSIDE" strokeWidth="0.0" />
+                        <Text layoutX="289.0" layoutY="489.0" strokeType="OUTSIDE" strokeWidth="0.0" />
+                        <Label layoutX="286.0" layoutY="476.0" />
+                        <Label fx:id="CategoriaIMC" layoutX="286.0" layoutY="476.0" text="  " />
                      </children>
                   </AnchorPane>
                 </center>
