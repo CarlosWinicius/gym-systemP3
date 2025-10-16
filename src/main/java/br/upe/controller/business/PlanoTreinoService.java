@@ -14,18 +14,15 @@ import java.util.Optional;
 public class PlanoTreinoService implements IPlanoTreinoService {
 
     private IPlanoTreinoRepository planoTreinoRepository;
-    private IExercicioService exercicioService;
     private IExercicioRepository exercicioRepository;
 
-    public PlanoTreinoService(IPlanoTreinoRepository planoTreinoRepository, IExercicioService exercicioService, IExercicioRepository exercicioRepository) {
+    public PlanoTreinoService(IPlanoTreinoRepository planoTreinoRepository, IExercicioRepository exercicioRepository) {
         this.planoTreinoRepository = planoTreinoRepository;
-        this.exercicioService = exercicioService;
         this.exercicioRepository = exercicioRepository;
     }
 
     public PlanoTreinoService() {
         this.planoTreinoRepository = new PlanoTreinoRepositoryImpl();
-        this.exercicioService = new ExercicioService();
         this.exercicioRepository = new ExercicioRepositoryImpl();
     }
 

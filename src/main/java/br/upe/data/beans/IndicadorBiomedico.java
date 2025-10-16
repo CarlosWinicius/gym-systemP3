@@ -12,11 +12,8 @@ public class IndicadorBiomedico {
     private double percentualMassaMagra;
     private double imc;
 
-    //O mockito precisou de um construtor padrão para poder realizar os mocks
-    public IndicadorBiomedico(){}
-
-    public IndicadorBiomedico(int id, int idUsuario, LocalDate data, double pesoKg, double alturaCm, double percentualGordura, double percentualMassaMagra, double imc) {
-        this.id = id;
+    private IndicadorBiomedico(int idUsuario, LocalDate data, double pesoKg, double alturaCm, double percentualGordura, double percentualMassaMagra, double imc) {
+        this.id = 0;
         this.idUsuario = idUsuario;
         this.data = data;
         this.pesoKg = pesoKg;
@@ -26,14 +23,67 @@ public class IndicadorBiomedico {
         this.imc = imc;
     }
 
-    public IndicadorBiomedico(int idUsuario, LocalDate data, double pesoKg, double alturaCm, double percentualGordura, double percentualMassaMagra, double imc) {
-        this.idUsuario = idUsuario;
-        this.data = data;
-        this.pesoKg = pesoKg;
-        this.alturaCm = alturaCm;
-        this.percentualGordura = percentualGordura;
-        this.percentualMassaMagra = percentualMassaMagra;
-        this.imc = imc;
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static class Builder {
+        private int id = 0;
+        private int idUsuario;
+        private LocalDate data;
+        private double pesoKg;
+        private double alturaCm;
+        private double percentualGordura;
+        private double percentualMassaMagra;
+        private double imc;
+
+        public Builder id(int id) {
+            this.id = id;
+            return this;
+        }
+
+        public Builder idUsuario(int idUsuario) {
+            this.idUsuario = idUsuario;
+            return this;
+        }
+
+        public Builder data(LocalDate data) {
+            this.data = data;
+            return this;
+        }
+
+        public Builder pesoKg(double pesoKg) {
+            this.pesoKg = pesoKg;
+            return this;
+        }
+
+        public Builder alturaCm(double alturaCm) {
+            this.alturaCm = alturaCm;
+            return this;
+        }
+
+        public Builder percentualGordura(double percentualGordura) {
+            this.percentualGordura = percentualGordura;
+            return this;
+        }
+
+        public Builder percentualMassaMagra(double percentualMassaMagra) {
+            this.percentualMassaMagra = percentualMassaMagra;
+            return this;
+        }
+
+        public Builder imc(double imc) {
+            this.imc = imc;
+            return this;
+        }
+
+        public IndicadorBiomedico build() {
+            IndicadorBiomedico instance = new IndicadorBiomedico(idUsuario, data, pesoKg, alturaCm, percentualGordura, percentualMassaMagra, imc);
+            if (id != 0) {
+                instance.setId(id);
+            }
+            return instance;
+        }
     }
 
     public int getId() {
