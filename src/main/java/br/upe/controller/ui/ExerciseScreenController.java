@@ -67,6 +67,7 @@ public class ExerciseScreenController extends BaseController {
 
         cartao.getChildren().addAll(imageView, nomeLabel);
 
+
         return cartao;
     }
 
