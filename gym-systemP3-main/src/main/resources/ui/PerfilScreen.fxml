@@ -1,69 +1,116 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.geometry.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
 
-<AnchorPane xmlns:fx="http://javafx.com/fxml"
-            fx:controller="br.upe.controller.ui.PerfilController"
-            prefWidth="900" prefHeight="600"
-            style="-fx-background-color: #dcdcdc;">
-
-    <children>
-
-        <!-- Sidebar com navegação funcional -->
-        <fx:include source="SideMenu.fxml">
-            <AnchorPane.leftAnchor>0.0</AnchorPane.leftAnchor>
-            <AnchorPane.topAnchor>0.0</AnchorPane.topAnchor>
-            <AnchorPane.bottomAnchor>0.0</AnchorPane.bottomAnchor>
-        </fx:include>
-
-        <!-- Conteúdo principal -->
-        <VBox layoutX="160" layoutY="20" spacing="15" prefWidth="700">
-            <Label text="Perfil" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
-
-            <!-- Foto e nome -->
-            <HBox spacing="20" alignment="CENTER_LEFT">
-                <StackPane style="-fx-background-color: #b3a89c; -fx-min-width: 100; -fx-min-height: 100; -fx-max-width: 100; -fx-max-height: 100;"/>
-                <TextField fx:id="txtNome" promptText="Nome completo" prefWidth="400"/>
-            </HBox>
-
-            <!-- Altura e peso -->
-            <HBox spacing="20">
-                <Label text="Altura:"/>
-                <TextField fx:id="txtAltura" prefWidth="80"/>
-                <Label text="cm"/>
-
-                <Label text="Peso:"/>
-                <TextField fx:id="txtPeso" prefWidth="80"/>
-                <Label text="Kg"/>
-            </HBox>
-
-            <!-- Percentuais -->
-            <HBox spacing="20">
-                <Label text="Percentual de gordura:"/>
-                <TextField fx:id="txtGordura" prefWidth="80"/>
-                <Label text="%"/>
-
-                <Label text="Massa magra:"/>
-                <TextField fx:id="txtMassaMagra" prefWidth="80"/>
-                <Label text="%"/>
-            </HBox>
-
-            <!-- IMC -->
-            <HBox spacing="10">
-                <Label text="IMC:"/>
-                <TextField fx:id="txtIMC" editable="false" prefWidth="80"/>
-                <Label fx:id="lblIMCStatus" text="normal"/>
-            </HBox>
-
-            <!-- Botões -->
-            <HBox spacing="20">
-                <Button text="Importar Indicadores" />
-                <Button text="Salvar" onMouseClicked="#onSalvar"
-                        style="-fx-background-color: #333; -fx-text-fill: white;"/>
-            </HBox>
-        </VBox>
-
-    </children>
+<AnchorPane xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.upe.controller.ui.HomeScreenController">
+   <children>
+      <AnchorPane>
+         <children>
+            <BorderPane prefHeight="600.0" prefWidth="900.0">
+                <left>
+                    <fx:include fx:id="sideMenu" source="SideMenu.fxml" />
+                </left>
+                <center>
+                  <AnchorPane style="-fx-background-color: #D4D5D6;">
+                     <children>
+                        <AnchorPane style="-fx-background-color: #D4D5D6;" />
+                        <Text layoutX="341.0" layoutY="198.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Nome:">
+                           <font>
+                              <Font name="System Bold" size="17.0" />
+                           </font>
+                        </Text>
+                            <Label fx:id="welcomeLabel" layoutX="71.0" layoutY="41.0" prefHeight="70.0" prefWidth="106.0" style="-fx-font-family: Inter; -fx-font-size: 28px; -fx-font-weight: regular; -fx-text-fill: #2c3e50;" text="Perfil">
+                                <font>
+                                    <Font name="Arial Black" size="12.0" />
+                                </font>
+                            </Label>
+                        <Text layoutX="343.0" layoutY="267.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Altura:">
+                           <font>
+                              <Font name="System Bold" size="17.0" />
+                           </font>
+                        </Text>
+                        <Text layoutX="343.0" layoutY="329.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Peso:">
+                           <font>
+                              <Font name="System Bold" size="17.0" />
+                           </font>
+                        </Text>
+                        <Text layoutX="83.0" layoutY="396.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Percentual de gordura:">
+                           <font>
+                              <Font name="System Bold" size="17.0" />
+                           </font>
+                        </Text>
+                        <Text layoutX="79.0" layoutY="446.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Percentual de massa magra:">
+                           <font>
+                              <Font name="System Bold" size="17.0" />
+                           </font>
+                        </Text>
+                        <Text layoutX="83.0" layoutY="491.0" strokeType="OUTSIDE" strokeWidth="0.0" text="IMC: ">
+                           <font>
+                              <Font name="System Bold" size="17.0" />
+                           </font>
+                        </Text>
+                        <TextField layoutX="409.0" layoutY="179.0" prefHeight="26.0" prefWidth="318.0" />
+                        <TextField layoutX="409.0" layoutY="247.0" />
+                        <TextField layoutX="397.0" layoutY="309.0" />
+                        <TextField layoutX="278.0" layoutY="376.0" />
+                        <TextField layoutX="310.0" layoutY="427.0" />
+                        <TextField layoutX="128.0" layoutY="472.0" />
+                        <ImageView fitHeight="204.0" fitWidth="255.0" layoutX="83.0" layoutY="147.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../../../../../rectangleperfil.png.png" />
+                           </image>
+                        </ImageView>
+                        <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="116.0" layoutY="196.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../../../../../perfildesign.png.png" />
+                           </image>
+                        </ImageView>
+                        <Text layoutX="465.0" layoutY="446.0" strokeType="OUTSIDE" strokeWidth="0.0" text="\%">
+                           <font>
+                              <Font size="17.0" />
+                           </font>
+                        </Text>
+                        <Text layoutX="434.0" layoutY="396.0" strokeType="OUTSIDE" strokeWidth="0.0" text="\%">
+                           <font>
+                              <Font size="17.0" />
+                           </font>
+                        </Text>
+                        <Text layoutX="568.0" layoutY="266.0" strokeType="OUTSIDE" strokeWidth="0.0" text="cm">
+                           <font>
+                              <Font size="17.0" />
+                           </font>
+                        </Text>
+                        <Text layoutX="558.0" layoutY="328.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Kg">
+                           <font>
+                              <Font size="17.0" />
+                           </font>
+                        </Text>
+                        <Button fx:id="adicionarButton" layoutX="525.0" layoutY="505.0" onAction="#handleAdicionarExercicio" prefHeight="30.0" prefWidth="158.0" style="-fx-background-color: black; -fx-text-fill: white; -fx-font-weight: bold; -fx-border-width: 2; -fx-border-radius: 50;" text="Salvar">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Button>
+                        <VBox spacing="20.0" style="-fx-background-color: #D4D5D6">
+                           <padding>
+                              <Insets left="20.0" top="20.0" />
+                           </padding>
+                        </VBox>
+                        <Button fx:id="adicionarButton1" layoutX="487.0" layoutY="59.0" onAction="#handleAdicionarExercicio" prefHeight="30.0" prefWidth="208.0" style="-fx-background-color: transparent; -fx-text-fill: #8A806F; -fx-font-weight: bold; -fx-border-width: 2; -fx-border-color: #8A806F; -fx-border-radius: 6;" styleClass="border" text="Importar Bioindicadores" />
+                     </children>
+                  </AnchorPane>
+                </center>
+            </BorderPane>
+         </children>
+      </AnchorPane>
+   </children>
 </AnchorPane>
