@@ -17,10 +17,10 @@
       <AnchorPane>
          <children>
             <BorderPane prefHeight="600.0" prefWidth="900.0">
-                <left>
-                    <fx:include fx:id="sideMenu" source="SideMenu.fxml" />
-                </left>
-                <center>
+               <left>
+                  <fx:include fx:id="sideMenu" source="SideMenu.fxml" />
+               </left>
+               <center>
                   <AnchorPane fx:id="NivelIMC" style="-fx-background-color: #D4D5D6;">
                      <children>
                         <AnchorPane style="-fx-background-color: #D4D5D6;" />
@@ -29,11 +29,11 @@
                               <Font name="System Bold" size="17.0" />
                            </font>
                         </Text>
-                            <Label fx:id="welcomeLabel" layoutX="71.0" layoutY="41.0" prefHeight="70.0" prefWidth="106.0" style="-fx-font-family: Inter; -fx-font-size: 28px; -fx-font-weight: regular; -fx-text-fill: #2c3e50;" text="Perfil">
-                                <font>
-                                    <Font name="Arial Black" size="12.0" />
-                                </font>
-                            </Label>
+                        <Label fx:id="welcomeLabel" layoutX="71.0" layoutY="41.0" prefHeight="70.0" prefWidth="106.0" style="-fx-font-family: Inter; -fx-font-size: 28px; -fx-font-weight: regular; -fx-text-fill: #2c3e50;" text="Perfil">
+                           <font>
+                              <Font name="Arial Black" size="12.0" />
+                           </font>
+                        </Label>
                         <Text layoutX="343.0" layoutY="267.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Altura:">
                            <font>
                               <Font name="System Bold" size="17.0" />
@@ -112,7 +112,7 @@
                         <Label fx:id="CategoriaIMC" layoutX="286.0" layoutY="476.0" text="  " />
                      </children>
                   </AnchorPane>
-                </center>
+               </center>
             </BorderPane>
          </children>
       </AnchorPane>
