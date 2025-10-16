@@ -6,26 +6,26 @@ import javafx.scene.input.MouseEvent;
 
 public class PerfilController extends BaseController {
 
-    @FXML private TextField txtNome;
-    @FXML private TextField txtAltura;
-    @FXML private TextField txtPeso;
-    @FXML private TextField txtGordura;
-    @FXML private TextField txtMassaMagra;
-    @FXML private TextField txtIMC;
-    @FXML private Label lblIMCStatus;
+    @FXML private TextField Nome;
+    @FXML private TextField Altura;
+    @FXML private TextField Peso;
+    @FXML private TextField PercentualGordura;
+    @FXML private TextField PercentualMM;
+    @FXML private TextField IMC;
+    @FXML private Label CategoriaIMC;
+
 
     @FXML
     protected void initialize() {
-        // Exemplo de preenchimento inicial
-        txtNome.setText("Fulaninho de Tal da Silva");
-        txtAltura.setText("170");
-        txtPeso.setText("55.6");
-        txtGordura.setText("15.2");
-        txtMassaMagra.setText("70.8");
-        calcularIMC();
-    }
+        Nome.setText("Fulaninho de Tal da Silva");
+        Altura.setText("170");
+        Peso.setText("55.6");
+        PercentualGordura.setText("15.2");
+        PercentualMM.setText("70.8");
+        IMC.setText("6");
+    } }
 
-    @FXML
+   /* @FXML
     protected void onSalvar(MouseEvent event) {
         showAlert(Alert.AlertType.INFORMATION, "Perfil", "Informações salvas com sucesso!");
     }
@@ -54,3 +54,5 @@ public class PerfilController extends BaseController {
         }
     }
 }
+*\
+    */
