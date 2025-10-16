@@ -1,17 +1,14 @@
 package br.upe.controller.ui;
 
+import br.upe.controller.business.IPlanoTreinoService;
+import br.upe.controller.business.PlanoTreinoService;
 import br.upe.data.beans.PlanoTreino;
-import javafx.fxml.FXML; // Importe a anotação!
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
+import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
-import javafx.stage.Stage;
 
-import java.io.IOException;
 
 public class PlanoListController extends BaseController {
 
@@ -22,6 +19,7 @@ public class PlanoListController extends BaseController {
 
     private PlanoTreino planoData;
     private PlansScreenController parentController;
+    private final IPlanoTreinoService planoTreinoService = new PlanoTreinoService();
 
     public void setData(PlanoTreino plano, PlansScreenController parentController) {
         this.planoData = plano;
@@ -29,19 +27,12 @@ public class PlanoListController extends BaseController {
         this.nomePlanoLabel.setText(plano.getNome());
     }
 
-    /**
-     * Chamado quando o usuário clica na área principal do card para visualizá-lo.
-     */
-    @FXML // <--- CORREÇÃO AQUI!
+    @FXML
     private void handleVerPlano(MouseEvent event) {
-        // A lógica de ver e editar agora é a mesma: ir para a tela de edição.
         handleEditarPlano(event);
     }
 
-    /**
-     * Chamado quando o usuário clica no ícone de caneta para editar.
-     */
-    @FXML // <--- CORREÇÃO AQUI!
+    @FXML
     private void handleEditarPlano(MouseEvent event) {
         if (planoData == null) return;
 
@@ -53,15 +44,10 @@ public class PlanoListController extends BaseController {
         }
     }
 
-    /**
-     * Chamado quando o usuário clica no ícone de lixeira para deletar.
-     */
-    @FXML // <--- CORREÇÃO AQUI!
+    @FXML
     public void handleDeletePlano(MouseEvent mouseEvent) {
         logger.info("Deletando o plano: " + planoData.getNome());
-        // Lógica para chamar o service e deletar do banco
-        // planoTreinoService.deletarPlano(usuarioLogado.getId(), planoData.getNome());
-
+        planoTreinoService.deletarPlano(usuarioLogado.getId(), planoData.getNome());
         parentController.removerCardDaTela(cardPane);
         showAlert(Alert.AlertType.INFORMATION, "Sucesso", "Plano '" + planoData.getNome() + "' removido.");
     }
