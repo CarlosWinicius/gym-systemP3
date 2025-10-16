@@ -16,15 +16,11 @@ public abstract class BaseController {
 
     protected static Usuario usuarioLogado;
 
-    // Logger para ser usado pelas classes filhas
     protected final Logger logger = Logger.getLogger(getClass().getName());
 
-    /**
-     * Navega para uma nova tela (versão simples, "fire-and-forget").
-     */
+
     protected void navigateTo(Node eventSource, String fxmlFile) {
         try {
-            // Internamente, agora ele usa o método mais poderoso
             loadScene(eventSource, fxmlFile);
         } catch (IOException e) {
             handleNavigationError(e, fxmlFile);
