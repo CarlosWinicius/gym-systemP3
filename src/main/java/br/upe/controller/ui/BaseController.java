@@ -27,16 +27,11 @@ public abstract class BaseController {
         }
     }
 
-    /**
-     * Navega para uma nova tela e retorna o controller dela.
-     * Perfeito para quando precisamos passar dados para a próxima tela.
-     * @param <T> O tipo do controller que esperamos receber.
-     * @return A instância do controller da nova cena.
-     */
+
     protected <T> T navigateTo(Node eventSource, String fxmlFile, Class<T> controllerClass) {
         try {
             FXMLLoader loader = loadScene(eventSource, fxmlFile);
-            // Retorna o controller para que o método chamador possa usá-lo
+
             return loader.getController();
         } catch (IOException e) {
             handleNavigationError(e, fxmlFile);
@@ -44,10 +39,6 @@ public abstract class BaseController {
         }
     }
 
-    /**
-     * Lógica centralizada para carregar e exibir uma cena.
-     * @return O FXMLLoader usado, para acesso ao controller.
-     */
     private FXMLLoader loadScene(Node eventSource, String fxmlFile) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlFile));
         Parent root = loader.load();
