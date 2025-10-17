@@ -22,6 +22,8 @@ public class SideMenuController extends BaseController {
     private Label exerciciosButton;
     @FXML
     private Label metricasButton;
+    @FXML
+    private Label logoutButton;
 
     @FXML
     private void handleNavigation(MouseEvent event) {
@@ -54,5 +56,14 @@ public class SideMenuController extends BaseController {
         if (!fxmlFile.isEmpty()) {
             navigateTo((Node) event.getSource(), fxmlFile);
         }
+    }
+
+    @FXML
+    private void handleLogout(MouseEvent event) {
+        if (logger.isLoggable(Level.INFO)) {
+            logger.info("Efetuando logout e retornando à tela de login.");
+        }
+        BaseController.usuarioLogado = null;
+        navigateTo((Node) event.getSource(), "/ui/LoginScreen.fxml");
     }
 }
