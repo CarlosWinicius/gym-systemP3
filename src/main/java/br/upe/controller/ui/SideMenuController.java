@@ -22,10 +22,13 @@ public class SideMenuController extends BaseController {
     private Label exerciciosButton;
     @FXML
     private Label metricasButton;
+    @FXML
+    private Label logoutButton;
 
     @FXML
     private void handleNavigation(MouseEvent event) {
-        String sourceId = ((Node) event.getSource()).getId();
+        Node source = (Node) event.getSource();
+        String sourceId = source.getId();
         String fxmlFile = "";
 
         switch (sourceId) {
@@ -33,26 +36,33 @@ public class SideMenuController extends BaseController {
                 fxmlFile = "/ui/HomeScreen.fxml";
                 break;
             case "perfilButton":
-                fxmlFile = "/ui/PerfilScreen.fxml";
+                // fxmlFile = "/ui/PerfilScreen.fxml"; // Descomente quando criar a tela
                 break;
             case "planosButton":
-                fxmlFile = "/ui/PlanosScreen.fxml";
+                fxmlFile = "/ui/PlansScreen.fxml";
                 break;
             case "exerciciosButton":
                 fxmlFile = "/ui/ExerciseScreen.fxml";
                 break;
             case "metricasButton":
-                fxmlFile = "/ui/MetricasScreen.fxml";
+                // fxmlFile = "/ui/MetricasScreen.fxml"; // Descomente quando criar a tela
                 break;
             default:
-                if (logger.isLoggable(Level.INFO)) {
-                    logger.info(String.format("Nenhuma ação de navegação definida para o ID: %s", sourceId));
-                }
-                break;
+                logger.info("Nenhuma ação de navegação definida para o ID: " + sourceId);
+                return;
         }
 
         if (!fxmlFile.isEmpty()) {
-            navigateTo((Node) event.getSource(), fxmlFile);
+            navigateTo(source, fxmlFile);
         }
+    }
+
+    @FXML
+    private void handleLogout(MouseEvent event) {
+        if (logger.isLoggable(Level.INFO)) {
+            logger.info("Efetuando logout e retornando à tela de login.");
+        }
+        BaseController.usuarioLogado = null;
+        navigateTo((Node) event.getSource(), "/ui/LoginScreen.fxml");
     }
 }

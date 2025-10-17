@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 public class IndicadorBiomedicoRepositoryImpl implements IIndicadorBiomedicoRepository {
 
@@ -156,7 +157,7 @@ public class IndicadorBiomedicoRepositoryImpl implements IIndicadorBiomedicoRepo
     public List<IndicadorBiomedico> listarPorUsuario(int idUsuario) {
         return indicadores.stream()
                 .filter(i -> i.getIdUsuario() == idUsuario)
-                .toList();
+                .collect(Collectors.toList());
     }
 
     // Listar indicadores de um usuário pelo período
@@ -166,7 +167,7 @@ public class IndicadorBiomedicoRepositoryImpl implements IIndicadorBiomedicoRepo
                 .filter(i -> i.getIdUsuario() == idUsuario &&
                               !i.getData().isBefore(dataInicio) &&
                               !i.getData().isAfter(dataFim))
-                .toList();
+                .collect(Collectors.toList());
     }
 
     // Verifica condições e altera indicadores
