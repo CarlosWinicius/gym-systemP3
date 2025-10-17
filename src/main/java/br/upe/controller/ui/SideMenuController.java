@@ -4,6 +4,8 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
+
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class SideMenuController extends BaseController {
