@@ -90,52 +90,31 @@ public class EditPlanScreenController extends BaseController {
         }
     }
 
-    /**
-     * Salva as alterações do plano (novo nome e lista de exercícios).
-     * Distingue entre criar um novo plano e atualizar um existente.
-     */
-    // Dentro da classe EditPlanScreenController
-
-// ... dentro da classe EditPlanScreenController ...
-
-// Dentro da classe EditPlanScreenController.java
-
     @FXML
     void handleSavePlan(ActionEvent event) {
-        // Guarda o nome antigo para o caso de ser uma edição
         String nomeAntigoDoPlano = planoAtual.getNome();
         String novoNomeDoPlano = planNameField.getText();
 
         try {
-            // --- ETAPA 1: GARANTIR QUE O PLANO EXISTA COM O NOME CORRETO ---
-
             if (planoAtual.getIdPlano() == 0) {
-                // É um plano NOVO. Precisamos criá-lo primeiro.
                 logger.info("Criando novo plano com nome: " + novoNomeDoPlano);
-                // O serviço retorna o plano com o ID gerado pelo banco. ATUALIZAMOS nossa referência.
-                // Isso é CRUCIAL para a próxima etapa.
+
                 this.planoAtual = planoTreinoService.criarPlano(usuarioLogado.getId(), novoNomeDoPlano);
             } else if (!nomeAntigoDoPlano.equals(novoNomeDoPlano)) {
-                // É um plano EXISTENTE e o nome foi alterado.
                 logger.info("Editando nome do plano de '" + nomeAntigoDoPlano + "' para '" + novoNomeDoPlano + "'");
                 planoTreinoService.editarPlano(usuarioLogado.getId(), nomeAntigoDoPlano, novoNomeDoPlano);
-                planoAtual.setNome(novoNomeDoPlano); // Atualiza o nome no nosso objeto local também
+                planoAtual.setNome(novoNomeDoPlano);
             }
 
-            // --- ETAPA 2: SINCRONIZAR A LISTA DE EXERCÍCIOS ---
-
-            // Lista de IDs dos exercícios que ESTAVAM no plano ANTES da edição
             Set<Integer> idsOriginais = planoAtual.getItensTreino().stream()
                     .map(ItemPlanoTreino::getIdExercicio)
                     .collect(Collectors.toSet());
 
-            // Lista de IDs dos exercícios que estão SELECIONADOS na tela AGORA
             Set<Integer> idsNovos = cardControllers.stream()
                     .filter(ExerciseCardController::isSelected)
                     .map(controller -> controller.getExercicio().getIdExercicio())
                     .collect(Collectors.toSet());
 
-            // 2a: Remover os que foram desmarcados
             for (Integer idOriginal : idsOriginais) {
                 if (!idsNovos.contains(idOriginal)) {
                     logger.info("Removendo exercício ID " + idOriginal + " do plano '" + planoAtual.getNome() + "'");
@@ -143,11 +122,10 @@ public class EditPlanScreenController extends BaseController {
                 }
             }
 
-            // 2b: Adicionar os que foram marcados
             for (Integer idNovo : idsNovos) {
                 if (!idsOriginais.contains(idNovo)) {
                     logger.info("Adicionando exercício ID " + idNovo + " ao plano '" + planoAtual.getNome() + "'");
-                    // Adicionamos com carga e repetições padrão. O pop-up futuro cuidaria disso.
+
                     planoTreinoService.adicionarExercicioAoPlano(usuarioLogado.getId(), planoAtual.getNome(), idNovo, 0, 0);
                 }
             }
@@ -163,9 +141,7 @@ public class EditPlanScreenController extends BaseController {
         }
     }
 
-    /**
-     * Deleta o plano de treino atual do sistema.
-     */
+
     @FXML
     void handleDeletePlan(ActionEvent event) {
         try {

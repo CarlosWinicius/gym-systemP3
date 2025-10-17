@@ -26,21 +26,12 @@ public class PlansScreenController extends BaseController {
 
     private final IPlanoTreinoService planoTreinoService = new PlanoTreinoService();
 
-    /**
-     * Método de inicialização do JavaFX.
-     * É chamado automaticamente UMA VEZ quando a tela FXML é carregada.
-     * É o local perfeito para carregar os dados iniciais.
-     */
     @FXML
     public void initialize() {
         logger.info("Inicializando a tela 'Meus Planos'.");
         carregarPlanosDoUsuario();
     }
 
-    /**
-     * Busca todos os planos de treino do usuário logado no banco de dados
-     * e cria um card visual para cada um deles na tela.
-     */
     private void carregarPlanosDoUsuario() {
         if (usuarioLogado == null) {
             logger.severe("Nenhum usuário logado! Não é possível carregar os planos.");
@@ -48,17 +39,14 @@ public class PlansScreenController extends BaseController {
             return;
         }
 
-        // Limpa a tela para garantir que não haja cards duplicados
         PlanoTilePane.getChildren().clear();
         logger.info("Buscando planos no banco de dados para o usuário ID: " + usuarioLogado.getId());
 
-        // **AQUI A MÁGICA ACONTECE**
-        // Chamando o seu serviço para buscar a lista completa de planos
+
         List<PlanoTreino> planosDoUsuario = planoTreinoService.listarMeusPlanos(usuarioLogado.getId());
 
         logger.info("Foram encontrados " + planosDoUsuario.size() + " planos.");
 
-        // Para cada plano encontrado, cria um card FXML e o adiciona na tela
         for (PlanoTreino plano : planosDoUsuario) {
             try {
                 criarEAdicionarCard(plano);
@@ -68,10 +56,6 @@ public class PlansScreenController extends BaseController {
         }
     }
 
-    /**
-     * Ação do botão "+ Adicionar Plano".
-     * Cria um novo objeto PlanoTreino e navega para a tela de edição.
-     */
     @FXML
     private void handleAdicionarPlano(ActionEvent event) {
         logger.info("Botão 'Adicionar Plano' pressionado.");
@@ -83,18 +67,10 @@ public class PlansScreenController extends BaseController {
         }
     }
 
-    /**
-     * Remove um card da interface gráfica.
-     * Este método é chamado pelo PlanoListController quando um plano é deletado.
-     */
     public void removerCardDaTela(Node cardNode) {
         PlanoTilePane.getChildren().remove(cardNode);
     }
 
-    /**
-     * Método auxiliar que carrega o FXML de um card, injeta os dados do plano
-     * e o adiciona ao TilePane.
-     */
     private void criarEAdicionarCard(PlanoTreino plano) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/ui/PlanoList.fxml"));
         HBox cardNode = loader.load();
