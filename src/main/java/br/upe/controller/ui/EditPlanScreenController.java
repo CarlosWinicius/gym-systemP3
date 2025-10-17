@@ -39,20 +39,13 @@ public class EditPlanScreenController extends BaseController {
     private final IExercicioService exercicioService = new ExercicioService();
     private final List<ExerciseCardController> cardControllers = new ArrayList<>();
 
-    /**
-     * Inicializa a tela com os dados de um plano existente ou de um novo plano.
-     */
     public void initData(PlanoTreino plano) {
         this.planoAtual = plano;
         this.planNameField.setText(plano.getNome());
-        // Se for um plano novo (sem ID), o botão de deletar é desabilitado.
         deleteButton.setDisable(plano.getIdPlano() == 0);
         populateExerciseGrid();
     }
 
-    /**
-     * Carrega e exibe todos os exercícios disponíveis, pré-selecionando os que pertencem ao plano atual.
-     */
     private void populateExerciseGrid() {
         exercisesTilePane.getChildren().clear();
         cardControllers.clear();
@@ -76,7 +69,6 @@ public class EditPlanScreenController extends BaseController {
                 cardNode.setOnMouseClicked(event -> {
                     if (event.getClickCount() == 2) {
                         logger.info("Clique duplo em: " + controller.getExercicio().getNome());
-                        // TODO: Abrir modal de edição de carga/reps
                     } else {
                         controller.toggleSelection();
                     }
@@ -135,7 +127,6 @@ public class EditPlanScreenController extends BaseController {
             navigateTo((Node) event.getSource(), "/ui/PlansScreen.fxml");
 
         } catch (Exception e) {
-            // O service já lança exceções claras (ex: "Nome já existe"), então podemos mostrá-las ao usuário.
             logger.log(java.util.logging.Level.SEVERE, "Erro ao salvar o plano", e);
             showAlert(Alert.AlertType.ERROR, "Erro ao Salvar", e.getMessage());
         }
@@ -145,13 +136,11 @@ public class EditPlanScreenController extends BaseController {
     @FXML
     void handleDeletePlan(ActionEvent event) {
         try {
-            // LÓGICA DE DELEÇÃO REAL (Substituindo o TODO)
             planoTreinoService.deletarPlano(usuarioLogado.getId(), planoAtual.getNome());
 
             logger.info("Deletando plano: " + planoAtual.getNome());
             showAlert(Alert.AlertType.INFORMATION, "Sucesso", "Plano deletado com sucesso!");
 
-            // Navega de volta para a tela de listagem
             navigateTo((Node) event.getSource(), "/ui/PlansScreen.fxml");
         } catch (Exception e) {
             logger.severe("Erro ao deletar o plano: " + e.getMessage());

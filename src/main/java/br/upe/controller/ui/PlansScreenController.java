@@ -15,10 +15,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;
 
-/**
- * Controller para a tela de listagem de planos (PlansScreen.fxml).
- * Carrega os planos existentes do usuário e gerencia a criação de novos.
- */
 public class PlansScreenController extends BaseController {
 
     @FXML
@@ -76,7 +72,6 @@ public class PlansScreenController extends BaseController {
         HBox cardNode = loader.load();
 
         PlanoListController cardController = loader.getController();
-        // Passa o objeto 'plano' e a referência deste controller para o card filho
         cardController.setData(plano, this);
 
         PlanoTilePane.getChildren().add(cardNode);

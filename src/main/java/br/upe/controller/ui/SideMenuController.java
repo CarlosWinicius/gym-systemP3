@@ -36,7 +36,7 @@ public class SideMenuController extends BaseController {
                 fxmlFile = "/ui/HomeScreen.fxml";
                 break;
             case "perfilButton":
-                // fxmlFile = "/ui/PerfilScreen.fxml"; // Descomente quando criar a tela
+                // fxmlFile = "/ui/PerfilScreen.fxml";
                 break;
             case "planosButton":
                 fxmlFile = "/ui/PlansScreen.fxml";
@@ -45,7 +45,7 @@ public class SideMenuController extends BaseController {
                 fxmlFile = "/ui/ExerciseScreen.fxml";
                 break;
             case "metricasButton":
-                // fxmlFile = "/ui/MetricasScreen.fxml"; // Descomente quando criar a tela
+                // fxmlFile = "/ui/MetricasScreen.fxml";
                 break;
             default:
                 logger.info("Nenhuma ação de navegação definida para o ID: " + sourceId);
