@@ -22,6 +22,10 @@ public class PlanoTreino {
         this.itensTreino = new ArrayList<>();
     }
 
+    public PlanoTreino() {
+
+    }
+
     public int getIdPlano() {
         return idPlano;
     }
