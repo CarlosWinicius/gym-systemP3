@@ -24,10 +24,10 @@ public class SignInScreenController extends BaseController {
     private TextField emailField;
 
     @FXML
-    private TextField passwordField; // Correto: Usar PasswordField para senhas
+    private TextField passwordField;
 
     @FXML
-    private TextField confirmPasswordField; // Correto: Usar PasswordField para senhas
+    private TextField confirmPasswordField;
 
     @FXML
     private Button signInButton;
@@ -39,10 +39,8 @@ public class SignInScreenController extends BaseController {
 
     @FXML
     public void initialize() {
-        // Coloca o foco no campo de nome quando a tela abre
-        Platform.runLater(() -> nameField.requestFocus());
 
-        // Associa a ação de clique do botão ao método handleSignIn
+        Platform.runLater(() -> nameField.requestFocus());
         signInButton.setOnAction(e -> handleSignIn());
 
     }
