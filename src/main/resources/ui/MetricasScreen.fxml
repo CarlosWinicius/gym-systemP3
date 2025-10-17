@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.upe.controller.ui.MetricasScreenController">
+    <left>
+        <fx:include fx:id="sideMenu" source="SideMenu.fxml" />
+    </left>
+    <center>
+        <VBox spacing="14.0" style="-fx-background-color: #D4D5D6;">
+            <padding>
+                <Insets bottom="20.0" left="40.0" right="40.0" top="20.0"/>
+            </padding>
+            <Label style="-fx-font-family: 'Inter'; -fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"
+                   text="Minhas Métricas"/>
+
+            <!-- Cadastro rápido de indicador -->
+            <TitledPane text="Cadastrar Indicador">
+                <GridPane hgap="10" vgap="10">
+                    <padding>
+                        <Insets top="10.0" right="10.0" bottom="10.0" left="10.0"/>
+                    </padding>
+                    <columnConstraints>
+                        <ColumnConstraints halignment="RIGHT" minWidth="120"/>
+                        <ColumnConstraints hgrow="ALWAYS"/>
+                        <ColumnConstraints halignment="RIGHT" minWidth="120"/>
+                        <ColumnConstraints hgrow="ALWAYS"/>
+                        <ColumnConstraints halignment="RIGHT" minWidth="120"/>
+                        <ColumnConstraints hgrow="ALWAYS"/>
+                    </columnConstraints>
+                    <Label text="Data:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                    <DatePicker fx:id="dataPicker" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                    <Label text="Peso (kg):" GridPane.rowIndex="0" GridPane.columnIndex="2"/>
+                    <TextField fx:id="pesoField" promptText="ex: 75.5" GridPane.rowIndex="0"
+                               GridPane.columnIndex="3"/>
+
+                    <Label text="Altura (cm):" GridPane.rowIndex="0" GridPane.columnIndex="4"/>
+                    <TextField fx:id="alturaField" promptText="ex: 175" GridPane.rowIndex="0"
+                               GridPane.columnIndex="5"/>
+
+                    <Label text="Gordura (%):" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                    <TextField fx:id="gorduraField" promptText="ex: 15.2" GridPane.rowIndex="1"
+                               GridPane.columnIndex="1"/>
+
+                    <Label text="Massa Magra (%):" GridPane.rowIndex="1" GridPane.columnIndex="2"/>
+                    <TextField fx:id="massaMagraField" promptText="ex: 70.8" GridPane.rowIndex="1"
+                               GridPane.columnIndex="3"/>
+
+                    <Button fx:id="adicionarButton" text="Adicionar" onAction="#handleAdicionarIndicador"
+                            style="-fx-background-color: #A6917E; -fx-text-fill: white; -fx-font-weight: bold;"
+                            GridPane.rowIndex="1" GridPane.columnIndex="5"/>
+                </GridPane>
+            </TitledPane>
+
+            <!-- Filtros e ações -->
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <children>
+                    <Label text="Período:"/>
+                    <DatePicker fx:id="inicioPicker" promptText="Início"/>
+                    <DatePicker fx:id="fimPicker" promptText="Fim"/>
+                    <Button fx:id="filtrarButton" text="Filtrar" onAction="#handleFiltrar"
+                            style="-fx-background-color: #A6917E; -fx-text-fill: white; -fx-font-weight: bold;"/>
+                    <Button fx:id="mostrarTodosButton" text="Mostrar todos" onAction="#handleMostrarTodos"/>
+                    <Pane HBox.hgrow="ALWAYS"/>
+                    <Button fx:id="relatorioDiferencaButton" text="Relatório Diferença"
+                            onAction="#handleRelatorioDiferenca"/>
+                    <Button fx:id="exportarListaButton" text="Exportar Lista" onAction="#handleExportarLista"/>
+                    <Button fx:id="exportarDiffButton" text="Exportar Diferença" onAction="#handleExportarDiferenca"/>
+                    <Button fx:id="importarCsvButton" text="Importar CSV" onAction="#handleImportarCsv"/>
+                </children>
+            </HBox>
+
+            <!-- Tabela de indicadores -->
+            <TableView fx:id="indicadoresTable" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="colData" text="Data" prefWidth="100"/>
+                    <TableColumn fx:id="colPeso" text="Peso (kg)" prefWidth="90"/>
+                    <TableColumn fx:id="colAltura" text="Altura (cm)" prefWidth="100"/>
+                    <TableColumn fx:id="colGordura" text="Gordura (%)" prefWidth="100"/>
+                    <TableColumn fx:id="colMassaMagra" text="Massa Magra (%)" prefWidth="130"/>
+                    <TableColumn fx:id="colImc" text="IMC" prefWidth="80"/>
+                </columns>
+            </TableView>
+        </VBox>
+    </center>
+</BorderPane>

@@ -151,7 +151,7 @@ public class SessaoTreinoRepositoryImpl implements ISessaoTreinoRepository {
 
     @Override
     public List<SessaoTreino> buscarTodosDoUsuario(int idUsuario) {
-        return sessoes.stream().filter(s -> s.getIdUsuario() == idUsuario).toList();
+        return sessoes.stream().filter(s -> s.getIdUsuario() == idUsuario).collect(Collectors.toList());
     }
 
     @Override
@@ -160,7 +160,7 @@ public class SessaoTreinoRepositoryImpl implements ISessaoTreinoRepository {
                 .filter(s -> s.getIdUsuario() == idUsuario &&
                         !s.getDataSessao().isBefore(dataInicio) &&
                         !s.getDataSessao().isAfter(dataFim))
-                .toList();
+                .collect(Collectors.toList());
     }
 
     @Override
