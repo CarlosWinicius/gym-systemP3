@@ -102,14 +102,14 @@ class IndicadorBiomedicoTest {
     @Test
     @DisplayName("Teste do método toString")
     void testToString() {
-        String expected = "ID: 0 | Data: 2023-10-01 | Peso: 70,5kg | Altura: 175cm | Gordura: 15,0% | Massa Magra: 85,0% | IMC: 23,00   ";
+        String expected = "ID: 0 | Data: 2023-10-01 | Peso: 70,5kg | Altura: 175cm | Gordura: 15,0% | Massa Magra: 85,0% | IMC: 23,00";
         assertEquals(expected, indicadorCompleto.toString());
     }
     @Test
     @DisplayName("Teste do método toString sem ID")
     void testToStringSemId() {
         // ID padrão é 0
-        String expected = "ID: 0 | Data: 2023-10-01 | Peso: 70,5kg | Altura: 175cm | Gordura: 15,0% | Massa Magra: 85,0% | IMC: 23,00   ";
+        String expected = "ID: 0 | Data: 2023-10-01 | Peso: 70,5kg | Altura: 175cm | Gordura: 15,0% | Massa Magra: 85,0% | IMC: 23,00";
         assertEquals(expected, indicadorSemId.toString());
     }
 

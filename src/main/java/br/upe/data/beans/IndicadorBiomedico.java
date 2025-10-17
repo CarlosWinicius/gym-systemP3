@@ -1,5 +1,6 @@
 package br.upe.data.beans;
 
+import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.time.LocalDate;
 import java.util.Locale;
@@ -162,7 +163,15 @@ public class IndicadorBiomedico {
         Locale ptBr = new Locale("pt", "BR");
         DecimalFormatSymbols symbols = new DecimalFormatSymbols(ptBr);
         symbols.setDecimalSeparator(',');
-        return String.format("ID: %d | Data: %-10s | Peso: %.1fkg | Altura: %.0fcm | Gordura: %.1f%% | Massa Magra: %.1f%% | IMC: %-8.2f",
-                id, data, pesoKg, alturaCm, percentualGordura, percentualMassaMagra, imc);
+        DecimalFormat inteiro = new DecimalFormat("#0", symbols);
+        DecimalFormat umDecimal = new DecimalFormat("#0.0", symbols);
+        DecimalFormat doisDecimais = new DecimalFormat("#0.00", symbols);
+        String pesoFormatado = umDecimal.format(pesoKg) + "kg";
+        String alturaCmFormatada = inteiro.format(alturaCm) + "cm";
+        String gorduraFormatada = umDecimal.format(percentualGordura) + "%";
+        String massaMagraFormatada = umDecimal.format(percentualMassaMagra) + "%";
+        String imcFormatado = doisDecimais.format(imc);
+        return String.format("ID: %d | Data: %-10s | Peso: %s | Altura: %s | Gordura: %s | Massa Magra: %s | IMC: %s",
+                id, data, pesoFormatado, alturaCmFormatada, gorduraFormatada, massaMagraFormatada, imcFormatado);
     }
 }
