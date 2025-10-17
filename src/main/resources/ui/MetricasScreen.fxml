@@ -16,7 +16,7 @@
             <Label style="-fx-font-family: 'Inter'; -fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"
                    text="Minhas Métricas"/>
 
-            <!-- Cadastro rápido de indicador -->
+
             <TitledPane text="Cadastrar Indicador">
                 <GridPane hgap="10" vgap="10">
                     <padding>
@@ -55,7 +55,7 @@
                 </GridPane>
             </TitledPane>
 
-            <!-- Filtros e ações -->
+
             <HBox spacing="10" alignment="CENTER_LEFT">
                 <children>
                     <Label text="Período:"/>
@@ -73,7 +73,7 @@
                 </children>
             </HBox>
 
-            <!-- Tabela de indicadores -->
+
             <TableView fx:id="indicadoresTable" VBox.vgrow="ALWAYS">
                 <columns>
                     <TableColumn fx:id="colData" text="Data" prefWidth="100"/>
