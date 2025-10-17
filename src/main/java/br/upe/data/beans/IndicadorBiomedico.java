@@ -1,6 +1,8 @@
 package br.upe.data.beans;
 
+import java.text.DecimalFormatSymbols;
 import java.time.LocalDate;
+import java.util.Locale;
 
 public class IndicadorBiomedico {
     private int id;
@@ -156,6 +158,10 @@ public class IndicadorBiomedico {
 
     @Override
     public String toString() {
+        // Configurações para o formato brasileiro, para evitar erros com vírgulas e pontos
+        Locale ptBr = new Locale("pt", "BR");
+        DecimalFormatSymbols symbols = new DecimalFormatSymbols(ptBr);
+        symbols.setDecimalSeparator(',');
         return String.format("ID: %d | Data: %-10s | Peso: %.1fkg | Altura: %.0fcm | Gordura: %.1f%% | Massa Magra: %.1f%% | IMC: %-8.2f",
                 id, data, pesoKg, alturaCm, percentualGordura, percentualMassaMagra, imc);
     }
