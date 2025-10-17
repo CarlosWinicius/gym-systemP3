@@ -7,6 +7,7 @@ import br.upe.data.repository.impl.IndicadorBiomedicoRepositoryImpl;
 import java.io.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -79,7 +80,8 @@ public class IndicadorBiomedicoService implements IIndicadorBiomedicoService {
         if (dataInicio.isAfter(dataFim)) {
             throw new IllegalArgumentException("Data de início não pode ser posterior à data de fim.");
         }
-        List<IndicadorBiomedico> resultados = indicadorRepository.buscarPorPeriodo(idUsuario, dataInicio, dataFim);
+        List<IndicadorBiomedico> resultadosRepo = indicadorRepository.buscarPorPeriodo(idUsuario, dataInicio, dataFim);
+        List<IndicadorBiomedico> resultados = new ArrayList<>(resultadosRepo);
         resultados.sort(Comparator.comparing(IndicadorBiomedico::getData));
         return resultados;
     }
@@ -94,7 +96,8 @@ public class IndicadorBiomedicoService implements IIndicadorBiomedicoService {
             throw new IllegalArgumentException("Data de início não pode ser posterior à data de fim.");
         }
 
-        List<IndicadorBiomedico> indicadoresNoPeriodo = indicadorRepository.buscarPorPeriodo(idUsuario, dataInicio, dataFim);
+        List<IndicadorBiomedico> indicadoresNoPeriodoRepo = indicadorRepository.buscarPorPeriodo(idUsuario, dataInicio, dataFim);
+        List<IndicadorBiomedico> indicadoresNoPeriodo = new ArrayList<>(indicadoresNoPeriodoRepo);
         indicadoresNoPeriodo.sort(Comparator.comparing(IndicadorBiomedico::getData));
 
         RelatorioDiferencaIndicadores relatorio = new RelatorioDiferencaIndicadores();

@@ -1,0 +1,13 @@
+.exercise-card {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 8;
+    -fx-border-color: #E0E0E0; /* Borda padrão, cinza claro */
+    -fx-border-radius: 8;
+    -fx-border-width: 1.5;
+}
+
+.exercise-card:selected {
+    -fx-border-color: #A6917E; /* Cor da "aura" quando selecionado */
+    -fx-border-width: 2.5;
+    -fx-effect: dropshadow(gaussian, rgba(166, 145, 126, 0.5), 10, 0.3, 0, 0); /* Sombra para dar destaque */
+}

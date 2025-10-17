@@ -6,6 +6,7 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.Cursor?>
+<?import javafx.scene.layout.Pane?>
 
 <VBox prefHeight="400.0" prefWidth="140.0" spacing="20" style="-fx-font-family: Inter; -fx-background-color: #8A806F; -fx-padding: 15;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.upe.controller.ui.SideMenuController">
     <children>
@@ -52,6 +53,18 @@
             <graphic>
                 <ImageView fitHeight="20.0" fitWidth="20.0" preserveRatio="true">
                     <Image url="@../images/material-symbols_health-metrics-rounded.png" />
+                </ImageView>
+            </graphic>
+        </Label>
+
+        <!-- Spacer to push logout to bottom -->
+        <Pane VBox.vgrow="ALWAYS" />
+
+        <!-- Logout button at bottom -->
+        <Label fx:id="logoutButton" onMouseClicked="#handleLogout" style="-fx-text-fill: white; -fx-cursor: hand;" text="Sair" graphicTextGap="8.0">
+            <graphic>
+                <ImageView fitHeight="20.0" fitWidth="20.0" preserveRatio="true">
+                    <Image url="@../images/user.png" />
                 </ImageView>
             </graphic>
         </Label>
