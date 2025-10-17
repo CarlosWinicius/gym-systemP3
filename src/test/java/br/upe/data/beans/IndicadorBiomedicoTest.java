@@ -20,27 +20,25 @@ class IndicadorBiomedicoTest {
     @BeforeEach
     void setUp() {
         //criando objetos de IndicadorBiomedico para os testes
-        indicadorCompleto = new IndicadorBiomedico(1, 100, java.time.LocalDate.of(2023, 10, 1), 70.5, 175.0, 15.0, 85.0, 23.0);
+        indicadorCompleto = new IndicadorBiomedico(100, java.time.LocalDate.of(2023, 10, 1), 70.5, 175.0, 15.0, 85.0, 23.0);
         indicadorSemId = new IndicadorBiomedico(100, java.time.LocalDate.of(2023, 10, 1), 70.5, 175.0, 15.0, 85.0, 23.0);
-        indicadorNull = new IndicadorBiomedico(1, 100, null, 0.0, 0.0, 0.0, 0.0, 0.0);
+        indicadorNull = new IndicadorBiomedico(0, null, 0.0, 0.0, 0.0, 0.0, 0.0);
     }
     //testar construtores
     @Test
     @DisplayName("Teste do construtor completo")
     void testConstrutorCompleto() {
-        assert indicadorCompleto.getId() == 1;
-        assert indicadorCompleto.getIdUsuario() == 100;
-        assert indicadorCompleto.getData().equals(java.time.LocalDate.of(2023, 10, 1));
-        assert indicadorCompleto.getPesoKg() == 70.5;
-        assert indicadorCompleto.getAlturaCm() == 175.0;
-        assert indicadorCompleto.getPercentualGordura() == 15.0;
-        assert indicadorCompleto.getPercentualMassaMagra() == 85.0;
-        assert indicadorCompleto.getImc() == 23.0;
+        assertEquals(100, indicadorCompleto.getIdUsuario());
+        assertEquals(java.time.LocalDate.of(2023, 10, 1), indicadorCompleto.getData());
+        assertEquals(70.5, indicadorCompleto.getPesoKg());
+        assertEquals(175.0, indicadorCompleto.getAlturaCm());
+        assertEquals(15.0, indicadorCompleto.getPercentualGordura());
+        assertEquals(85.0, indicadorCompleto.getPercentualMassaMagra());
+        assertEquals(23.0, indicadorCompleto.getImc());
     }
     @Test
     @DisplayName("Teste do construtor sem ID")
     void testConstrutorSemId() {
-        assert indicadorSemId.getId() == 0; // ID padrão é 0
         assert indicadorSemId.getIdUsuario() == 100;
         assert indicadorSemId.getData().equals(java.time.LocalDate.of(2023, 10, 1));
         assert indicadorSemId.getPesoKg() == 70.5;
@@ -53,9 +51,6 @@ class IndicadorBiomedicoTest {
     @Test
     @DisplayName("Teste dos getters e setters")
     void testGettersAndSetters() {
-        //ID
-        indicadorCompleto.setId(2);
-        assert indicadorCompleto.getId() == 2;
         //ID usuário
         indicadorCompleto.setIdUsuario(200);
         assert indicadorCompleto.getIdUsuario() == 200;
@@ -107,14 +102,14 @@ class IndicadorBiomedicoTest {
     @Test
     @DisplayName("Teste do método toString")
     void testToString() {
-        String expected = "ID: 1 | Data: 2023-10-01 | Peso: 70,5kg | Altura: 175cm | Gordura: 15,0% | Massa Magra: 85,0% | IMC: 23,00";
+        String expected = "ID: 0 | Data: 2023-10-01 | Peso: 70,5kg | Altura: 175cm | Gordura: 15,0% | Massa Magra: 85,0% | IMC: 23,00   ";
         assertEquals(expected, indicadorCompleto.toString());
     }
     @Test
     @DisplayName("Teste do método toString sem ID")
     void testToStringSemId() {
         // ID padrão é 0
-        String expected = "ID: 0 | Data: 2023-10-01 | Peso: 70,5kg | Altura: 175cm | Gordura: 15,0% | Massa Magra: 85,0% | IMC: 23,00";
+        String expected = "ID: 0 | Data: 2023-10-01 | Peso: 70,5kg | Altura: 175cm | Gordura: 15,0% | Massa Magra: 85,0% | IMC: 23,00   ";
         assertEquals(expected, indicadorSemId.toString());
     }
 

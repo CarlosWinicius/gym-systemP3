@@ -12,7 +12,8 @@ public class IndicadorBiomedico {
     private double percentualMassaMagra;
     private double imc;
 
-    private IndicadorBiomedico(int idUsuario, LocalDate data, double pesoKg, double alturaCm, double percentualGordura, double percentualMassaMagra, double imc) {
+    public IndicadorBiomedico(){}
+    IndicadorBiomedico(int idUsuario, LocalDate data, double pesoKg, double alturaCm, double percentualGordura, double percentualMassaMagra, double imc) {
         this.id = 0;
         this.idUsuario = idUsuario;
         this.data = data;
@@ -22,6 +23,8 @@ public class IndicadorBiomedico {
         this.percentualMassaMagra = percentualMassaMagra;
         this.imc = imc;
     }
+
+
 
     public static Builder builder() {
         return new Builder();
@@ -152,7 +155,7 @@ public class IndicadorBiomedico {
 
     @Override
     public String toString() {
-        return String.format("ID: %d | Data: %-12s | Peso: %.1fkg | Altura: %.0fcm | Gordura: %.1f%% | Massa Magra: %.1f%% | IMC: %-8.2f",
+        return String.format("ID: %d | Data: %-10s | Peso: %.1fkg | Altura: %.0fcm | Gordura: %.1f%% | Massa Magra: %.1f%% | IMC: %-8.2f",
                 id, data, pesoKg, alturaCm, percentualGordura, percentualMassaMagra, imc);
     }
 }

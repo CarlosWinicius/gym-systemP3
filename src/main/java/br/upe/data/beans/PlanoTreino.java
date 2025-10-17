@@ -3,11 +3,15 @@ package br.upe.data.beans;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class PlanoTreino {
     private int idPlano;
     private int idUsuario;
     private String nome;
     private List<ItemPlanoTreino> itensTreino;
+
+    //O mockito precisou de um construtor padrão para poder realizar os mocks
+    public PlanoTreino() {}
 
     public PlanoTreino(int idPlano, int idUsuario, String nome, List<ItemPlanoTreino> itensTreino) {
         this.idPlano = idPlano;
@@ -22,9 +26,6 @@ public class PlanoTreino {
         this.itensTreino = new ArrayList<>();
     }
 
-    public PlanoTreino() {
-
-    }
 
     public int getIdPlano() {
         return idPlano;
