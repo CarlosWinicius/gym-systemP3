@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+
+<BorderPane prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.upe.controller.ui.EditPlanScreenController">
+    <left>
+        <fx:include source="SideMenu.fxml" />
+    </left>
+    <center>
+        <VBox spacing="20.0" style="-fx-background-color: #EAEAEA;">
+            <padding>
+                <Insets bottom="25.0" left="25.0" right="25.0" top="25.0" />
+            </padding>
+            <children>
+                <HBox alignment="CENTER_LEFT" spacing="15.0">
+                    <children>
+                        <TextField fx:id="planNameField" promptText="Nome do Plano" HBox.hgrow="ALWAYS" style="-fx-font-size: 18px;" />
+                        <Button fx:id="saveButton" onAction="#handleSavePlan" text="Salvar Plano" style="-fx-background-color: #8A806F; -fx-text-fill: white; -fx-font-weight: bold;" />
+                        <Button fx:id="deleteButton" onAction="#handleDeletePlan" text="Excluir" style="-fx-background-color: #c0392b; -fx-text-fill: white;" />
+                    </children>
+                </HBox>
+                <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS">
+                    <content>
+                        <TilePane fx:id="exercisesTilePane" hgap="20" vgap="20">
+                            <padding>
+                                <Insets top="10.0" />
+                            </padding>
+                        </TilePane>
+                    </content>
+                </ScrollPane>
+            </children>
+        </VBox>
+    </center>
+</BorderPane>
