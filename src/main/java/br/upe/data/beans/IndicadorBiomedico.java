@@ -153,6 +153,7 @@ public class IndicadorBiomedico {
         this.imc = imc;
     }
 
+
     @Override
     public String toString() {
         return String.format("ID: %d | Data: %-10s | Peso: %.1fkg | Altura: %.0fcm | Gordura: %.1f%% | Massa Magra: %.1f%% | IMC: %-8.2f",

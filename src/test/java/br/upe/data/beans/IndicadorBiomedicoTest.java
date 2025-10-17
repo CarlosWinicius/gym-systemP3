@@ -113,6 +113,7 @@ class IndicadorBiomedicoTest {
         assertEquals(expected, indicadorSemId.toString());
     }
 
+
     //testes de valores limites
     @Test
     @DisplayName("Teste de valores limites")
