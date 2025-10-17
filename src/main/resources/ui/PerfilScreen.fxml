@@ -67,12 +67,12 @@
                                 <TextField fx:id="IMC" layoutX="128.0" layoutY="472.0" />
                                 <ImageView fitHeight="204.0" fitWidth="255.0" layoutX="83.0" layoutY="147.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
-                                        <Image url="@../../../../../../rectangleperfil.png.png" />
+                                        <Image url="@../images/rectangleperfil.png" />
                                     </image>
                                 </ImageView>
                                 <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="116.0" layoutY="196.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
-                                        <Image url="@../../../../../../perfildesign.png.png" />
+                                        <Image url="@../images/perfildesign.png" />
                                     </image>
                                 </ImageView>
                                 <Text layoutX="465.0" layoutY="446.0" strokeType="OUTSIDE" strokeWidth="0.0" text="\%">
@@ -95,7 +95,7 @@
                                         <Font size="17.0" />
                                     </font>
                                 </Text>
-                                <Button fx:id="adicionarButton" layoutX="525.0" layoutY="505.0" prefHeight="30.0" prefWidth="158.0" style="-fx-background-color: black; -fx-text-fill: white; -fx-font-weight: bold; -fx-border-width: 2; -fx-border-radius: 50;" text="Salvar">
+                                <Button fx:id="adicionarButton" layoutX="525.0" layoutY="505.0" prefHeight="30.0" prefWidth="158.0" style="-fx-background-color: black; -fx-text-fill: white; -fx-font-weight: bold; -fx-border-width: 2; -fx-border-radius: 50;" text="Salvar" onAction="#salvarDados">
                                     <font>
                                         <Font size="14.0" />
                                     </font>
@@ -105,7 +105,6 @@
                                         <Insets left="20.0" top="20.0" />
                                     </padding>
                                 </VBox>
-                                <Button fx:id="adicionarButton1" layoutX="487.0" layoutY="59.0" prefHeight="30.0" prefWidth="208.0" style="-fx-background-color: transparent; -fx-text-fill: #8A806F; -fx-font-weight: bold; -fx-border-width: 2; -fx-border-color: #8A806F; -fx-border-radius: 6;" styleClass="border" text="Importar Bioindicadores" />
                                 <Text fx:id="W" layoutX="289.0" layoutY="489.0" strokeType="OUTSIDE" strokeWidth="0.0" />
                                 <Text layoutX="289.0" layoutY="489.0" strokeType="OUTSIDE" strokeWidth="0.0" />
                                 <Label layoutX="286.0" layoutY="476.0" />
