@@ -45,7 +45,7 @@ public class SideMenuController extends BaseController {
                 fxmlFile = "/ui/ExerciseScreen.fxml";
                 break;
             case "metricasButton":
-                // fxmlFile = "/ui/MetricasScreen.fxml";
+                fxmlFile = "/ui/MetricasScreen.fxml";
                 break;
             default:
                 logger.info("Nenhuma ação de navegação definida para o ID: " + sourceId);
