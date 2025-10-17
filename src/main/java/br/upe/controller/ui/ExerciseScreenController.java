@@ -4,36 +4,26 @@ import br.upe.controller.business.ExercicioService;
 import br.upe.data.beans.Exercicio;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.Label;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.logging.Logger;
+import java.util.logging.Level;
 
 public class ExerciseScreenController extends BaseController {
 
-    private static final Logger logger = Logger.getLogger(ExerciseScreenController.class.getName());
-
     @FXML private TilePane exerciciosTilePane;
     @FXML private Button adicionarButton;
-    @FXML private SideMenuController sideMenuController;
 
     private final ExercicioService exercicioService = new ExercicioService();
 
@@ -47,78 +37,32 @@ public class ExerciseScreenController extends BaseController {
 
         exerciciosTilePane.getChildren().clear();
 
+        // Combina exercícios do sistema (ID 0) com os do usuário logado
         List<Exercicio> exerciciosSistema = exercicioService.listarExerciciosDoUsuario(0);
         List<Exercicio> exerciciosUsuario = exercicioService.listarExerciciosDoUsuario(usuarioLogado.getId());
 
         List<Exercicio> todosExercicios = new ArrayList<>(exerciciosSistema);
         todosExercicios.addAll(exerciciosUsuario);
 
+        // Para cada exercício encontrado, cria um card FXML e o adiciona na tela
         for (Exercicio exercicio : todosExercicios) {
-            VBox cartao = criarCartaoExercicio(exercicio);
-            exerciciosTilePane.getChildren().add(cartao);
+            try {
+                criarEAdicionarCard(exercicio);
+            } catch (IOException e) {
+                logger.log(Level.SEVERE, "Falha ao criar o card para o exercício: " + exercicio.getNome(), e);
+            }
         }
     }
 
-    private VBox criarCartaoExercicio(Exercicio exercicio) {
-        VBox cartao = new VBox(5);
-        cartao.setAlignment(Pos.CENTER);
-        cartao.setPrefSize(150, 180);
-        cartao.setStyle("-fx-background-color: #FFFFFF; -fx-border-radius: 10; -fx-background-radius: 10; -fx-padding: 10; -fx-cursor: hand;");
-        cartao.setOnMouseClicked(event -> handleVisualizarExercicio(exercicio));
+    private void criarEAdicionarCard(Exercicio exercicio) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/ui/ExerciseCard.fxml"));
+        VBox cardNode = loader.load();
 
-        ImageView imageView = new ImageView();
+        ExerciseCardController cardController = loader.getController();
+        // Passa o objeto 'exercicio' e a referência deste controller para o card filho
+        cardController.setData(exercicio, this);
 
-        String caminhoGif = exercicio.getCaminhoGif();
-        Image image;
-        if (caminhoGif != null && !caminhoGif.isEmpty()) {
-            try (InputStream stream = getClass().getResourceAsStream("/" + caminhoGif)) {
-                if (stream != null) {
-                    image = new Image(stream);
-                } else {
-
-                    logger.warning("Arquivo de imagem não encontrado: " + caminhoGif);
-                    image = new Image(getClass().getResourceAsStream("/images/no image.png"));
-                }
-            } catch (Exception e) {
-                logger.severe("Erro ao carregar imagem: " + caminhoGif + " - " + e.getMessage());
-                image = new Image(getClass().getResourceAsStream("/images/no image.png"));
-            }
-        } else {
-            image = new Image(getClass().getResourceAsStream("/images/no image.png"));
-        }
-
-        imageView.setImage(image);
-        imageView.setFitHeight(80);
-        imageView.setFitWidth(80);
-        imageView.setPreserveRatio(true);
-
-        Label nomeLabel = new Label(exercicio.getNome());
-        nomeLabel.setStyle("-fx-font-weight: bold;");
-
-        cartao.getChildren().addAll(imageView, nomeLabel);
-
-        if (usuarioLogado != null && exercicio.getIdUsuario() == usuarioLogado.getId()) {
-            HBox botoesBox = new HBox(5);
-            botoesBox.setAlignment(Pos.CENTER);
-            botoesBox.setPadding(new Insets(5, 0, 0, 0));
-
-            Button editarBtn = new Button("Editar");
-            editarBtn.setOnAction(e -> {
-                e.consume();
-                handleEditarExercicio(exercicio);
-            });
-
-            Button excluirBtn = new Button("Excluir");
-            excluirBtn.setOnAction(e -> {
-                e.consume();
-                handleExcluirExercicio(exercicio);
-            });
-
-            botoesBox.getChildren().addAll(editarBtn, excluirBtn);
-            cartao.getChildren().add(botoesBox);
-        }
-
-        return cartao;
+        exerciciosTilePane.getChildren().add(cardNode);
     }
 
     @FXML
@@ -126,15 +70,16 @@ public class ExerciseScreenController extends BaseController {
         abrirDialogo(null, DialogMode.NOVO);
     }
 
-    private void handleEditarExercicio(Exercicio exercicio) {
+    // Estes métodos agora são públicos para serem chamados pelo ExerciseCardController
+    public void handleEditarExercicio(Exercicio exercicio) {
         abrirDialogo(exercicio, DialogMode.EDITAR);
     }
 
-    private void handleVisualizarExercicio(Exercicio exercicio) {
+    public void handleVisualizarExercicio(Exercicio exercicio) {
         abrirDialogo(exercicio, DialogMode.VISUALIZAR);
     }
 
-    private void handleExcluirExercicio(Exercicio exercicio) {
+    public void handleExcluirExercicio(Exercicio exercicio) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Confirmar Exclusão");
         alert.setHeaderText("Excluir: " + exercicio.getNome());
@@ -144,7 +89,7 @@ public class ExerciseScreenController extends BaseController {
         if (result.isPresent() && result.get() == ButtonType.OK) {
             try {
                 exercicioService.deletarExercicioPorNome(usuarioLogado.getId(), exercicio.getNome());
-                carregarExercicios();
+                carregarExercicios(); // Recarrega a tela para refletir a exclusão
             } catch (Exception e) {
                 showAlert(Alert.AlertType.ERROR, "Erro ao Excluir", "Não foi possível excluir o exercício.");
             }
@@ -171,6 +116,7 @@ public class ExerciseScreenController extends BaseController {
 
             dialogStage.showAndWait();
 
+            // Se o usuário salvou (seja novo ou edição), recarrega a lista de exercícios
             if (controller.isSalvo()) {
                 if (modo == DialogMode.NOVO) {
                     exercicioService.cadastrarExercicio(
@@ -182,18 +128,17 @@ public class ExerciseScreenController extends BaseController {
                 } else if (modo == DialogMode.EDITAR) {
                     exercicioService.atualizarExercicio(
                             usuarioLogado.getId(),
-                            exercicio.getNome(),
+                            exercicio.getNome(), // Nome antigo para busca
                             controller.getExercicio().getNome(),
                             controller.getExercicio().getDescricao(),
                             controller.getExercicio().getCaminhoGif()
                     );
                 }
-                carregarExercicios();
+                carregarExercicios(); // Recarrega a tela para mostrar o novo item ou a alteração
             }
 
         } catch (IOException e) {
-            logger.severe("Falha ao abrir o diálogo de exercício: " + e.getMessage());
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Falha ao abrir o diálogo de exercício: " + e.getMessage(), e);
             showAlert(Alert.AlertType.ERROR, "Erro de Interface", "Não foi possível abrir a tela de detalhes.");
         }
     }
