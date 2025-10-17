@@ -10,11 +10,18 @@ public class SideMenuController extends BaseController {
 
     private static final Logger logger = Logger.getLogger(SideMenuController.class.getName());
 
-    @FXML private Label homeButton;
-    @FXML private Label perfilButton;
-    @FXML private Label planosButton;
-    @FXML private Label exerciciosButton;
-    @FXML private Label metricasButton;
+    @FXML
+    private Label homeButton;
+    @FXML
+    private Label perfilButton;
+    @FXML
+    private Label planosButton;
+    @FXML
+    private Label exerciciosButton;
+    @FXML
+    private Label metricasButton;
+    @FXML
+    private Label logoutButton;
 
     @FXML
     private void handleNavigation(MouseEvent event) {
@@ -46,5 +53,14 @@ public class SideMenuController extends BaseController {
         if (!fxmlFile.isEmpty()) {
             navigateTo(source, fxmlFile);
         }
+    }
+
+    @FXML
+    private void handleLogout(MouseEvent event) {
+        if (logger.isLoggable(Level.INFO)) {
+            logger.info("Efetuando logout e retornando à tela de login.");
+        }
+        BaseController.usuarioLogado = null;
+        navigateTo((Node) event.getSource(), "/ui/LoginScreen.fxml");
     }
 }
