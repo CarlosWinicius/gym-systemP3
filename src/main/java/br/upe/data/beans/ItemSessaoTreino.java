@@ -5,6 +5,9 @@ public class ItemSessaoTreino {
     private int repeticoesRealizadas;
     private double cargaRealizada;
 
+    //O mockito precisou de um construtor padrão para poder realizar os mocks
+    public ItemSessaoTreino() {}
+
     public ItemSessaoTreino(int idExercicio, int repeticoesRealizadas, double cargaRealizada) {
         this.idExercicio = idExercicio;
         this.repeticoesRealizadas = repeticoesRealizadas;

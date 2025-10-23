@@ -11,6 +11,9 @@ public class SessaoTreino {
     private LocalDate dataSessao;
     private List<ItemSessaoTreino> itensExecutados;
 
+    //O mockito precisou de um construtor padrão para poder realizar os mocks
+    public SessaoTreino(){}
+
     public SessaoTreino(int idSessao, int idUsuario, int idPlanoTreino, LocalDate dataSessao, List<ItemSessaoTreino> itensExecutados) {
         this.idSessao = idSessao;
         this.idUsuario = idUsuario;
