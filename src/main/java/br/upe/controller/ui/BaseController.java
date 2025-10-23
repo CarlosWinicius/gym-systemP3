@@ -35,7 +35,7 @@ public abstract class BaseController {
             return loader.getController();
         } catch (IOException e) {
             handleNavigationError(e, fxmlFile);
-            return null; // Retorna null em caso de erro
+            return null;
         }
     }
 

@@ -37,14 +37,14 @@ public class ExerciseScreenController extends BaseController {
 
         exerciciosTilePane.getChildren().clear();
 
-        // Combina exercícios do sistema (ID 0) com os do usuário logado
+
         List<Exercicio> exerciciosSistema = exercicioService.listarExerciciosDoUsuario(0);
         List<Exercicio> exerciciosUsuario = exercicioService.listarExerciciosDoUsuario(usuarioLogado.getId());
 
         List<Exercicio> todosExercicios = new ArrayList<>(exerciciosSistema);
         todosExercicios.addAll(exerciciosUsuario);
 
-        // Para cada exercício encontrado, cria um card FXML e o adiciona na tela
+
         for (Exercicio exercicio : todosExercicios) {
             try {
                 criarEAdicionarCard(exercicio);
@@ -59,7 +59,6 @@ public class ExerciseScreenController extends BaseController {
         VBox cardNode = loader.load();
 
         ExerciseCardController cardController = loader.getController();
-        // Passa o objeto 'exercicio' e a referência deste controller para o card filho
         cardController.setData(exercicio, this);
 
         exerciciosTilePane.getChildren().add(cardNode);
@@ -70,7 +69,6 @@ public class ExerciseScreenController extends BaseController {
         abrirDialogo(null, DialogMode.NOVO);
     }
 
-    // Estes métodos agora são públicos para serem chamados pelo ExerciseCardController
     public void handleEditarExercicio(Exercicio exercicio) {
         abrirDialogo(exercicio, DialogMode.EDITAR);
     }
@@ -89,7 +87,7 @@ public class ExerciseScreenController extends BaseController {
         if (result.isPresent() && result.get() == ButtonType.OK) {
             try {
                 exercicioService.deletarExercicioPorNome(usuarioLogado.getId(), exercicio.getNome());
-                carregarExercicios(); // Recarrega a tela para refletir a exclusão
+                carregarExercicios();
             } catch (Exception e) {
                 showAlert(Alert.AlertType.ERROR, "Erro ao Excluir", "Não foi possível excluir o exercício.");
             }
@@ -116,7 +114,6 @@ public class ExerciseScreenController extends BaseController {
 
             dialogStage.showAndWait();
 
-            // Se o usuário salvou (seja novo ou edição), recarrega a lista de exercícios
             if (controller.isSalvo()) {
                 if (modo == DialogMode.NOVO) {
                     exercicioService.cadastrarExercicio(
@@ -128,13 +125,13 @@ public class ExerciseScreenController extends BaseController {
                 } else if (modo == DialogMode.EDITAR) {
                     exercicioService.atualizarExercicio(
                             usuarioLogado.getId(),
-                            exercicio.getNome(), // Nome antigo para busca
+                            exercicio.getNome(),
                             controller.getExercicio().getNome(),
                             controller.getExercicio().getDescricao(),
                             controller.getExercicio().getCaminhoGif()
                     );
                 }
-                carregarExercicios(); // Recarrega a tela para mostrar o novo item ou a alteração
+                carregarExercicios();
             }
 
         } catch (IOException e) {
