@@ -22,7 +22,7 @@ public class ExerciseCardController extends BaseController {
     @FXML private HBox botoesBox;
 
     private Exercicio exercicio;
-    private ExerciseScreenController parentController; // Pode ser nulo
+    private ExerciseScreenController parentController;
     private final BooleanProperty selected = new SimpleBooleanProperty(false);
 
     @FXML
@@ -32,23 +32,16 @@ public class ExerciseCardController extends BaseController {
         });
     }
 
-    /**
-     * Método setData para a tela de Edição de Planos (não precisa de callbacks).
-     */
     public void setData(Exercicio exercicio) {
-        // Chama a sobrecarga principal passando null como parent
         setData(exercicio, null);
     }
 
-    /**
-     * Método setData completo para a tela "Meus Exercícios".
-     */
     public void setData(Exercicio exercicio, ExerciseScreenController parentController) {
         this.exercicio = exercicio;
         this.parentController = parentController;
         this.exerciseName.setText(exercicio.getNome());
 
-        // Lógica de carregar a imagem
+
         try {
             String caminho = exercicio.getCaminhoGif();
             if (caminho == null || caminho.isBlank()) {
@@ -66,7 +59,6 @@ public class ExerciseCardController extends BaseController {
             this.exerciseImage.setImage(placeholder);
         }
 
-        // Mostra os botões apenas se houver um parent controller (ou seja, na tela Meus Exercícios)
         if (this.parentController != null && usuarioLogado != null && exercicio.getIdUsuario() == usuarioLogado.getId()) {
             botoesBox.setVisible(true);
             botoesBox.setManaged(true);
@@ -75,13 +67,11 @@ public class ExerciseCardController extends BaseController {
             botoesBox.setManaged(false);
         }
 
-        // Adiciona o evento de clique (pode ser para selecionar ou visualizar)
+
         cardPane.setOnMouseClicked(event -> {
             if (this.parentController != null) {
-                // Na tela de exercícios, um clique simples visualiza
                 parentController.handleVisualizarExercicio(this.exercicio);
             } else {
-                // Em outras telas (como edição de plano), um clique simples seleciona
                 toggleSelection();
             }
         });

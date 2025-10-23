@@ -8,7 +8,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
-
+import javafx.scene.Node;
 import java.util.logging.Logger;
 
 public class SignInScreenController extends BaseController {
@@ -84,6 +84,6 @@ public class SignInScreenController extends BaseController {
     @FXML
     private void handleGoToLogin(MouseEvent event) {
         logger.info("Navegando para a tela de Login...");
-        navigateTo(loginAccountLabel, "/ui/LoginScreen.fxml");
+        navigateTo((Node) event.getSource(), "/ui/LoginScreen.fxml");
     }
 }

@@ -8,14 +8,17 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.stage.FileChooser;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.stage.Stage;
 
 import java.io.File;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -164,18 +167,48 @@ public class MetricasScreenController extends BaseController {
             return;
         }
         try {
+            // Gera o relatório de diferenças (inicial x final)
             RelatorioDiferencaIndicadores rel = indicadorService.gerarRelatorioDiferenca(usuarioLogado.getId(), inicio, fim);
-            TextArea area = new TextArea(rel.toString());
-            area.setEditable(false);
-            area.setWrapText(true);
-            area.setPrefRowCount(12);
+            // Dados completos do período para montar o gráfico
+            List<IndicadorBiomedico> evolucao = indicadorService.gerarRelatorioPorData(usuarioLogado.getId(), inicio, fim);
+
+            if (evolucao == null || evolucao.isEmpty()) {
+                showAlert(Alert.AlertType.INFORMATION, "Relatório de Diferenças", "Nenhum dado encontrado no período informado.");
+                return;
+            }
+
+            // Carrega o FXML do relatório (tabela + gráfico)
+            java.net.URL fxmlUrl = getClass().getResource("/ui/RelatorioDiferencasDialog.fxml");
+            if (fxmlUrl == null) {
+                logger.severe("FXML '/ui/RelatorioDiferencasDialog.fxml' não encontrado no classpath.");
+                showAlert(Alert.AlertType.ERROR, "Erro", "Arquivo de interface do Relatório de Diferenças não encontrado.");
+                return;
+            }
+            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(fxmlUrl);
+            javafx.scene.Parent root = loader.load();
+            RelatorioDiferencasDialogController controller = loader.getController();
+            controller.setDados(rel, evolucao);
+
             Dialog<Void> dialog = new Dialog<>();
             dialog.setTitle("Relatório de Diferenças");
-            dialog.getDialogPane().setContent(area);
+            dialog.getDialogPane().setContent(root);
             dialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
+
+            // Define o ícone quando o Stage do diálogo estiver disponível
+            dialog.setOnShown(e -> {
+                Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
+                stage.getIcons().clear();
+                stage.getIcons().add(new Image(
+                        Objects.requireNonNull(getClass().getResource("/images/material-symbols_health-metrics-rounded.png")).toExternalForm()
+                ));
+            });
+
             dialog.showAndWait();
         } catch (IllegalArgumentException ex) {
             showAlert(Alert.AlertType.ERROR, "Erro no relatório", ex.getMessage());
+        } catch (Exception ex) {
+            logger.log(Level.SEVERE, "Erro ao abrir o relatório de diferenças", ex);
+            showAlert(Alert.AlertType.ERROR, "Erro", "Falha ao abrir o relatório de diferenças.");
         }
     }
 

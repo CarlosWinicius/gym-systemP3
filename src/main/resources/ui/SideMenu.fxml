@@ -57,10 +57,10 @@
             </graphic>
         </Label>
 
-        <!-- Spacer to push logout to bottom -->
+
         <Pane VBox.vgrow="ALWAYS" />
 
-        <!-- Logout button at bottom -->
+
         <Label fx:id="logoutButton" onMouseClicked="#handleLogout" style="-fx-text-fill: white; -fx-cursor: hand;" text="Sair" graphicTextGap="8.0">
             <graphic>
                 <ImageView fitHeight="20.0" fitWidth="20.0" preserveRatio="true">

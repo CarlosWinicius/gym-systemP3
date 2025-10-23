@@ -19,7 +19,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
-enum                                           DialogMode {
+enum DialogMode {
     NOVO,
     EDITAR,
     VISUALIZAR
@@ -60,7 +60,6 @@ public class ExercicioDialogController extends BaseController {
                 tituloLabel.setText("Editar Exercício");
                 salvarButton.setText("Salvar");
                 excluirButton.setText("Cancelar");
-                excluirButton.setStyle("-fx-background-color: #7f8c8d;"); // Cor cinza para cancelar
                 preencherDados();
                 break;
             case VISUALIZAR:
@@ -68,7 +67,7 @@ public class ExercicioDialogController extends BaseController {
                 nomeTextField.setEditable(false);
                 descricaoTextArea.setEditable(false);
                 salvarButton.setVisible(false);
-                excluirButton.setText("Fechar");
+                excluirButton.setVisible(false);
                 selecionarArquivoButton.setVisible(false);
                 preencherDados();
                 break;
