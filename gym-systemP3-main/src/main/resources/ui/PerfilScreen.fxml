@@ -29,7 +29,7 @@
                                         <Font name="System Bold" size="17.0" />
                                     </font>
                                 </Text>
-                                <Label fx:id="welcomeLabel" layoutX="71.0" layoutY="41.0" prefHeight="70.0" prefWidth="106.0" style="-fx-font-family: Inter; -fx-font-size: 28px; -fx-font-weight: regular; -fx-text-fill: #2c3e50;" text="Perfil">
+                                <Label fx:id="welcomeLabel" layoutX="83.0" layoutY="47.0" prefHeight="70.0" prefWidth="106.0" style="-fx-font-family: Inter; -fx-font-size: 28px; -fx-font-weight: regular; -fx-text-fill: #2c3e50;" text="Perfil">
                                     <font>
                                         <Font name="Arial Black" size="12.0" />
                                     </font>
@@ -95,11 +95,6 @@
                                         <Font size="17.0" />
                                     </font>
                                 </Text>
-                                <Button fx:id="adicionarButton" layoutX="525.0" layoutY="505.0" prefHeight="30.0" prefWidth="158.0" style="-fx-background-color: black; -fx-text-fill: white; -fx-font-weight: bold; -fx-border-width: 2; -fx-border-radius: 50;" text="Salvar" onAction="#salvarDados">
-                                    <font>
-                                        <Font size="14.0" />
-                                    </font>
-                                </Button>
                                 <VBox spacing="20.0" style="-fx-background-color: #D4D5D6">
                                     <padding>
                                         <Insets left="20.0" top="20.0" />
@@ -109,6 +104,11 @@
                                 <Text layoutX="289.0" layoutY="489.0" strokeType="OUTSIDE" strokeWidth="0.0" />
                                 <Label layoutX="286.0" layoutY="476.0" />
                                 <Label fx:id="CategoriaIMC" layoutX="286.0" layoutY="476.0" text="  " />
+                        <Button fx:id="Editar" layoutX="607.0" layoutY="82.0" onAction="#EditarTela" prefHeight="30.0" prefWidth="92.0" style="-fx-background-color: black; -fx-text-fill: white; -fx-font-weight: bold; -fx-border-width: 2; -fx-border-radius: 50;" text="Editar">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Button>
                             </children>
                         </AnchorPane>
                     </center>
