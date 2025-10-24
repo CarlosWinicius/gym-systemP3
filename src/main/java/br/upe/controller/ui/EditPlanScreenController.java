@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 public class EditPlanScreenController extends BaseController {
@@ -89,11 +90,11 @@ public class EditPlanScreenController extends BaseController {
 
         try {
             if (planoAtual.getIdPlano() == 0) {
-                logger.info("Criando novo plano com nome: " + novoNomeDoPlano);
+                logger.log(Level.INFO, "Criando novo plano com nome: {0}", novoNomeDoPlano);
 
                 this.planoAtual = planoTreinoService.criarPlano(usuarioLogado.getId(), novoNomeDoPlano);
             } else if (!nomeAntigoDoPlano.equals(novoNomeDoPlano)) {
-                logger.info("Editando nome do plano de '" + nomeAntigoDoPlano + "' para '" + novoNomeDoPlano + "'");
+                logger.log(Level.INFO, "Editando nome do plano de ''{0}'' para ''{1}''", new Object[]{nomeAntigoDoPlano, novoNomeDoPlano});
                 planoTreinoService.editarPlano(usuarioLogado.getId(), nomeAntigoDoPlano, novoNomeDoPlano);
                 planoAtual.setNome(novoNomeDoPlano);
             }
@@ -109,14 +110,14 @@ public class EditPlanScreenController extends BaseController {
 
             for (Integer idOriginal : idsOriginais) {
                 if (!idsNovos.contains(idOriginal)) {
-                    logger.info("Removendo exercício ID " + idOriginal + " do plano '" + planoAtual.getNome() + "'");
+                    logger.log(Level.INFO, "Removendo exercício ID {0} do plano ''{1}''", new Object[]{idOriginal, planoAtual.getNome()});
                     planoTreinoService.removerExercicioDoPlano(usuarioLogado.getId(), planoAtual.getNome(), idOriginal);
                 }
             }
 
             for (Integer idNovo : idsNovos) {
                 if (!idsOriginais.contains(idNovo)) {
-                    logger.info("Adicionando exercício ID " + idNovo + " ao plano '" + planoAtual.getNome() + "'");
+                    logger.log(Level.INFO, "Adicionando exercício ID {0} ao plano ''{1}''", new Object[]{idNovo, planoAtual.getNome()});
 
                     planoTreinoService.adicionarExercicioAoPlano(usuarioLogado.getId(), planoAtual.getNome(), idNovo, 0, 0);
                 }
