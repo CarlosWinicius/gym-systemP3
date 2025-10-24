@@ -6,10 +6,13 @@ import br.upe.data.repository.impl.ExercicioRepositoryImpl;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ExercicioService implements IExercicioService {
 
     private IExercicioRepository exercicioRepository;
+    private static final Logger logger = Logger.getLogger(ExercicioService.class.getName());
 
     public ExercicioService(IExercicioRepository exercicioRepository) {
         this.exercicioRepository = exercicioRepository;
@@ -78,7 +81,7 @@ public class ExercicioService implements IExercicioService {
             exercicioRepository.deletar(exercicioParaDeletar.getIdExercicio());
             return true;
         } else {
-            System.out.println("Exercício com nome '" + nomeExercicio + "' não encontrado entre os seus exercícios.");
+            logger.log(Level.WARNING, "Exercício com nome ''{0}'' não encontrado entre os seus exercícios.", nomeExercicio);
             return false;
         }
     }

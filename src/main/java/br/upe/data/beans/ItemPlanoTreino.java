@@ -5,11 +5,15 @@ public class ItemPlanoTreino {
     private int cargaKg;
     private int repeticoes;
 
+    //O mockito precisou de um construtor padrão para poder realizar os mocks
+    public ItemPlanoTreino(){}
+
     public ItemPlanoTreino(int idExercicio, int cargaKg, int repeticoes) {
         this.idExercicio = idExercicio;
         this.cargaKg = cargaKg;
         this.repeticoes = repeticoes;
     }
+
 
     public int getIdExercicio() {
         return idExercicio;
