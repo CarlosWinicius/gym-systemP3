@@ -9,6 +9,9 @@ public class Usuario {
     private String senha;
     private TipoUsuario tipo;
 
+    //Mockito precisa de um construtor vazio
+    public Usuario(){}
+
     public Usuario(int id, String nome, String email, String senha, TipoUsuario tipo) {
         this.id = id;
         this.nome = nome;

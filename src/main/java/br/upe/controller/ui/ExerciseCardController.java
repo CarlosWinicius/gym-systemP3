@@ -27,9 +27,9 @@ public class ExerciseCardController extends BaseController {
 
     @FXML
     public void initialize() {
-        selected.addListener((obs, wasSelected, isSelected) -> {
-            cardPane.pseudoClassStateChanged(javafx.css.PseudoClass.getPseudoClass("selected"), isSelected);
-        });
+        selected.addListener((obs, wasSelected, isSelected) ->
+            cardPane.pseudoClassStateChanged(javafx.css.PseudoClass.getPseudoClass("selected"), isSelected)
+        );
     }
 
     public void setData(Exercicio exercicio) {

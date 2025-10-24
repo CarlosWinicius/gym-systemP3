@@ -12,12 +12,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public class SessaoTreinoRepositoryImpl implements ISessaoTreinoRepository {
 
     private final List<SessaoTreino> sessoes;
     private final AtomicInteger proximoId;
+    private static final Logger logger = Logger.getLogger(SessaoTreinoRepositoryImpl.class.getName());
 
     public SessaoTreinoRepositoryImpl() {
         this.sessoes = new ArrayList<>();
@@ -39,15 +42,15 @@ public class SessaoTreinoRepositoryImpl implements ISessaoTreinoRepository {
         File arquivo = new File(getArquivoCSV());
 
         if (!arquivo.exists()) {
-            System.out.println("Arquivo " + getArquivoCSV() + " não encontrado, será criado.");
+            logger.log(Level.INFO, "Arquivo {0} não encontrado, será criado.", getArquivoCSV());
             try {
                 // Garante que os diretórios pais existam
                 Files.createDirectories(arquivo.getParentFile().toPath());
                 if (!arquivo.createNewFile()) {
-                    System.out.println("Arquivo " + getArquivoCSV() + " já existia e não foi recriado.");
+                    logger.log(Level.INFO, "Arquivo {0} já existia e não foi recriado.", getArquivoCSV());
                 }
             } catch (IOException e) {
-                System.err.println("Erro crítico ao criar arquivo CSV: " + e.getMessage());
+                logger.log(Level.SEVERE, "Erro crítico ao criar arquivo CSV: {0}", e.getMessage());
             }
             return;
         }
@@ -66,7 +69,7 @@ public class SessaoTreinoRepositoryImpl implements ISessaoTreinoRepository {
             }
             proximoId.set(maxId + 1);
         } catch (IOException e) {
-            System.err.println("Erro ao ler o arquivo CSV de sessões: " + e.getMessage());
+            logger.log(Level.SEVERE, "Erro ao ler o arquivo CSV de sessões: {0}", e.getMessage());
         }
     }
 
@@ -77,14 +80,14 @@ public class SessaoTreinoRepositoryImpl implements ISessaoTreinoRepository {
                 bw.newLine();
             }
         } catch (IOException e) {
-            System.err.println("Erro ao escrever no arquivo CSV de sessões: " + e.getMessage());
+            logger.log(Level.SEVERE, "Erro ao escrever no arquivo CSV de sessões: {0}", e.getMessage());
         }
     }
 
     private SessaoTreino parseLinhaCsv(String linha) {
         String[] partes = linha.split(";", 5);
         if (partes.length < 5) {
-            System.err.println("Linha CSV de sessão com formato inválido (menos de 5 partes): " + linha);
+            logger.log(Level.SEVERE, "Linha CSV de sessão com formato inválido (menos de 5 partes): {0}", linha);
             return null;
         }
 
@@ -109,7 +112,7 @@ public class SessaoTreinoRepositoryImpl implements ISessaoTreinoRepository {
             }
             return new SessaoTreino(idSessao, idUsuario, idPlanoTreino, dataSessao, itensExecutados);
         } catch (NumberFormatException | DateTimeParseException e) {
-            System.err.println("Erro de parsing em linha CSV de sessão: " + linha + " - " + e.getMessage());
+            logger.log(Level.SEVERE, "Erro de parsing em linha CSV de sessão: {0} - {1}", new Object[]{linha, e.getMessage()});
             return null;
         }
     }
@@ -175,7 +178,7 @@ public class SessaoTreinoRepositoryImpl implements ISessaoTreinoRepository {
         if (removido) {
             escreverParaCsv();
         } else {
-            System.err.println("Erro: Sessão de treino com ID " + idSessao + " não encontrada para remoção.");
+            logger.log(Level.SEVERE, "Erro: Sessão de treino com ID {0} não encontrada para remoção.", idSessao);
         }
     }
 

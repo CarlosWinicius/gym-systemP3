@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="br.upe.controller.ui.RelatorioDiferencasDialogController"
+      spacing="12" style="-fx-font-family: Inter;" prefWidth="720.0" prefHeight="520.0">
+    <children>
+        <Label text="Relatório de Diferenças" style="-fx-font-size: 18px; -fx-font-weight: bold;" />
+
+        <TableView fx:id="diffTable" prefHeight="180.0" VBox.vgrow="SOMETIMES">
+            <columns>
+                <TableColumn fx:id="colIndicador" text="Indicador" prefWidth="220.0" />
+                <TableColumn fx:id="colInicial" text="Inicial" prefWidth="150.0" />
+                <TableColumn fx:id="colFinal" text="Final" prefWidth="150.0" />
+                <TableColumn fx:id="colDiferenca" text="Diferença" prefWidth="150.0" />
+            </columns>
+        </TableView>
+
+        <Label text="Evolução no período" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
+        <LineChart fx:id="evolutionChart" legendVisible="true" VBox.vgrow="ALWAYS">
+            <xAxis>
+                <CategoryAxis fx:id="xAxis" label="Data" />
+            </xAxis>
+            <yAxis>
+                <NumberAxis fx:id="yAxis" label="Valor" />
+            </yAxis>
+        </LineChart>
+    </children>
+    <padding>
+        <Insets top="10" right="10" bottom="10" left="10" />
+    </padding>
+</VBox>

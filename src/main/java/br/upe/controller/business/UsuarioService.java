@@ -7,9 +7,12 @@ import br.upe.data.repository.impl.UsuarioRepositoryImpl;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class UsuarioService implements IUsuarioService {
     private final IUsuarioRepository usuarioRepository;
+    private static final Logger LOGGER = Logger.getLogger(UsuarioService.class.getName());
 
     public UsuarioService(IUsuarioRepository usuarioRepository) {
         this.usuarioRepository = usuarioRepository;
@@ -19,7 +22,41 @@ public class UsuarioService implements IUsuarioService {
         this.usuarioRepository = new UsuarioRepositoryImpl();
     }
 
-    // Verifica condições e realiza o login do usuario
+    @Override
+    public void promoverUsuarioAAdmin(int idUsuario) {
+        Optional<Usuario> usuarioOpt = usuarioRepository.buscarPorId(idUsuario);
+        if (usuarioOpt.isEmpty()) {
+            throw new IllegalArgumentException("Usuário com ID " + idUsuario + " não encontrado para promoção.");
+        }
+        Usuario usuario = usuarioOpt.get();
+        if (usuario.getTipo() == TipoUsuario.ADMIN) {
+            LOGGER.log(Level.INFO, "Tentativa de promover usuário que já é ADMIN (ID: {0})", idUsuario);
+            return;
+        }
+        usuario.setTipo(TipoUsuario.ADMIN);
+        usuarioRepository.editar(usuario);
+        LOGGER.log(Level.INFO, "Usuário ''{0}'' (ID: {1}) promovido a ADMIN.", new Object[]{usuario.getNome(), idUsuario});
+    }
+
+    @Override
+    public void rebaixarUsuarioAComum(int idUsuario) {
+        if (idUsuario == 1) {
+            throw new IllegalArgumentException("O administrador principal não pode ser rebaixado.");
+        }
+        Optional<Usuario> usuarioOpt = usuarioRepository.buscarPorId(idUsuario);
+        if (usuarioOpt.isEmpty()) {
+            throw new IllegalArgumentException("Usuário com ID " + idUsuario + " não encontrado para rebaixamento.");
+        }
+        Usuario usuario = usuarioOpt.get();
+        if (usuario.getTipo() == TipoUsuario.COMUM) {
+            LOGGER.log(Level.INFO, "Tentativa de rebaixar usuário que já é COMUM (ID: {0})", idUsuario);
+            return;
+        }
+        usuario.setTipo(TipoUsuario.COMUM);
+        usuarioRepository.editar(usuario);
+        LOGGER.log(Level.INFO, "Usuário ''{0}'' (ID: {1}) rebaixado a COMUM.", new Object[]{usuario.getNome(), idUsuario});
+    }
+
     @Override
     public Usuario autenticarUsuario(String email, String senha) {
         if (email == null || email.trim().isEmpty() || senha == null || senha.trim().isEmpty()) {
@@ -35,7 +72,6 @@ public class UsuarioService implements IUsuarioService {
         return null;
     }
 
-    // Verifica condições e realiza o cadastro do usuario
     @Override
     public Usuario cadastrarUsuario(String nome, String email, String senha, TipoUsuario tipo) {
         if (nome == null || nome.trim().isEmpty() || email == null || email.trim().isEmpty() || senha == null || senha.trim().isEmpty()) {
@@ -53,95 +89,75 @@ public class UsuarioService implements IUsuarioService {
         return usuarioRepository.salvar(novoUsuario);
     }
 
-    // Listar usuario por id
     @Override
     public Optional<Usuario> buscarUsuarioPorId(int id) {
         return usuarioRepository.buscarPorId(id);
     }
 
-    // Listar usuario por email
     @Override
     public Optional<Usuario> buscarUsuarioPorEmail(String email) {
         return usuarioRepository.buscarPorEmail(email);
     }
 
-    // Listar todos os usuarios
     @Override
     public List<Usuario> listarTodosUsuarios() {
         return usuarioRepository.listarTodos();
     }
 
-    // Verifica condições e altera o usuario pelo id
     @Override
     public void atualizarUsuario(int id, String novoNome, String novoEmail, String novaSenha, TipoUsuario novoTipo) {
-        Optional<Usuario> usuarioOpt = usuarioRepository.buscarPorId(id);
-        if (!usuarioOpt.isPresent()) {
-            throw new IllegalArgumentException("Usuário com ID " + id + " não encontrado.");
-        }
-        Usuario usuario = usuarioOpt.get();
+        Usuario usuario = usuarioRepository.buscarPorId(id)
+                .orElseThrow(() -> new IllegalArgumentException("Usuário com ID " + id + " não encontrado."));
 
-        if (novoNome != null && !novoNome.trim().isEmpty()) {
-            usuario.setNome(novoNome.trim());
-        }
-        if (novoEmail != null && !novoEmail.trim().isEmpty()) {
-            if (!novoEmail.trim().equalsIgnoreCase(usuario.getEmail())) {
-                Optional<Usuario> emailExistente = usuarioRepository.buscarPorEmail(novoEmail.trim());
-                if (emailExistente.isPresent() && emailExistente.get().getId() != usuario.getId()) {
-                    throw new IllegalArgumentException("Email '" + novoEmail + "' já está em uso por outro usuário.");
-                }
-            }
-            usuario.setEmail(novoEmail.trim());
-        }
-        if (novaSenha != null && !novaSenha.trim().isEmpty()) {
-            usuario.setSenha(novaSenha.trim());
-        }
+        validarAtualizacaoTipo(id, novoTipo);
+        processarAtualizacaoNome(usuario, novoNome);
+        processarAtualizacaoEmail(usuario, novoEmail);
+        processarAtualizacaoSenha(usuario, novaSenha);
+
         if (novoTipo != null) {
             usuario.setTipo(novoTipo);
         }
+
         usuarioRepository.editar(usuario);
     }
 
-    // Remove o usuario pelo id
+    private void validarAtualizacaoTipo(int id, TipoUsuario novoTipo) {
+        if (id == 1 && novoTipo == TipoUsuario.COMUM) {
+            throw new IllegalArgumentException("O administrador principal não pode ser rebaixado para usuário comum.");
+        }
+    }
+
+    private void processarAtualizacaoNome(Usuario usuario, String novoNome) {
+        if (novoNome != null && !novoNome.trim().isEmpty()) {
+            usuario.setNome(novoNome.trim());
+        }
+    }
+
+    private void processarAtualizacaoEmail(Usuario usuario, String novoEmail) {
+        if (novoEmail != null && !novoEmail.trim().isEmpty() && !novoEmail.trim().equalsIgnoreCase(usuario.getEmail())) {
+            Optional<Usuario> emailExistente = usuarioRepository.buscarPorEmail(novoEmail.trim());
+            if (emailExistente.isPresent() && emailExistente.get().getId() != usuario.getId()) {
+                throw new IllegalArgumentException("Email '" + novoEmail + "' já está em uso por outro usuário.");
+            }
+            usuario.setEmail(novoEmail.trim());
+        }
+    }
+
+    private void processarAtualizacaoSenha(Usuario usuario, String novaSenha) {
+        if (novaSenha != null && !novaSenha.trim().isEmpty()) {
+            usuario.setSenha(novaSenha.trim());
+        }
+    }
+
     @Override
     public void removerUsuario(int id) {
+        if (id == 1) {
+            throw new IllegalArgumentException("O administrador principal (ID 1) não pode ser removido.");
+        }
         Optional<Usuario> usuarioOpt = usuarioRepository.buscarPorId(id);
-        if (!usuarioOpt.isPresent()) {
+        if (usuarioOpt.isEmpty()) {
             throw new IllegalArgumentException("Usuário com ID " + id + " não encontrado para remoção.");
         }
         usuarioRepository.deletar(id);
-    }
-
-    // Verifica condições e altera o tipo do usuario
-    @Override
-    public void promoverUsuarioAAdmin(int idUsuario) {
-        Optional<Usuario> usuarioOpt = usuarioRepository.buscarPorId(idUsuario);
-        if (!usuarioOpt.isPresent()) {
-            throw new IllegalArgumentException("Usuário com ID " + idUsuario + " não encontrado para promoção.");
-        }
-        Usuario usuario = usuarioOpt.get();
-        if (usuario.getTipo() == TipoUsuario.ADMIN) {
-            System.out.println("Usuário já é ADMIN.");
-            return;
-        }
-        usuario.setTipo(TipoUsuario.ADMIN);
-        usuarioRepository.editar(usuario);
-        System.out.println("Usuário " + usuario.getNome() + " promovido a ADMIN.");
-    }
-
-    // Verifica condições e altera o tipo de usuario
-    @Override
-    public void rebaixarUsuarioAComum(int idUsuario) {
-        Optional<Usuario> usuarioOpt = usuarioRepository.buscarPorId(idUsuario);
-        if (!usuarioOpt.isPresent()) {
-            throw new IllegalArgumentException("Usuário com ID " + idUsuario + " não encontrado para rebaixamento.");
-        }
-        Usuario usuario = usuarioOpt.get();
-        if (usuario.getTipo() == TipoUsuario.COMUM) {
-            System.out.println("Usuário já é COMUM.");
-            return;
-        }
-        usuario.setTipo(TipoUsuario.COMUM);
-        usuarioRepository.editar(usuario);
-        System.out.println("Usuário " + usuario.getNome() + " rebaixado a COMUM.");
     }
 }

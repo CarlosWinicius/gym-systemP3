@@ -1,6 +1,9 @@
 package br.upe.data.beans;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.time.LocalDate;
+import java.util.Locale;
 
 public class IndicadorBiomedico {
     private int id;
@@ -12,7 +15,8 @@ public class IndicadorBiomedico {
     private double percentualMassaMagra;
     private double imc;
 
-    private IndicadorBiomedico(int idUsuario, LocalDate data, double pesoKg, double alturaCm, double percentualGordura, double percentualMassaMagra, double imc) {
+    public IndicadorBiomedico(){}
+    IndicadorBiomedico(int idUsuario, LocalDate data, double pesoKg, double alturaCm, double percentualGordura, double percentualMassaMagra, double imc) {
         this.id = 0;
         this.idUsuario = idUsuario;
         this.data = data;
@@ -22,6 +26,8 @@ public class IndicadorBiomedico {
         this.percentualMassaMagra = percentualMassaMagra;
         this.imc = imc;
     }
+
+
 
     public static Builder builder() {
         return new Builder();
@@ -150,9 +156,22 @@ public class IndicadorBiomedico {
         this.imc = imc;
     }
 
+
     @Override
     public String toString() {
-        return String.format("ID: %d | Data: %-12s | Peso: %.1fkg | Altura: %.0fcm | Gordura: %.1f%% | Massa Magra: %.1f%% | IMC: %-8.2f",
-                id, data, pesoKg, alturaCm, percentualGordura, percentualMassaMagra, imc);
+        // Configurações para o formato brasileiro, para evitar erros com vírgulas e pontos
+        Locale ptBr = Locale.forLanguageTag("pt-BR");
+        DecimalFormatSymbols symbols = new DecimalFormatSymbols(ptBr);
+        symbols.setDecimalSeparator(',');
+        DecimalFormat inteiro = new DecimalFormat("#0", symbols);
+        DecimalFormat umDecimal = new DecimalFormat("#0.0", symbols);
+        DecimalFormat doisDecimais = new DecimalFormat("#0.00", symbols);
+        String pesoFormatado = umDecimal.format(pesoKg) + "kg";
+        String alturaCmFormatada = inteiro.format(alturaCm) + "cm";
+        String gorduraFormatada = umDecimal.format(percentualGordura) + "%";
+        String massaMagraFormatada = umDecimal.format(percentualMassaMagra) + "%";
+        String imcFormatado = doisDecimais.format(imc);
+        return String.format("ID: %d | Data: %-10s | Peso: %s | Altura: %s | Gordura: %s | Massa Magra: %s | IMC: %s",
+                id, data, pesoFormatado, alturaCmFormatada, gorduraFormatada, massaMagraFormatada, imcFormatado);
     }
 }

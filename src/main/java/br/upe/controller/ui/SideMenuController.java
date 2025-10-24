@@ -1,5 +1,6 @@
 package br.upe.controller.ui;
 
+import br.upe.data.TipoUsuario;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
@@ -24,6 +25,16 @@ public class SideMenuController extends BaseController {
     private Label metricasButton;
     @FXML
     private Label logoutButton;
+    @FXML
+    private Label usuariosButton;
+
+    @FXML
+    public void initialize() {
+        if (usuarioLogado != null && usuarioLogado.getTipo() == TipoUsuario.ADMIN) {
+            usuariosButton.setVisible(true);
+            usuariosButton.setManaged(true);
+        }
+    }
 
     @FXML
     private void handleNavigation(MouseEvent event) {
@@ -36,7 +47,7 @@ public class SideMenuController extends BaseController {
                 fxmlFile = "/ui/HomeScreen.fxml";
                 break;
             case "perfilButton":
-                // fxmlFile = "/ui/PerfilScreen.fxml";
+                fxmlFile = "/ui/PerfilScreen.fxml";
                 break;
             case "planosButton":
                 fxmlFile = "/ui/PlansScreen.fxml";
@@ -46,6 +57,9 @@ public class SideMenuController extends BaseController {
                 break;
             case "metricasButton":
                 fxmlFile = "/ui/MetricasScreen.fxml";
+                break;
+            case "usuariosButton":
+                fxmlFile = "/ui/AdminScreen.fxml";
                 break;
             default:
                 logger.info("Nenhuma ação de navegação definida para o ID: " + sourceId);
