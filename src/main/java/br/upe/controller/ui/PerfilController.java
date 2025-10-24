@@ -112,8 +112,8 @@ public class PerfilController extends BaseController {
     private void preencherPercentual() {
         try {
             if (!percentualMM.getText().isEmpty() && !percentualGordura.getText().isEmpty()) {
-                double percentualGorduraValor = Double.parseDouble(percentualMM.getText());
-                double percentualMMValor = Double.parseDouble(percentualGordura.getText());
+                Double.parseDouble(percentualMM.getText());
+                Double.parseDouble(percentualGordura.getText());
             }
         } catch (NumberFormatException e) {
             percentualGordura.setText("Erro");
