@@ -18,7 +18,7 @@ import java.util.logging.Level;
 public class PlansScreenController extends BaseController {
 
     @FXML
-    private TilePane PlanoTilePane;
+    private TilePane planoTilePane;
 
     private final IPlanoTreinoService planoTreinoService = new PlanoTreinoService();
 
@@ -35,19 +35,19 @@ public class PlansScreenController extends BaseController {
             return;
         }
 
-        PlanoTilePane.getChildren().clear();
+        planoTilePane.getChildren().clear();
         logger.info("Buscando planos no banco de dados para o usuário ID: " + usuarioLogado.getId());
 
 
         List<PlanoTreino> planosDoUsuario = planoTreinoService.listarMeusPlanos(usuarioLogado.getId());
 
-        logger.info("Foram encontrados " + planosDoUsuario.size() + " planos.");
+        logger.log(Level.INFO, "Foram encontrados {0} planos.", planosDoUsuario.size());
 
         for (PlanoTreino plano : planosDoUsuario) {
             try {
                 criarEAdicionarCard(plano);
             } catch (IOException e) {
-                logger.log(Level.SEVERE, "Falha ao criar o card visual para o plano: " + plano.getNome(), e);
+                logger.log(Level.SEVERE, "Falha ao criar o card visual para o plano ''{0}'': {1}", new Object[]{plano.getNome(), e});
             }
         }
     }
@@ -64,7 +64,7 @@ public class PlansScreenController extends BaseController {
     }
 
     public void removerCardDaTela(Node cardNode) {
-        PlanoTilePane.getChildren().remove(cardNode);
+        planoTilePane.getChildren().remove(cardNode);
     }
 
     private void criarEAdicionarCard(PlanoTreino plano) throws IOException {
@@ -74,6 +74,6 @@ public class PlansScreenController extends BaseController {
         PlanoListController cardController = loader.getController();
         cardController.setData(plano, this);
 
-        PlanoTilePane.getChildren().add(cardNode);
+        planoTilePane.getChildren().add(cardNode);
     }
 }

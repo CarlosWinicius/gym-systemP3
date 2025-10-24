@@ -7,9 +7,12 @@ import br.upe.data.repository.impl.UsuarioRepositoryImpl;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class UsuarioService implements IUsuarioService {
     private final IUsuarioRepository usuarioRepository;
+    private static final Logger LOGGER = Logger.getLogger(UsuarioService.class.getName());
 
     public UsuarioService(IUsuarioRepository usuarioRepository) {
         this.usuarioRepository = usuarioRepository;
@@ -120,12 +123,12 @@ public class UsuarioService implements IUsuarioService {
         }
         Usuario usuario = usuarioOpt.get();
         if (usuario.getTipo() == TipoUsuario.ADMIN) {
-            System.out.println("Usuário já é ADMIN.");
+            LOGGER.log(Level.INFO, "Usuário já é ADMIN.");
             return;
         }
         usuario.setTipo(TipoUsuario.ADMIN);
         usuarioRepository.editar(usuario);
-        System.out.println("Usuário " + usuario.getNome() + " promovido a ADMIN.");
+        LOGGER.log(Level.INFO, "Usuário {0} promovido a ADMIN.", usuario.getNome());
     }
 
     // Verifica condições e altera o tipo de usuario
@@ -137,11 +140,11 @@ public class UsuarioService implements IUsuarioService {
         }
         Usuario usuario = usuarioOpt.get();
         if (usuario.getTipo() == TipoUsuario.COMUM) {
-            System.out.println("Usuário já é COMUM.");
+            LOGGER.log(Level.INFO, "Usuário já é COMUM.");
             return;
         }
         usuario.setTipo(TipoUsuario.COMUM);
         usuarioRepository.editar(usuario);
-        System.out.println("Usuário " + usuario.getNome() + " rebaixado a COMUM.");
+        LOGGER.log(Level.INFO, "Usuário {0} rebaixado a COMUM.", usuario.getNome());
     }
 }

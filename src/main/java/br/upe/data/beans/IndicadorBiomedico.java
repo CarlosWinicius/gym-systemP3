@@ -160,7 +160,7 @@ public class IndicadorBiomedico {
     @Override
     public String toString() {
         // Configurações para o formato brasileiro, para evitar erros com vírgulas e pontos
-        Locale ptBr = new Locale("pt", "BR");
+        Locale ptBr = Locale.forLanguageTag("pt-BR");
         DecimalFormatSymbols symbols = new DecimalFormatSymbols(ptBr);
         symbols.setDecimalSeparator(',');
         DecimalFormat inteiro = new DecimalFormat("#0", symbols);

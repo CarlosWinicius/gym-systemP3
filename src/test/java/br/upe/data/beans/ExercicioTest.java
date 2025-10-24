@@ -144,12 +144,12 @@ class ExercicioTest {
     @DisplayName("Deve aceitar strings muito longas")
     void testStringsMuitoLongas() {
         //criando string muito longa
-        String Stringlonga = "A".repeat(1000);
+        String stringLonga = "A".repeat(1000);
 
         //atribuindo string muito longa
-        exercicioCompleto.setDescricao(Stringlonga);
+        exercicioCompleto.setDescricao(stringLonga);
         //verificando se a string foi atribuída corretamente
-        assert exercicioCompleto.getDescricao().equals(Stringlonga);
+        assert exercicioCompleto.getDescricao().equals(stringLonga);
     }
 
 }

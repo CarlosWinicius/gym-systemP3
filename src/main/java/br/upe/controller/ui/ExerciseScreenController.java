@@ -49,7 +49,7 @@ public class ExerciseScreenController extends BaseController {
             try {
                 criarEAdicionarCard(exercicio);
             } catch (IOException e) {
-                logger.log(Level.SEVERE, "Falha ao criar o card para o exercício: " + exercicio.getNome(), e);
+                logger.log(Level.SEVERE, "Falha ao criar o card para o exercício ''{0}'': {1}", new Object[]{exercicio.getNome(), e});
             }
         }
     }
@@ -135,7 +135,7 @@ public class ExerciseScreenController extends BaseController {
             }
 
         } catch (IOException e) {
-            logger.log(Level.SEVERE, "Falha ao abrir o diálogo de exercício: " + e.getMessage(), e);
+            logger.log(Level.SEVERE, "Falha ao abrir o diálogo de exercício ''{0}'': {1}", new Object[]{e.getMessage(), e});
             showAlert(Alert.AlertType.ERROR, "Erro de Interface", "Não foi possível abrir a tela de detalhes.");
         }
     }
