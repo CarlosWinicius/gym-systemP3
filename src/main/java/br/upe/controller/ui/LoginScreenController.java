@@ -11,11 +11,7 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 
-import java.util.logging.Logger;
-
 public class LoginScreenController extends BaseController {
-
-    private static final Logger logger = Logger.getLogger(LoginScreenController.class.getName());
 
     @FXML private TextField emailField;
     @FXML private PasswordField passwordField;

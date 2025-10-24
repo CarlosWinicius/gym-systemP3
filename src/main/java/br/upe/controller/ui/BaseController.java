@@ -8,7 +8,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 import java.io.IOException;
-import java.util.logging.Logger; // Import do Logger
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public abstract class BaseController {
     protected static final double APP_WIDTH = 900;
@@ -51,7 +52,7 @@ public abstract class BaseController {
     }
 
     private void handleNavigationError(IOException e, String fxmlFile) {
-        logger.log(java.util.logging.Level.SEVERE, "Erro de Navegação: Não foi possível carregar " + fxmlFile, e);
+        logger.log(Level.SEVERE, "Erro de Navegação: Não foi possível carregar ''{0}: {1}", new Object[]{fxmlFile, e});
         showAlert(Alert.AlertType.ERROR, "Erro de Navegação", "Não foi possível carregar a tela: " + fxmlFile);
     }
 

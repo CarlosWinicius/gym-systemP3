@@ -9,11 +9,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.Node;
-import java.util.logging.Logger;
 
 public class SignInScreenController extends BaseController {
-
-    private static final Logger logger = Logger.getLogger(SignInScreenController.class.getName());
 
     private static final String ERRO_CADASTRO_TITULO = "Erro de Cadastro";
 

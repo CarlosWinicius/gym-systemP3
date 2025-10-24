@@ -11,10 +11,13 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class IndicadorBiomedicoService implements IIndicadorBiomedicoService {
 
     private final IIndicadorBiomedicoRepository indicadorRepository;
+    private static final Logger logger = Logger.getLogger(IndicadorBiomedicoService.class.getName());
 
     public IndicadorBiomedicoService(IIndicadorBiomedicoRepository indicadorRepository) {
         this.indicadorRepository = indicadorRepository;
@@ -63,11 +66,11 @@ public class IndicadorBiomedicoService implements IIndicadorBiomedicoService {
 
                 processarLinhaCsv(linha, linhaNum, idUsuario);
             }
-            System.out.println("Importação de indicadores concluída (verifique mensagens no console).");
+            logger.log(Level.INFO, "Importação de indicadores concluída (verifique mensagens no console).");
         } catch (FileNotFoundException e) {
             throw new IllegalArgumentException("Arquivo CSV não encontrado: " + caminhoArquivoCsv);
         } catch (IOException e) {
-            System.err.println("Erro ao ler o arquivo CSV para importação: " + e.getMessage());
+            logger.log(Level.SEVERE, "Erro ao ler o arquivo CSV para importação: {0}", e.getMessage());
         }
     }
 
@@ -138,9 +141,9 @@ public class IndicadorBiomedicoService implements IIndicadorBiomedicoService {
                 writer.newLine();
             }
 
-            System.out.println("Relatório exportado com sucesso para: " + caminhoArquivo);
+            logger.log(Level.INFO, "Relatório exportado com sucesso para: {0}", caminhoArquivo);
         } catch (IOException e) {
-            System.err.println("Erro ao exportar relatório: " + e.getMessage());
+            logger.log(Level.SEVERE, "Erro ao exportar relatório: {0}", e.getMessage());
         }
     }
 
@@ -156,12 +159,12 @@ public class IndicadorBiomedicoService implements IIndicadorBiomedicoService {
 
                 cadastrarIndicador(idUsuario, data, pesoKg, alturaCm, percentualGordura, percentualMassaMagra);
             } catch (NumberFormatException | DateTimeParseException e) {
-                System.err.println("Erro de formato na linha " + linhaNum + " do CSV: " + linha + " - " + e.getMessage());
+                logger.log(Level.SEVERE, "Erro de formato na linha {0} do CSV: {1} - {2}", new Object[]{linhaNum, linha, e.getMessage()});
             } catch (IllegalArgumentException e) {
-                System.err.println("Erro de validação na linha " + linhaNum + " do CSV: " + linha + " - " + e.getMessage());
+                logger.log(Level.SEVERE, "Erro de validação na linha {0} do CSV: {1} - {2}", new Object[]{linhaNum, linha, e.getMessage()});
             }
         } else {
-            System.err.println("Formato inválido na linha " + linhaNum + " do CSV (esperado 5 colunas): " + linha);
+            logger.log(Level.SEVERE, "Formato inválido na linha {0} do CSV (esperado 5 colunas): {1}", new Object[]{linhaNum, linha});
         }
     }
 }
