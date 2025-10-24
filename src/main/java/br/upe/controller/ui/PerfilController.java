@@ -20,26 +20,25 @@ import java.io.IOException;
 public class PerfilController extends BaseController {
 
     @FXML
-    private TextField Nome;
+    private TextField nome;
     @FXML
-    private TextField Altura;
+    private TextField altura;
     @FXML
-    private TextField Peso;
+    private TextField peso;
     @FXML
-    private TextField PercentualGordura;
+    private TextField percentualGordura;
     @FXML
-    private TextField PercentualMM;
+    private TextField percentualMM;
     @FXML
-    private TextField IMC;
+    private TextField imc;
     @FXML
-    private Label CategoriaIMC;
+    private Label categoriaIMC;
     @FXML
-    private Button Salvar;
+    private Button salvar;
     @FXML
-    private Button EscolherImagem;
-
+    private Button escolherImagem;
     @FXML
-    private ImageView Foto;
+    private ImageView foto;
 
     private final IUsuarioService usuarioService = new UsuarioService();
     private final IndicadorBiomedicoService indicadorService = new IndicadorBiomedicoService();
@@ -47,37 +46,36 @@ public class PerfilController extends BaseController {
     private boolean editavel = false;
 
     private void setCamposEditaveis(boolean editavel) {
-        Nome.setEditable(editavel);
-        Altura.setEditable(editavel);
-        Peso.setEditable(editavel);
-        PercentualGordura.setEditable(editavel);
-        PercentualMM.setEditable(editavel);
-        IMC.setEditable(false);
+        nome.setEditable(editavel);
+        altura.setEditable(editavel);
+        peso.setEditable(editavel);
+        percentualGordura.setEditable(editavel);
+        percentualMM.setEditable(editavel);
+        imc.setEditable(false);
     }
 
     @FXML
     protected void initialize() {
-
-        Nome.setText(usuarioLogado.getNome());
+        nome.setText(usuarioLogado.getNome());
 
         try {
             var lista = indicadorService.listarTodosDoUsuario(usuarioLogado.getId());
 
             if (!lista.isEmpty()) {
                 var ultimo = lista.get(lista.size() - 1);
-                Altura.setText(String.valueOf(ultimo.getAlturaCm()));
-                Peso.setText(String.valueOf(ultimo.getPesoKg()));
-                PercentualGordura.setText(String.valueOf(ultimo.getPercentualGordura()));
-                PercentualMM.setText(String.valueOf(ultimo.getPercentualMassaMagra()));
-                IMC.setText(String.format("%.2f", ultimo.getImc()));
-                CategoriaIMC.setText(CalculadoraIMC.classificarImc(ultimo.getImc()));
+                altura.setText(String.valueOf(ultimo.getAlturaCm()));
+                peso.setText(String.valueOf(ultimo.getPesoKg()));
+                percentualGordura.setText(String.valueOf(ultimo.getPercentualGordura()));
+                percentualMM.setText(String.valueOf(ultimo.getPercentualMassaMagra()));
+                imc.setText(String.format("%.2f", ultimo.getImc()));
+                categoriaIMC.setText(CalculadoraIMC.classificarImc(ultimo.getImc()));
             } else {
-                Altura.setText("");
-                Peso.setText("");
-                PercentualGordura.setText("");
-                PercentualMM.setText("");
-                IMC.setText("");
-                CategoriaIMC.setText("");
+                altura.setText("");
+                peso.setText("");
+                percentualGordura.setText("");
+                percentualMM.setText("");
+                imc.setText("");
+                categoriaIMC.setText("");
             }
         } catch (Exception e) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -87,7 +85,7 @@ public class PerfilController extends BaseController {
             alert.showAndWait();
         }
 
-        PreencherPercentual();
+        preencherPercentual();
         atualizarIMC();
 
         setCamposEditaveis(editavel);
@@ -95,38 +93,38 @@ public class PerfilController extends BaseController {
 
     private void atualizarIMC() {
         try {
-            if (!Altura.getText().isEmpty() && !Peso.getText().isEmpty()) {
-                double altura = Double.parseDouble(Altura.getText());
-                double peso = Double.parseDouble(Peso.getText());
+            if (!altura.getText().isEmpty() && !peso.getText().isEmpty()) {
+                double alturaValor = Double.parseDouble(altura.getText());
+                double pesoValor = Double.parseDouble(peso.getText());
 
-                double imc = CalculadoraIMC.calcular(peso, altura);
-                IMC.setText(String.format("%.2f", imc));
+                double resultadoIMC = CalculadoraIMC.calcular(pesoValor, alturaValor);
+                imc.setText(String.format("%.2f", resultadoIMC));
 
-                String classificacao = CalculadoraIMC.classificarImc(imc);
-                CategoriaIMC.setText(classificacao);
+                String classificacao = CalculadoraIMC.classificarImc(resultadoIMC);
+                categoriaIMC.setText(classificacao);
             }
         } catch (NumberFormatException e) {
-            IMC.setText("Erro");
-            CategoriaIMC.setText("Erro");
+            imc.setText("Erro");
+            categoriaIMC.setText("Erro");
         }
     }
 
-    private void PreencherPercentual() {
+    private void preencherPercentual() {
         try {
-            if (!PercentualMM.getText().isEmpty() && !PercentualGordura.getText().isEmpty()) {
-                double percentualGordura = Double.parseDouble(PercentualMM.getText());
-                double percentualMM = Double.parseDouble(PercentualGordura.getText());
+            if (!percentualMM.getText().isEmpty() && !percentualGordura.getText().isEmpty()) {
+                double percentualGorduraValor = Double.parseDouble(percentualMM.getText());
+                double percentualMMValor = Double.parseDouble(percentualGordura.getText());
             }
         } catch (NumberFormatException e) {
-            PercentualGordura.setText("Erro");
-            PercentualMM.setText("Erro");
+            percentualGordura.setText("Erro");
+            percentualMM.setText("Erro");
         }
     }
 
     @FXML
     protected void salvarDados() {
         try {
-            String novoNome = Nome.getText().trim();
+            String novoNome = nome.getText().trim();
 
             if (novoNome.isEmpty()) {
                 throw new IllegalArgumentException("O nome não pode estar vazio.");
@@ -142,23 +140,23 @@ public class PerfilController extends BaseController {
                     usuarioLogado.getTipo()
             );
 
-            double altura = Double.parseDouble(Altura.getText());
-            double peso = Double.parseDouble(Peso.getText());
-            double percentualGordura = Double.parseDouble(PercentualGordura.getText());
-            double percentualMM = Double.parseDouble(PercentualMM.getText());
+            double alturaValor = Double.parseDouble(altura.getText());
+            double pesoValor = Double.parseDouble(peso.getText());
+            double percentualGorduraValor = Double.parseDouble(percentualGordura.getText());
+            double percentualMMValor = Double.parseDouble(percentualMM.getText());
 
-            double imc = CalculadoraIMC.calcular(peso, altura);
+            double resultadoIMC = CalculadoraIMC.calcular(pesoValor, alturaValor);
 
-            IMC.setText(String.format("%.2f", imc));
-            CategoriaIMC.setText(CalculadoraIMC.classificarImc(imc));
+            imc.setText(String.format("%.2f", resultadoIMC));
+            categoriaIMC.setText(CalculadoraIMC.classificarImc(resultadoIMC));
 
             indicadorService.cadastrarIndicador(
                     usuarioLogado.getId(),
                     java.time.LocalDate.now(),
-                    peso,
-                    altura,
-                    percentualGordura,
-                    percentualMM
+                    pesoValor,
+                    alturaValor,
+                    percentualGorduraValor,
+                    percentualMMValor
             );
 
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -196,7 +194,7 @@ public class PerfilController extends BaseController {
     }
 
     @FXML
-    private void EditarTela(javafx.event.ActionEvent event) {
+    private void editarTela(javafx.event.ActionEvent event) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/ui/PerfilEditScreen.fxml"));
             Parent root = loader.load();
@@ -206,11 +204,11 @@ public class PerfilController extends BaseController {
             controller.editavel = true;
             controller.setCamposEditaveis(true);
 
-            controller.Nome.setText(usuarioLogado.getNome());
-            controller.Altura.setText(Altura.getText());
-            controller.Peso.setText(Peso.getText());
-            controller.PercentualGordura.setText(PercentualGordura.getText());
-            controller.PercentualMM.setText(PercentualMM.getText());
+            controller.nome.setText(usuarioLogado.getNome());
+            controller.altura.setText(altura.getText());
+            controller.peso.setText(peso.getText());
+            controller.percentualGordura.setText(percentualGordura.getText());
+            controller.percentualMM.setText(percentualMM.getText());
             controller.atualizarIMC();
 
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -230,7 +228,7 @@ public class PerfilController extends BaseController {
 
         if (file != null) {
             Image image = new Image(file.toURI().toString());
-            Foto.setImage(image);
+            foto.setImage(image);
         }
     }
 }

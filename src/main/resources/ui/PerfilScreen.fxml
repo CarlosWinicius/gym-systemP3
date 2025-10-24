@@ -59,12 +59,12 @@
                                         <Font name="System Bold" size="17.0" />
                                     </font>
                                 </Text>
-                                <TextField fx:id="Nome" layoutX="409.0" layoutY="179.0" prefHeight="26.0" prefWidth="318.0" />
-                                <TextField fx:id="Altura" layoutX="409.0" layoutY="247.0" />
-                                <TextField fx:id="Peso" layoutX="397.0" layoutY="309.0" />
-                                <TextField fx:id="PercentualGordura" layoutX="278.0" layoutY="376.0" />
-                                <TextField fx:id="PercentualMM" layoutX="310.0" layoutY="427.0" />
-                                <TextField fx:id="IMC" layoutX="128.0" layoutY="472.0" />
+                                <TextField fx:id="nome" layoutX="409.0" layoutY="179.0" prefHeight="26.0" prefWidth="318.0" />
+                                <TextField fx:id="altura" layoutX="409.0" layoutY="247.0" />
+                                <TextField fx:id="peso" layoutX="397.0" layoutY="309.0" />
+                                <TextField fx:id="percentualGordura" layoutX="278.0" layoutY="376.0" />
+                                <TextField fx:id="percentualMM" layoutX="310.0" layoutY="427.0" />
+                                <TextField fx:id="imc" layoutX="128.0" layoutY="472.0" />
                                 <ImageView fitHeight="204.0" fitWidth="255.0" layoutX="83.0" layoutY="147.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
                                         <Image url="@../images/rectangleperfil.png" />
@@ -103,8 +103,8 @@
                                 <Text fx:id="W" layoutX="289.0" layoutY="489.0" strokeType="OUTSIDE" strokeWidth="0.0" />
                                 <Text layoutX="289.0" layoutY="489.0" strokeType="OUTSIDE" strokeWidth="0.0" />
                                 <Label layoutX="286.0" layoutY="476.0" />
-                                <Label fx:id="CategoriaIMC" layoutX="286.0" layoutY="476.0" text="  " />
-                                <Button fx:id="Editar" layoutX="607.0" layoutY="82.0" onAction="#EditarTela" prefHeight="30.0" prefWidth="92.0" style="-fx-background-color: black; -fx-text-fill: white; -fx-font-weight: bold; -fx-border-width: 2; -fx-border-radius: 50;" text="Editar">
+                                <Label fx:id="categoriaIMC" layoutX="286.0" layoutY="476.0" text="  " />
+                                <Button fx:id="editar" layoutX="607.0" layoutY="82.0" onAction="#editarTela" prefHeight="30.0" prefWidth="92.0" style="-fx-background-color: black; -fx-text-fill: white; -fx-font-weight: bold; -fx-border-width: 2; -fx-border-radius: 50;" text="Editar">
                                     <font>
                                         <Font size="14.0" />
                                     </font>

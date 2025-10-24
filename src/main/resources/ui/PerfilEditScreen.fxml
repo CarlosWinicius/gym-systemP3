@@ -58,12 +58,12 @@
                                         <Font name="System Bold" size="17.0" />
                                     </font>
                                 </Text>
-                                <TextField fx:id="Nome" layoutX="409.0" layoutY="179.0" prefHeight="26.0" prefWidth="318.0" />
-                                <TextField fx:id="Altura" layoutX="409.0" layoutY="247.0" />
-                                <TextField fx:id="Peso" layoutX="397.0" layoutY="309.0" />
-                                <TextField fx:id="PercentualGordura" layoutX="278.0" layoutY="376.0" />
-                                <TextField fx:id="PercentualMM" layoutX="310.0" layoutY="427.0" />
-                                <TextField fx:id="IMC" layoutX="128.0" layoutY="472.0" />
+                                <TextField fx:id="nome" layoutX="409.0" layoutY="179.0" prefHeight="26.0" prefWidth="318.0" />
+                                <TextField fx:id="altura" layoutX="409.0" layoutY="247.0" />
+                                <TextField fx:id="peso" layoutX="397.0" layoutY="309.0" />
+                                <TextField fx:id="percentualGordura" layoutX="278.0" layoutY="376.0" />
+                                <TextField fx:id="percentualMM" layoutX="310.0" layoutY="427.0" />
+                                <TextField fx:id="imc" layoutX="128.0" layoutY="472.0" />
                                 <Text layoutX="465.0" layoutY="446.0" strokeType="OUTSIDE" strokeWidth="0.0" text="\%">
                                     <font>
                                         <Font size="17.0" />
@@ -84,7 +84,7 @@
                                         <Font size="17.0" />
                                     </font>
                                 </Text>
-                                <Button fx:id="Salvar" layoutX="460.0" layoutY="516.0" onAction="#salvarDados" prefHeight="30.0" prefWidth="122.0" style="-fx-background-color: black; -fx-text-fill: white; -fx-font-weight: bold; -fx-border-width: 2; -fx-border-radius: 50;" text="Salvar">
+                                <Button fx:id="salvar" layoutX="460.0" layoutY="516.0" onAction="#salvarDados" prefHeight="30.0" prefWidth="122.0" style="-fx-background-color: black; -fx-text-fill: white; -fx-font-weight: bold; -fx-border-width: 2; -fx-border-radius: 50;" text="Salvar">
                                     <font>
                                         <Font size="14.0" />
                                     </font>
@@ -97,14 +97,14 @@
                                 <Text fx:id="W" layoutX="289.0" layoutY="489.0" strokeType="OUTSIDE" strokeWidth="0.0" />
                                 <Text layoutX="289.0" layoutY="489.0" strokeType="OUTSIDE" strokeWidth="0.0" />
                                 <Label layoutX="286.0" layoutY="476.0" />
-                                <Label fx:id="CategoriaIMC" layoutX="286.0" layoutY="476.0" text="  " />
-                                <Button fx:id="Voltar" layoutX="590.0" layoutY="516.0" onAction="#voltarTela" prefHeight="30.0" prefWidth="122.0" style="-fx-background-color: transparet; -fx-text-fill: black; -fx-font-weight: bold; -fx-border-width: 2; -fx-border-color: black; -fx-border-radius: 6;" text="Voltar">
+                                <Label fx:id="categoriaIMC" layoutX="286.0" layoutY="476.0" text="  " />
+                                <Button fx:id="voltar" layoutX="590.0" layoutY="516.0" onAction="#voltarTela" prefHeight="30.0" prefWidth="122.0" style="-fx-background-color: transparet; -fx-text-fill: black; -fx-font-weight: bold; -fx-border-width: 2; -fx-border-color: black; -fx-border-radius: 6;" text="Voltar">
                                     <font>
                                         <Font size="14.0" />
                                     </font>
                                 </Button>
-                                <ImageView fx:id="Foto" fitHeight="158.0" fitWidth="200.0" layoutX="75.0" layoutY="126.0" pickOnBounds="true" preserveRatio="true" />
-                                <Button fx:id="EscolherImagem" layoutX="87.0" layoutY="294.0" onAction="#escolherImagem" prefHeight="33.0" prefWidth="175.0" style="-fx-background-color: transparet; -fx-text-fill: black; -fx-border-width: 1; -fx-border-color: black; -fx-border-radius: 6;" text="Escolher imagem">
+                                <ImageView fx:id="foto" fitHeight="158.0" fitWidth="200.0" layoutX="75.0" layoutY="126.0" pickOnBounds="true" preserveRatio="true" />
+                                <Button fx:id="escolherImagem" layoutX="87.0" layoutY="294.0" onAction="#escolherImagem" prefHeight="33.0" prefWidth="175.0" style="-fx-background-color: transparet; -fx-text-fill: black; -fx-border-width: 1; -fx-border-color: black; -fx-border-radius: 6;" text="Escolher imagem">
                                     <font>
                                         <Font size="14.0" />
                                     </font>
