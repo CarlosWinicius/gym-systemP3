@@ -11,12 +11,15 @@ import br.upe.data.repository.impl.SessaoTreinoRepositoryImpl;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class SessaoTreinoService {
 
     private final ISessaoTreinoRepository sessaoRepo;
     private final IPlanoTreinoRepository planoRepo;
     private final IExercicioRepository exercicioRepo;
+    private static final Logger logger = Logger.getLogger(SessaoTreinoService.class.getName());
 
     public SessaoTreinoService(ISessaoTreinoRepository sessaoRepo, IPlanoTreinoRepository planoRepo, IExercicioRepository exercicioRepo) {
         this.sessaoRepo = sessaoRepo;
@@ -49,18 +52,18 @@ public class SessaoTreinoService {
     // Verifica as condições e registra uma sessao de treino
     public void salvarSessao(SessaoTreino sessao) {
         if (sessao.getItensExecutados().isEmpty()) {
-            System.out.println("Sessão vazia. Não será salva.");
+            logger.log(Level.WARNING, "Sessão vazia. Não será salva.");
             return;
         }
         sessaoRepo.salvar(sessao);
-        System.out.println("Sessão de treino ID " + sessao.getIdSessao() + " salva com sucesso!");
+        logger.log(Level.INFO, "Sessão de treino ID {0} salva com sucesso!", new Object[]{sessao.getIdSessao()});
     }
 
     // Verifica condições e gera sugestões de acordo com sessao de treino
     public List<SugestaoAtualizacaoPlano> verificarAlteracoesEGerarSugestoes(SessaoTreino sessao) {
         Optional<PlanoTreino> planoOpt = planoRepo.buscarPorId(sessao.getIdPlanoTreino());
         if (!planoOpt.isPresent()) {
-            System.err.println("Erro: Plano de treino com ID " + sessao.getIdPlanoTreino() + " não encontrado para verificação de alterações.");
+            logger.log(Level.SEVERE, "Plano de treino com ID {0} não encontrado para verificação de alterações.", new Object[]{sessao.getIdPlanoTreino()});
             return List.of();
         }
         PlanoTreino plano = planoOpt.get();
@@ -100,7 +103,7 @@ public class SessaoTreinoService {
     public void aplicarAtualizacoesNoPlano(int idPlano, int idExercicio, int novasRepeticoes, double novaCarga) {
         Optional<PlanoTreino> planoOpt = planoRepo.buscarPorId(idPlano);
         if (!planoOpt.isPresent()) {
-            System.err.println("Erro: Plano de treino com ID " + idPlano + " não encontrado para aplicar atualização.");
+            logger.log(Level.SEVERE, "Plano de treino com ID {0} não encontrado para aplicar atualização.", new Object[]{idPlano});
             return;
         }
         PlanoTreino plano = planoOpt.get();
@@ -114,9 +117,9 @@ public class SessaoTreinoService {
             item.setRepeticoes(novasRepeticoes);
             item.setCargaKg((int)novaCarga);
             planoRepo.editar(plano);
-            System.out.println("Plano de treino ID " + idPlano + " atualizado para o exercício ID " + idExercicio + ".");
+            logger.log(Level.INFO, "Plano de treino ID {0} atualizado para o exercício ID {1}.", new Object[]{idPlano, idExercicio});
         } else {
-            System.err.println("Erro: Exercício ID " + idExercicio + " não encontrado no plano ID " + idPlano + " para atualização.");
+            logger.log(Level.SEVERE, "Exercício ID {0} não encontrado no plano ID {1} para atualização.", new Object[]{idExercicio, idPlano});
         }
     }
 

@@ -22,7 +22,7 @@
                 </HBox>
                 <ScrollPane fitToWidth="true" hbarPolicy="NEVER" VBox.vgrow="ALWAYS">
                     <content>
-                        <TilePane fx:id="PlanoTilePane" hgap="20" vgap="20">
+                        <TilePane fx:id="planoTilePane" hgap="20" vgap="20">
                             <padding>
                                 <Insets top="10.0" />
                             </padding>

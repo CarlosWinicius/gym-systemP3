@@ -21,11 +21,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class MetricasScreenController extends BaseController {
-
-    private static final Logger logger = Logger.getLogger(MetricasScreenController.class.getName());
 
     private static final String MSG_SESSAO = "Sessão";
     private static final String MSG_PERIODO_REQUERIDO = "Período requerido";
