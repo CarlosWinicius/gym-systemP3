@@ -52,7 +52,7 @@ public abstract class BaseController {
     }
 
     private void handleNavigationError(IOException e, String fxmlFile) {
-        logger.log(Level.SEVERE, "Erro de Navegação: Não foi possível carregar ''{0}: {1}", new Object[]{fxmlFile, e});
+        logger.log(Level.SEVERE, "Erro de Navegação: Não foi possível carregar ''{0}'': {1}", new Object[]{fxmlFile, e});
         showAlert(Alert.AlertType.ERROR, "Erro de Navegação", "Não foi possível carregar a tela: " + fxmlFile);
     }
 
