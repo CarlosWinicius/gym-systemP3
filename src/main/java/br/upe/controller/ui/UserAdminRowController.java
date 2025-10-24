@@ -63,6 +63,6 @@ public class UserAdminRowController extends BaseController {
 
     @FXML
     private void handleDeleteUser(ActionEvent event) {
-        adminScreenController.handleDeleteUser(usuario, rootPane);
+        adminScreenController.handleDeleteUser(usuario);
     }
 }
