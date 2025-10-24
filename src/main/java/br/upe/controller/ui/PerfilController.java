@@ -187,7 +187,6 @@ public class PerfilController extends BaseController {
         this.usuarioLogado = usuarioLogado;
     }
 
-    private static final Logger logger = Logger.getLogger(PerfilController.class.getName());
     @FXML
     private void voltarTela(javafx.event.ActionEvent event) {
         try {
