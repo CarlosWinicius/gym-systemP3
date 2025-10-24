@@ -1,3 +1,4 @@
 id;nome;email;senha;tipo
-1;Administrador;adm;adm;ADMIN
 2;Usuario;usuario@email.com;usuario;COMUM
+3;leticia;leticia@email.com;123;COMUM
+1;Leticia;adm;adm;ADMIN
