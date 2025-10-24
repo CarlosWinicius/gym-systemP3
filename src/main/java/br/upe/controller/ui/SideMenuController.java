@@ -1,13 +1,17 @@
 package br.upe.controller.ui;
 
+import br.upe.data.TipoUsuario;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class SideMenuController extends BaseController {
+
+    private static final Logger logger = Logger.getLogger(SideMenuController.class.getName());
 
     @FXML
     private Label homeButton;
@@ -21,6 +25,16 @@ public class SideMenuController extends BaseController {
     private Label metricasButton;
     @FXML
     private Label logoutButton;
+    @FXML
+    private Label usuariosButton;
+
+    @FXML
+    public void initialize() {
+        if (usuarioLogado != null && usuarioLogado.getTipo() == TipoUsuario.ADMIN) {
+            usuariosButton.setVisible(true);
+            usuariosButton.setManaged(true);
+        }
+    }
 
     @FXML
     private void handleNavigation(MouseEvent event) {
@@ -44,8 +58,11 @@ public class SideMenuController extends BaseController {
             case "metricasButton":
                 fxmlFile = "/ui/MetricasScreen.fxml";
                 break;
+            case "usuariosButton":
+                fxmlFile = "/ui/AdminScreen.fxml";
+                break;
             default:
-                logger.log(Level.INFO, "Nenhuma ação de navegação definida para o ID: {0}", sourceId);
+                logger.info("Nenhuma ação de navegação definida para o ID: " + sourceId);
                 return;
         }
 
