@@ -4,11 +4,10 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.Cursor?>
 <?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
 
-<VBox prefHeight="400.0" prefWidth="140.0" spacing="20" style="-fx-font-family: Inter; -fx-background-color: #8A806F; -fx-padding: 15;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.upe.controller.ui.SideMenuController">
+<VBox prefHeight="400.0" prefWidth="140.0" spacing="20" style="-fx-font-family: Inter; -fx-background-color: #8A806F; -fx-padding: 15;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.upe.controller.ui.SideMenuController">
     <children>
         <Label graphicTextGap="8.0" style="-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 18px;" text="SYSFIT">
             <graphic>
@@ -21,47 +20,56 @@
             </VBox.margin>
         </Label>
 
-        <Label fx:id="homeButton" onMouseClicked="#handleNavigation" style="-fx-text-fill: white; -fx-cursor: hand;" text="Home" graphicTextGap="8.0">
+        <Label fx:id="homeButton" graphicTextGap="8.0" onMouseClicked="#handleNavigation" style="-fx-text-fill: white; -fx-cursor: hand;" text="Home">
             <graphic>
                 <ImageView fitHeight="20.0" fitWidth="20.0" preserveRatio="true">
                     <Image url="@../images/solar_graph-bold.png" />
                 </ImageView>
             </graphic>
         </Label>
-        <Label fx:id="perfilButton" onMouseClicked="#handleNavigation" style="-fx-text-fill: white; -fx-cursor: hand;" text="Meu Perfil" graphicTextGap="8.0">
+        <Label fx:id="perfilButton" graphicTextGap="8.0" onMouseClicked="#handleNavigation" style="-fx-text-fill: white; -fx-cursor: hand;" text="Meu Perfil">
             <graphic>
                 <ImageView fitHeight="20.0" fitWidth="20.0" preserveRatio="true">
                     <Image url="@../images/solar_user-bold.png" />
                 </ImageView>
             </graphic>
         </Label>
-        <Label fx:id="planosButton" onMouseClicked="#handleNavigation" style="-fx-text-fill: white; -fx-cursor: hand;" text="Meus Planos" graphicTextGap="8.0">
+        <Label fx:id="planosButton" graphicTextGap="8.0" onMouseClicked="#handleNavigation" style="-fx-text-fill: white; -fx-cursor: hand;" text="Meus Planos">
             <graphic>
                 <ImageView fitHeight="20.0" fitWidth="20.0" preserveRatio="true">
                     <Image url="@../images/mingcute_clipboard-fill.png" />
                 </ImageView>
             </graphic>
         </Label>
-        <Label fx:id="exerciciosButton" onMouseClicked="#handleNavigation" style="-fx-text-fill: white; -fx-cursor: hand;" text="Exercicios" graphicTextGap="8.0">
+        <Label fx:id="exerciciosButton" graphicTextGap="8.0" onMouseClicked="#handleNavigation" style="-fx-text-fill: white; -fx-cursor: hand;" text="Exercicios">
             <graphic>
                 <ImageView fitHeight="20.0" fitWidth="20.0" preserveRatio="true">
                     <Image url="@../images/material-symbols_exercise.png" />
                 </ImageView>
             </graphic>
         </Label>
-        <Label fx:id="metricasButton" onMouseClicked="#handleNavigation" style="-fx-text-fill: white; -fx-cursor: hand;" text="Métricas" graphicTextGap="8.0">
+        <Label fx:id="metricasButton" graphicTextGap="8.0" onMouseClicked="#handleNavigation" style="-fx-text-fill: white; -fx-cursor: hand;" text="Métricas">
             <graphic>
                 <ImageView fitHeight="20.0" fitWidth="20.0" preserveRatio="true">
                     <Image url="@../images/material-symbols_health-metrics-rounded.png" />
                 </ImageView>
             </graphic>
         </Label>
+        <Label fx:id="usuariosButton" graphicTextGap="8.0" onMouseClicked="#handleNavigation" style="-fx-text-fill: white; -fx-cursor: hand;" text="Usuários" visible="false" managed="false">
+         <graphic>
+            <ImageView fitHeight="20.0" fitWidth="20.0" preserveRatio="true">
+               <image>
+                  <Image url="@../images/flowbite_users-solid.png" />
+               </image>
+            </ImageView>
+         </graphic>
+      </Label>
 
 
         <Pane VBox.vgrow="ALWAYS" />
 
 
-        <Label fx:id="logoutButton" onMouseClicked="#handleLogout" style="-fx-text-fill: white; -fx-cursor: hand;" text="Sair" graphicTextGap="8.0">
+        <Label fx:id="logoutButton" graphicTextGap="8.0" onMouseClicked="#handleLogout" style="-fx-text-fill: white; -fx-cursor: hand;" text="Sair">
             <graphic>
                 <ImageView fitHeight="20.0" fitWidth="20.0" preserveRatio="true">
                     <Image url="@../images/user.png" />

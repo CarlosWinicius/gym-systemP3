@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.upe.controller.ui.UserAdminScreenController">
+    <left>
+        <fx:include fx:id="sideMenu" source="SideMenu.fxml" />
+    </left>
+    <center>
+        <VBox spacing="20.0" style="-fx-background-color: #D4D5D6">
+            <padding>
+                <Insets left="20.0" top="20.0" />
+            </padding>
+            <children>
+                <Label fx:id="welcomeLabel" style="-fx-font-family: Inter; -fx-font-size: 28px; -fx-font-weight: normal; -fx-text-fill: #2c3e50;" text="Menu Administrador">
+                    <font>
+                        <Font name="Arial Black" size="12.0" />
+                    </font>
+                </Label>
+                <ScrollPane fitToWidth="true" hbarPolicy="NEVER" prefHeight="494.0" prefWidth="718.0">
+                    <content>
+                        <VBox fx:id="userListVBox" spacing="10" />
+                    </content>
+                    <VBox.margin>
+                        <Insets right="10.0" />
+                    </VBox.margin>
+                </ScrollPane>
+            </children>
+        </VBox>
+    </center>
+</BorderPane>
