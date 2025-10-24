@@ -14,6 +14,7 @@ import javafx.stage.Stage;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -103,13 +104,21 @@ public class ExercicioDialogController extends BaseController {
         File arquivoSelecionado = fileChooser.showOpenDialog(dialogStage);
         if (arquivoSelecionado != null) {
             try {
-                Path destino = Paths.get("src/main/resources/gif/" + arquivoSelecionado.getName());
+
+                URL resource = getClass().getResource("/gif/");
+                if (resource == null) {
+                    throw new IOException("Diretório de resources '/gif/' não encontrado.");
+                }
+
+                Path gifDir = Paths.get(resource.toURI());
+                Path destino = gifDir.resolve(arquivoSelecionado.getName());
                 Files.copy(arquivoSelecionado.toPath(), destino, StandardCopyOption.REPLACE_EXISTING);
+
                 this.nomeArquivoGif = arquivoSelecionado.getName();
                 Image image = new Image(arquivoSelecionado.toURI().toString());
                 gifImageView.setImage(image);
-            } catch (IOException e) {
-                showAlert(Alert.AlertType.ERROR, "Erro ao Salvar Arquivo", "Não foi possível copiar a imagem.");
+            } catch (Exception e) {
+                showAlert(Alert.AlertType.ERROR, "Erro ao Salvar Arquivo", "Não foi possível copiar a imagem: " + e.getMessage());
             }
         }
     }
