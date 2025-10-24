@@ -5,7 +5,6 @@ import br.upe.controller.business.UsuarioService;
 import br.upe.data.beans.Usuario;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.layout.HBox;
@@ -46,7 +45,7 @@ public class UserAdminScreenController extends BaseController {
         }
     }
 
-    public void handleDeleteUser(Usuario usuario, Node rowNode) {
+    public void handleDeleteUser(Usuario usuario) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Confirmar Exclusão");
         alert.setHeaderText("Excluir: " + usuario.getNome());
@@ -61,6 +60,7 @@ public class UserAdminScreenController extends BaseController {
                 }
 
                 usuarioService.removerUsuario(usuario.getId());
+
                 loadUsers();
 
                 showAlert(Alert.AlertType.INFORMATION, "Sucesso", "Usuário removido com sucesso!");
