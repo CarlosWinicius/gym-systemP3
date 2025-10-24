@@ -189,7 +189,7 @@ public class PerfilController extends BaseController {
             stage.setScene(new Scene(root));
             stage.show();
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Erro ao carregar a tela de perfil", e);
         }
     }
 
@@ -215,7 +215,7 @@ public class PerfilController extends BaseController {
             stage.setScene(new Scene(root));
             stage.show();
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Erro ao carregar a tela de perfil", e);
         }
     }
 
