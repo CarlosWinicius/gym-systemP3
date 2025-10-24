@@ -4,6 +4,7 @@ import br.upe.controller.business.CalculadoraIMC;
 import br.upe.controller.business.IUsuarioService;
 import br.upe.controller.business.IndicadorBiomedicoService;
 import br.upe.controller.business.UsuarioService;
+import br.upe.data.beans.Usuario;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -16,6 +17,8 @@ import javafx.stage.Stage;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class PerfilController extends BaseController {
 
@@ -180,7 +183,11 @@ public class PerfilController extends BaseController {
             alert.showAndWait();
         }
     }
+    public void setUsuarioLogado(Usuario usuarioLogado) {
+        this.usuarioLogado = usuarioLogado;
+    }
 
+    private static final Logger logger = Logger.getLogger(PerfilController.class.getName());
     @FXML
     private void voltarTela(javafx.event.ActionEvent event) {
         try {
@@ -189,7 +196,7 @@ public class PerfilController extends BaseController {
             stage.setScene(new Scene(root));
             stage.show();
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Erro ao carregar a tela de perfil", e);
         }
     }
 
@@ -198,24 +205,21 @@ public class PerfilController extends BaseController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/ui/PerfilEditScreen.fxml"));
             Parent root = loader.load();
-
             PerfilController controller = loader.getController();
-            controller.usuarioLogado = this.usuarioLogado;
+            controller.setUsuarioLogado(usuarioLogado);
             controller.editavel = true;
             controller.setCamposEditaveis(true);
-
             controller.nome.setText(usuarioLogado.getNome());
             controller.altura.setText(altura.getText());
             controller.peso.setText(peso.getText());
             controller.percentualGordura.setText(percentualGordura.getText());
             controller.percentualMM.setText(percentualMM.getText());
             controller.atualizarIMC();
-
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.show();
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Erro ao carregar a tela de edição de perfil", e);
         }
     }
 
