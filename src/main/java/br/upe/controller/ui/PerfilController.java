@@ -186,7 +186,7 @@ public class PerfilController extends BaseController {
     @FXML
     private void voltarTela(javafx.event.ActionEvent event) {
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("/ui/PerfilMainScreen.fxml"));
+            Parent root = FXMLLoader.load(getClass().getResource("/ui/PerfilScreen.fxml"));
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.show();
@@ -198,15 +198,14 @@ public class PerfilController extends BaseController {
     @FXML
     private void EditarTela(javafx.event.ActionEvent event) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/ui/PerfilScreen.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/ui/PerfilEditScreen.fxml"));
             Parent root = loader.load();
 
             PerfilController controller = loader.getController();
             controller.usuarioLogado = this.usuarioLogado;
-            controller.editavel = true; // libera edição na tela de edição
+            controller.editavel = true;
             controller.setCamposEditaveis(true);
 
-            // recarrega dados
             controller.Nome.setText(usuarioLogado.getNome());
             controller.Altura.setText(Altura.getText());
             controller.Peso.setText(Peso.getText());
