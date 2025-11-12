@@ -14,11 +14,16 @@ import java.util.logging.Logger;
 public class UsuarioRepositoryImpl implements IUsuarioRepository {
 
     private static final Logger logger = Logger.getLogger(UsuarioRepositoryImpl.class.getName());
-    private static final String CAMINHO_ARQUIVO = "src/main/resources/data/usuarios.csv";
+    private final String caminhoArquivo;
     private List<Usuario> usuarios;
     private AtomicInteger proximoId;
 
     public UsuarioRepositoryImpl() {
+        this("src/main/resources/data/usuarios.csv");
+    }
+
+    public UsuarioRepositoryImpl(String caminhoArquivo) {
+        this.caminhoArquivo = caminhoArquivo;
         this.usuarios = new ArrayList<>();
         this.proximoId = new AtomicInteger(1);
         carregarDoCsv();
@@ -27,13 +32,13 @@ public class UsuarioRepositoryImpl implements IUsuarioRepository {
     // Lista o usuario do arquivo CSV
     private void carregarDoCsv() {
         try {
-            Files.createDirectories(Paths.get("src/main/resources/data"));
+            Files.createDirectories(Paths.get(caminhoArquivo.substring(0, caminhoArquivo.lastIndexOf("/"))));
         } catch (IOException e) {
             logger.log(Level.SEVERE, "Erro ao criar diretório para CSV: {0}", e.getMessage());
             return;
         }
 
-        File file = new File(CAMINHO_ARQUIVO);
+        File file = new File(caminhoArquivo);
         if (!file.exists()) {
             logger.info("Arquivo CSV de usuários não encontrado. Criando usuário 'adm' inicial...");
             Usuario adminUser = new Usuario(gerarProximoId(), "Administrador", "adm", "adm", TipoUsuario.ADMIN);
@@ -68,7 +73,7 @@ public class UsuarioRepositoryImpl implements IUsuarioRepository {
 
     // Grava o usuario no arquivo CSV
     private void escreverParaCsv() {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(CAMINHO_ARQUIVO))) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(caminhoArquivo))) {
             writer.write("id;nome;email;senha;tipo\n");
             for (Usuario usuario : usuarios) {
                 writer.write(formatarLinhaCsv(usuario));

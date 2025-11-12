@@ -13,6 +13,7 @@ import javafx.scene.input.MouseEvent;
 
 public class LoginScreenController extends BaseController {
 
+
     @FXML private TextField emailField;
     @FXML private PasswordField passwordField;
     @FXML private Button loginButton;
