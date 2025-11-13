@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 // Unit test for simple App.
 
 class AppTest {
-    //* Rigorous Test :-)
+    // Rigorous Test :-)
 
     @Test
     void shouldAnswerWithTrue() {
