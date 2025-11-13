@@ -17,32 +17,37 @@ import java.util.stream.Collectors;
 
 public class PlanoTreinoRepositoryImpl implements IPlanoTreinoRepository {
 
-    private static final String ARQUIVO_CSV = "src/main/resources/data/planos_treino.csv";
+    private final String caminhoArquivo;
     private List<PlanoTreino> planos;
     private AtomicInteger proximoId;
     private static final Logger logger = Logger.getLogger(PlanoTreinoRepositoryImpl.class.getName());
 
     public PlanoTreinoRepositoryImpl() {
+        this("src/main/resources/data/planos_treino.csv");
+    }
+
+    public PlanoTreinoRepositoryImpl(String caminhoArquivo) {
+        this.caminhoArquivo = caminhoArquivo;
         this.planos = new ArrayList<>();
-        this.proximoId = new AtomicInteger(0);
+        this.proximoId = new AtomicInteger(1);
         carregarDoCsv();
     }
 
     // Listar usuario do arquivo CSV
     private void carregarDoCsv() {
         try {
-            Files.createDirectories(Paths.get("src/main/resources/data"));
+            Files.createDirectories(Paths.get(caminhoArquivo.substring(0, caminhoArquivo.lastIndexOf("/"))));
         } catch (IOException e) {
             logger.log(Level.SEVERE, "Erro ao criar diretório para CSV: {0}", e.getMessage());
             return;
         }
 
-        File file = new File(ARQUIVO_CSV);
+        File file = new File(caminhoArquivo);
         if (!file.exists()) {
-            logger.log(Level.INFO, "Arquivo {0} não encontrado. Será criado vazio no primeiro salvamento.", ARQUIVO_CSV);
+            logger.log(Level.INFO, "Arquivo {0} não encontrado. Será criado vazio no primeiro salvamento.", caminhoArquivo);
             try {
                 if (!file.createNewFile()) {
-                    logger.log(Level.INFO, "Arquivo {0} já existia e não foi recriado.", ARQUIVO_CSV);
+                    logger.log(Level.INFO, "Arquivo {0} já existia e não foi recriado.", caminhoArquivo);
                 }
             }
             catch (IOException e) {
@@ -71,7 +76,7 @@ public class PlanoTreinoRepositoryImpl implements IPlanoTreinoRepository {
 
     // Gravar plano de treino no arquivo CSV
     private void escreverParaCsv() {
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(ARQUIVO_CSV))) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(caminhoArquivo))) {
             for (PlanoTreino plano : planos) {
                 bw.write(formatarLinhaCsv(plano));
                 bw.newLine();

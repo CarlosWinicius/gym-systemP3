@@ -39,13 +39,13 @@ class IndicadorBiomedicoTest {
     @Test
     @DisplayName("Teste do construtor sem ID")
     void testConstrutorSemId() {
-        assert indicadorSemId.getIdUsuario() == 100;
-        assert indicadorSemId.getData().equals(java.time.LocalDate.of(2023, 10, 1));
-        assert indicadorSemId.getPesoKg() == 70.5;
-        assert indicadorSemId.getAlturaCm() == 175.0;
-        assert indicadorSemId.getPercentualGordura() == 15.0;
-        assert indicadorSemId.getPercentualMassaMagra() == 85.0;
-        assert indicadorSemId.getImc() == 23.0;
+        assertEquals(100, indicadorSemId.getIdUsuario());
+        assertEquals(java.time.LocalDate.of(2023, 10, 1), indicadorSemId.getData());
+        assertEquals(70.5, indicadorSemId.getPesoKg());
+        assertEquals(175.0, indicadorSemId.getAlturaCm());
+        assertEquals(15.0, indicadorSemId.getPercentualGordura());
+        assertEquals(85.0, indicadorSemId.getPercentualMassaMagra());
+        assertEquals(23.0, indicadorSemId.getImc());
     }
     //testar getters e setters
     @Test
@@ -53,25 +53,25 @@ class IndicadorBiomedicoTest {
     void testGettersAndSetters() {
         //ID usuário
         indicadorCompleto.setIdUsuario(200);
-        assert indicadorCompleto.getIdUsuario() == 200;
+        assertEquals(200, indicadorCompleto.getIdUsuario());
         //data
         indicadorCompleto.setData(java.time.LocalDate.of(2023, 11, 1));
-        assert indicadorCompleto.getData().equals(java.time.LocalDate.of(2023, 11, 1));
+        assertEquals(java.time.LocalDate.of(2023, 11, 1), indicadorCompleto.getData());
         //peso em kg
         indicadorCompleto.setPesoKg(75.0);
-        assert indicadorCompleto.getPesoKg() == 75.0;
+        assertEquals(75.0, indicadorCompleto.getPesoKg());
         //altura em cm
         indicadorCompleto.setAlturaCm(180.0);
-        assert indicadorCompleto.getAlturaCm() == 180.0;
+        assertEquals(180.0, indicadorCompleto.getAlturaCm());
         //percentual de gordura
         indicadorCompleto.setPercentualGordura(20.0);
-        assert indicadorCompleto.getPercentualGordura() == 20.0;
+        assertEquals(20.0, indicadorCompleto.getPercentualGordura());
         //percentual de massa magra
         indicadorCompleto.setPercentualMassaMagra(80.0);
-        assert indicadorCompleto.getPercentualMassaMagra() == 80.0;
+        assertEquals(80.0, indicadorCompleto.getPercentualMassaMagra());
         //IMC
         indicadorCompleto.setImc(23.5);
-        assert indicadorCompleto.getImc() == 23.5;
+        assertEquals(23.5, indicadorCompleto.getImc());
     }
 
     //testar valores nulos
@@ -91,11 +91,11 @@ class IndicadorBiomedicoTest {
         indicadorNull.setPercentualMassaMagra(-95.0);
         indicadorNull.setImc(-20.0);
         //verifica se os valores inválidos foram atribuídos (não há validação no setter)
-        assert indicadorNull.getPesoKg() == -10.0;
-        assert indicadorNull.getAlturaCm() == -150.0;
-        assert indicadorNull.getPercentualGordura() == -5.0;
-        assert indicadorNull.getPercentualMassaMagra() == -95.0;
-        assert indicadorNull.getImc() == -20.0;
+        assertEquals(-10.0, indicadorNull.getPesoKg());
+        assertEquals(-150.0, indicadorNull.getAlturaCm());
+        assertEquals(-5.0, indicadorNull.getPercentualGordura());
+        assertEquals(-95.0, indicadorNull.getPercentualMassaMagra());
+        assertEquals(-20.0, indicadorNull.getImc());
     }
 
     //testar o toString
@@ -120,29 +120,29 @@ class IndicadorBiomedicoTest {
     void testValoresLimites() {
         //peso em kg
         indicadorCompleto.setPesoKg(0.0);
-        assert indicadorCompleto.getPesoKg() == 0.0;
+        assertEquals(0.0, indicadorCompleto.getPesoKg());
         indicadorCompleto.setPesoKg(500.0); // valor extremamente alto
-        assert indicadorCompleto.getPesoKg() == 500.0;
+        assertEquals(500.0, indicadorCompleto.getPesoKg());
         //altura em cm
         indicadorCompleto.setAlturaCm(0.0);
-        assert indicadorCompleto.getAlturaCm() == 0.0;
+        assertEquals(0.0, indicadorCompleto.getAlturaCm());
         indicadorCompleto.setAlturaCm(300.0); // valor extremamente alto
-        assert indicadorCompleto.getAlturaCm() == 300.0;
+        assertEquals(300.0, indicadorCompleto.getAlturaCm());
         //percentual de gordura
         indicadorCompleto.setPercentualGordura(0.0);
-        assert indicadorCompleto.getPercentualGordura() == 0.0;
+        assertEquals(0.0, indicadorCompleto.getPercentualGordura());
         indicadorCompleto.setPercentualGordura(100.0); // valor máximo possível
-        assert indicadorCompleto.getPercentualGordura() == 100.0;
+        assertEquals(100.0, indicadorCompleto.getPercentualGordura());
         //percentual de massa magra
         indicadorCompleto.setPercentualMassaMagra(0.0);
-        assert indicadorCompleto.getPercentualMassaMagra() == 0.0;
+        assertEquals(0.0, indicadorCompleto.getPercentualMassaMagra());
         indicadorCompleto.setPercentualMassaMagra(100.0); // valor máximo possível
-        assert indicadorCompleto.getPercentualMassaMagra() == 100.0;
+        assertEquals(100.0, indicadorCompleto.getPercentualMassaMagra());
         //IMC
         indicadorCompleto.setImc(0.0);
-        assert indicadorCompleto.getImc() == 0.0;
+        assertEquals(0.0, indicadorCompleto.getImc());
         indicadorCompleto.setImc(100.0); // valor extremamente alto
-        assert indicadorCompleto.getImc() == 100.0;
+        assertEquals(100.0, indicadorCompleto.getImc());
     }
 
     //testes de consistências

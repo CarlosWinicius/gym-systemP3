@@ -20,22 +20,30 @@ public class SessaoTreinoRepositoryImpl implements ISessaoTreinoRepository {
 
     private final List<SessaoTreino> sessoes;
     private final AtomicInteger proximoId;
+    private final String caminhoArquivo;
     private static final Logger logger = Logger.getLogger(SessaoTreinoRepositoryImpl.class.getName());
 
     public SessaoTreinoRepositoryImpl() {
+        this("src/main/resources/data/sessoes_treino.csv");
+    }
+
+    public SessaoTreinoRepositoryImpl(String caminhoArquivo) {
+        this.caminhoArquivo = caminhoArquivo;
         this.sessoes = new ArrayList<>();
-        this.proximoId = new AtomicInteger(1); // Inicia em 1 para novos IDs
+        this.proximoId = new AtomicInteger(1);
         carregarDoCsv();
     }
 
     /**
-     * Define o caminho do arquivo CSV.
-     * Este método é 'protected' para que classes de teste possam sobrescrevê-lo
-     * e usar um arquivo de dados separado, evitando corromper os dados de produção.
-     * @return O caminho completo para o arquivo CSV.
+     * Returns the path to the CSV file used for storing training session data.
+     * <p>
+     * This method is protected to allow subclasses or tests to override or access
+     * the file path, facilitating extension or testing with alternative data sources.
+     *
+     * @return the path to the CSV file as a String
      */
     protected String getArquivoCSV() {
-        return "src/main/resources/data/sessoes_treino.csv";
+        return caminhoArquivo;
     }
 
     private void carregarDoCsv() {
