@@ -7,11 +7,8 @@ import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class SideMenuController extends BaseController {
-
-    private static final Logger logger = Logger.getLogger(SideMenuController.class.getName());
 
     @FXML
     private Label homeButton;
@@ -62,7 +59,7 @@ public class SideMenuController extends BaseController {
                 fxmlFile = "/ui/AdminScreen.fxml";
                 break;
             default:
-                logger.info("Nenhuma ação de navegação definida para o ID: " + sourceId);
+                logger.log(Level.INFO, "Nenhuma ação de navegação definida para o ID: {0}", sourceId);
                 return;
         }
 
