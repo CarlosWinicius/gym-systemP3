@@ -108,7 +108,16 @@ class IndicadorBiomedicoRepositoryImplTest {
 
     @Test
     void testEditarIndicadorInexistente() {
-        IndicadorBiomedico indicador = IndicadorBiomedico.builder().id(999).idUsuario(1).data(LocalDate.now()).pesoKg(80.0).alturaCm(175.0).percentualGordura(20.0).percentualMassaMagra(70.0).imc(26.1).build();
+        IndicadorBiomedico indicador = IndicadorBiomedico.builder()
+                .id(999)
+                .idUsuario(1)
+                .data(LocalDate.now())
+                .pesoKg(80.0)
+                .alturaCm(175.0)
+                .percentualGordura(20.0)
+                .percentualMassaMagra(70.0)
+                .imc(26.1)
+                .build();
         repository.editar(indicador);
         Optional<IndicadorBiomedico> buscado = repository.buscarPorId(999);
         assertFalse(buscado.isPresent());
