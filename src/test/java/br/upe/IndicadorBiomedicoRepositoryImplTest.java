@@ -153,7 +153,15 @@ class IndicadorBiomedicoRepositoryImplTest {
 
     @Test
     void testPersistenciaEmArquivo() {
-        IndicadorBiomedico indicador = IndicadorBiomedico.builder().idUsuario(1).data(LocalDate.of(2025, 1, 1)).pesoKg(75.5).alturaCm(180.0).percentualGordura(18.0).percentualMassaMagra(72.0).imc(23.3).build();
+        IndicadorBiomedico indicador = IndicadorBiomedico.builder()
+                .idUsuario(1)
+                .data(LocalDate.of(2025, 1, 1))
+                .pesoKg(75.5)
+                .alturaCm(180.0)
+                .percentualGordura(18.0)
+                .percentualMassaMagra(72.0)
+                .imc(23.3)
+                .build();
         repository.salvar(indicador);
 
         IIndicadorBiomedicoRepository novoRepository = new IndicadorBiomedicoRepositoryImpl(TEST_CSV_PATH);
