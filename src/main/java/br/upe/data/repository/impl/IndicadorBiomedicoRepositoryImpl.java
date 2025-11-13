@@ -18,13 +18,18 @@ import java.util.stream.Collectors;
 
 public class IndicadorBiomedicoRepositoryImpl implements IIndicadorBiomedicoRepository {
 
-    private static final String CAMINHO_ARQUIVO = "src/main/resources/data/indicadores.csv";
+    private final String caminhoArquivo;
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE;
     private List<IndicadorBiomedico> indicadores;
     private AtomicInteger proximoId;
     private static final Logger logger = Logger.getLogger(IndicadorBiomedicoRepositoryImpl.class.getName());
 
     public IndicadorBiomedicoRepositoryImpl() {
+        this("src/main/resources/data/indicadores.csv");
+    }
+
+    public IndicadorBiomedicoRepositoryImpl(String caminhoArquivo) {
+        this.caminhoArquivo = caminhoArquivo;
         this.indicadores = new ArrayList<>();
         this.proximoId = new AtomicInteger(1);
         carregarDoCsv();
@@ -33,13 +38,13 @@ public class IndicadorBiomedicoRepositoryImpl implements IIndicadorBiomedicoRepo
     // Busca o usuario pelo arquivo CSV
     private void carregarDoCsv() {
         try {
-            Files.createDirectories(Paths.get("src/main/resources/data"));
+            Files.createDirectories(Paths.get(caminhoArquivo.substring(0, caminhoArquivo.lastIndexOf("/"))));
         } catch (IOException e) {
             logger.log(Level.SEVERE, "Erro ao criar diretório para CSV: {0}", e.getMessage());
             return;
         }
 
-        File file = new File(CAMINHO_ARQUIVO);
+        File file = new File(caminhoArquivo);
         if (!file.exists()) {
             logger.log(Level.INFO, "Arquivo CSV de indicadores não encontrado. Será criado um novo na primeira inserção.");
             return;
@@ -71,7 +76,7 @@ public class IndicadorBiomedicoRepositoryImpl implements IIndicadorBiomedicoRepo
 
     // Grava os indicadores no arquivo CSV
     private void escreverParaCsv() {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(CAMINHO_ARQUIVO))) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(caminhoArquivo))) {
             writer.write("id;idUsuario;data;pesoKg;alturaCm;percentualGordura;percentualMassaMagra;imc\n");
             for (IndicadorBiomedico indicador : indicadores) {
                 writer.write(formatarLinhaCsv(indicador));
