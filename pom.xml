@@ -21,6 +21,12 @@
         <hibernate.version>6.5.2.Final</hibernate.version>
         <mysql.connector.version>8.2.0</mysql.connector.version>
         <sonar.organization>winiciuscx</sonar.organization>
+        <sonar.sources>src/main/java</sonar.sources>
+        <sonar.tests>src/test/java</sonar.tests>
+        <sonar.java.binaries>target/classes</sonar.java.binaries>
+        <sonar.java.test.binaries>target/test-classes</sonar.java.test.binaries>
+        <sonar.coverage.jacoco.xmlReportPaths>target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+        <sonar.exclusions>**/controller/ui/**/*.java,**/Launcher.java,**/Main.java</sonar.exclusions>
     </properties>
 
     <dependencies>
@@ -145,6 +151,37 @@
                             <mainClass>br.upe.controller.ui.Launcher</mainClass>
                         </manifest>
                     </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.sonarsource.scanner.maven</groupId>
+                <artifactId>sonar-maven-plugin</artifactId>
+                <version>4.0.0.4121</version>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.11</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <excludes>
+                        <exclude>**/controller/ui/**/*</exclude>
+                        <exclude>**/Launcher.class</exclude>
+                        <exclude>**/Main.class</exclude>
+                    </excludes>
                 </configuration>
             </plugin>
         </plugins>
