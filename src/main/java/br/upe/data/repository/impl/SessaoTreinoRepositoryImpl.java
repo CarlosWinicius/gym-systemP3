@@ -34,6 +34,14 @@ public class SessaoTreinoRepositoryImpl implements ISessaoTreinoRepository {
         carregarDoCsv();
     }
 
+    /**
+     * Returns the path to the CSV file used for storing training session data.
+     * <p>
+     * This method is protected to allow subclasses or tests to override or access
+     * the file path, facilitating extension or testing with alternative data sources.
+     *
+     * @return the path to the CSV file as a String
+     */
     protected String getArquivoCSV() {
         return caminhoArquivo;
     }
