@@ -128,8 +128,24 @@ class IndicadorBiomedicoRepositoryImplTest {
 
     @Test
     void testListarTodos() {
-        repository.salvar(IndicadorBiomedico.builder().idUsuario(1).data(LocalDate.now()).pesoKg(80.0).alturaCm(175.0).percentualGordura(20.0).percentualMassaMagra(70.0).imc(26.1).build());
-        repository.salvar(IndicadorBiomedico.builder().idUsuario(2).data(LocalDate.now()).pesoKg(80.0).alturaCm(175.0).percentualGordura(20.0).percentualMassaMagra(70.0).imc(26.1).build());
+        repository.salvar(IndicadorBiomedico.builder()
+                .idUsuario(1)
+                .data(LocalDate.now())
+                .pesoKg(80.0)
+                .alturaCm(175.0)
+                .percentualGordura(20.0)
+                .percentualMassaMagra(70.0)
+                .imc(26.1)
+                .build());
+        repository.salvar(IndicadorBiomedico.builder()
+                .idUsuario(2)
+                .data(LocalDate.now())
+                .pesoKg(80.0)
+                .alturaCm(175.0)
+                .percentualGordura(20.0)
+                .percentualMassaMagra(70.0)
+                .imc(26.1)
+                .build());
 
         List<IndicadorBiomedico> todos = repository.listarTodos();
         assertEquals(2, todos.size());
