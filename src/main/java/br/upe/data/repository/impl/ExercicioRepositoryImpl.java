@@ -15,32 +15,37 @@ import java.util.logging.Logger;
 
 public class ExercicioRepositoryImpl implements IExercicioRepository {
 
-    private static final String ARQUIVO_CSV = "src/main/resources/data/exercicios.csv";
+    private final String caminhoArquivo;
     private List<Exercicio> exercicios;
     private AtomicInteger proximoId;
     private static final Logger logger = Logger.getLogger(ExercicioRepositoryImpl.class.getName());
 
     public ExercicioRepositoryImpl() {
+        this("src/main/resources/data/exercicios.csv");
+    }
+
+    public ExercicioRepositoryImpl(String caminhoArquivo) {
+        this.caminhoArquivo = caminhoArquivo;
         this.exercicios = new ArrayList<>();
-        this.proximoId = new AtomicInteger(0);
+        this.proximoId = new AtomicInteger(1);
         carregarDoCsv();
     }
 
     // Listar usuario do arquivo csv
     private void carregarDoCsv() {
         try {
-            Files.createDirectories(Paths.get("src/main/resources/data"));
+            Files.createDirectories(Paths.get(caminhoArquivo.substring(0, caminhoArquivo.lastIndexOf("/"))));
         } catch (IOException e) {
             logger.log(Level.SEVERE, "Erro ao criar diretório para CSV: {0}", e.getMessage());
             return;
         }
 
-        File file = new File(ARQUIVO_CSV);
+        File file = new File(caminhoArquivo);
         if (!file.exists()) {
             logger.log(Level.INFO, "Arquivo CSV não encontrado. Será criado vazio no primeiro salvamento.");
             try {
                 if (!file.createNewFile()) {
-                    logger.log(Level.INFO, "Arquivo {0} já existia e não foi recriado.", ARQUIVO_CSV);
+                    logger.log(Level.INFO, "Arquivo {0} já existia e não foi recriado.", caminhoArquivo);
                 }
             } catch (IOException e) {
                 logger.log(Level.SEVERE, "Erro ao criar o arquivo CSV vazio: {0}", e.getMessage());
@@ -68,7 +73,7 @@ public class ExercicioRepositoryImpl implements IExercicioRepository {
 
     // Gravar exercicio no arquivo CSV
     private void escreverParaCsv() {
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(ARQUIVO_CSV))) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(caminhoArquivo))) {
             for (Exercicio exercicio : exercicios) {
                 bw.write(formatarLinhaCsv(exercicio));
                 bw.newLine();
