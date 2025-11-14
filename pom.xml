@@ -88,6 +88,9 @@
             <artifactId>mysql-connector-j</artifactId>
             <version>${mysql.connector.version}</version>
         </dependency>
+        <!-- As três dependências abaixo são explicitamente declaradas apenas  
+             para resolver vulnerabilidades de versões mais antigas 
+             que estavam sendo declaras implicitamente-->
         <dependency>
             <groupId>com.google.protobuf</groupId>
             <artifactId>protobuf-java</artifactId>
