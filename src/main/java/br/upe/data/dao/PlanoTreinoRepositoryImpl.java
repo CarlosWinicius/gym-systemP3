@@ -1,8 +1,8 @@
-package br.upe.data.repository.impl;
+package br.upe.data.dao;
 
 import br.upe.data.beans.ItemPlanoTreino;
 import br.upe.data.beans.PlanoTreino;
-import br.upe.data.repository.IPlanoTreinoRepository;
+import br.upe.data.interfaces.IPlanoTreinoRepository;
 
 import java.io.*;
 import java.nio.file.Files;

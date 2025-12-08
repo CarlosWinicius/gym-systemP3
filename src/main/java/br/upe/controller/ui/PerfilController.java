@@ -4,7 +4,7 @@ import br.upe.controller.business.CalculadoraIMC;
 import br.upe.controller.business.IUsuarioService;
 import br.upe.controller.business.IndicadorBiomedicoService;
 import br.upe.controller.business.UsuarioService;
-import br.upe.data.beans.Usuario;
+import br.upe.data.entity.Usuario;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
