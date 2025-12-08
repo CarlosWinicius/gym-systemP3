@@ -1,8 +1,8 @@
 package br.upe.controller.business;
 
 import br.upe.data.beans.Exercicio;
-import br.upe.data.repository.IExercicioRepository;
-import br.upe.data.repository.impl.ExercicioRepositoryImpl;
+import br.upe.data.interfaces.IExercicioRepository;
+import br.upe.data.dao.ExercicioRepositoryImpl;
 
 import java.util.List;
 import java.util.Optional;

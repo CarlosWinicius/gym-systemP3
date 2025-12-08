@@ -1,7 +1,7 @@
 package br.upe.controller.business;
 
 import br.upe.data.beans.Exercicio;
-import br.upe.data.repository.IExercicioRepository;
+import br.upe.data.interfaces.IExercicioRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
