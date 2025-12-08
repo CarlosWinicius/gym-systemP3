@@ -1,8 +1,8 @@
-package br.upe.data.repository.impl;
+package br.upe.data.dao;
 
 import br.upe.data.beans.ItemSessaoTreino;
 import br.upe.data.beans.SessaoTreino;
-import br.upe.data.repository.ISessaoTreinoRepository;
+import br.upe.data.interfaces.ISessaoTreinoRepository;
 
 import java.io.*;
 import java.nio.file.Files;

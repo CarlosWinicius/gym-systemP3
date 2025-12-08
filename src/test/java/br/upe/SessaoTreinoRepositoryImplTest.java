@@ -2,8 +2,8 @@ package br.upe;
 
 import br.upe.data.beans.ItemSessaoTreino;
 import br.upe.data.beans.SessaoTreino;
-import br.upe.data.repository.ISessaoTreinoRepository;
-import br.upe.data.repository.impl.SessaoTreinoRepositoryImpl;
+import br.upe.data.interfaces.ISessaoTreinoRepository;
+import br.upe.data.dao.SessaoTreinoRepositoryImpl;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

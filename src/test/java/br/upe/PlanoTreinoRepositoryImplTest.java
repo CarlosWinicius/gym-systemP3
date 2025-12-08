@@ -2,8 +2,8 @@ package br.upe;
 
 import br.upe.data.beans.ItemPlanoTreino;
 import br.upe.data.beans.PlanoTreino;
-import br.upe.data.repository.IPlanoTreinoRepository;
-import br.upe.data.repository.impl.PlanoTreinoRepositoryImpl;
+import br.upe.data.interfaces.IPlanoTreinoRepository;
+import br.upe.data.dao.PlanoTreinoRepositoryImpl;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
