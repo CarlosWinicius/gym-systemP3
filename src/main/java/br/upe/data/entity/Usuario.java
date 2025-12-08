@@ -1,0 +1,58 @@
+package br.upe.data.entity;
+
+import br.upe.data.TipoUsuario;
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "usuario") // Nome exato da tabela no SQL
+public class Usuario {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // O banco gera o ID (auto-increment)
+    private Integer id;
+
+    @Column(nullable = false, length = 100)
+    private String nome;
+
+    @Column(nullable = false, unique = true, length = 255)
+    private String email;
+
+    @Column(nullable = false)
+    private String senha;
+
+    @Enumerated(EnumType.ORDINAL) // Mapeia o Enum para smallint (0, 1, 2...)
+    @Column(nullable = false)
+    private TipoUsuario tipo;
+
+    // Construtor vazio obrigatório do JPA
+    public Usuario() {}
+
+    // Construtor utilitário (sem ID, pois o banco gera)
+    public Usuario(String nome, String email, String senha, TipoUsuario tipo) {
+        this.nome = nome;
+        this.email = email;
+        this.senha = senha;
+        this.tipo = tipo;
+    }
+
+    // Getters e Setters
+    public Integer getId() { return id; }
+    public void setId(Integer id) { this.id = id; }
+
+    public String getNome() { return nome; }
+    public void setNome(String nome) { this.nome = nome; }
+
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+
+    public String getSenha() { return senha; }
+    public void setSenha(String senha) { this.senha = senha; }
+
+    public TipoUsuario getTipo() { return tipo; }
+    public void setTipo(TipoUsuario tipo) { this.tipo = tipo; }
+
+    @Override
+    public String toString() {
+        return "ID: " + id + ", Nome: " + nome + ", Email: " + email;
+    }
+}
