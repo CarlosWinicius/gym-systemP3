@@ -1,8 +1,8 @@
 package br.upe;
 
 import br.upe.data.beans.IndicadorBiomedico;
-import br.upe.data.repository.IIndicadorBiomedicoRepository;
-import br.upe.data.repository.impl.IndicadorBiomedicoRepositoryImpl;
+import br.upe.data.interfaces.IIndicadorBiomedicoRepository;
+import br.upe.data.dao.IndicadorBiomedicoRepositoryImpl;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
