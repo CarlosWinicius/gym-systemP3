@@ -1,6 +1,6 @@
-package br.upe.data.repository;
+package br.upe.data.interfaces;
 
-import br.upe.data.beans.Usuario;
+import br.upe.data.entity.Usuario;
 import java.util.List;
 import java.util.Optional;
 
