@@ -1,7 +1,7 @@
 package br.upe.controller.business;
 
 import br.upe.data.beans.IndicadorBiomedico;
-import br.upe.data.repository.IIndicadorBiomedicoRepository;
+import br.upe.data.interfaces.IIndicadorBiomedicoRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
