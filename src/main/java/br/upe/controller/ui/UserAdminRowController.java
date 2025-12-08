@@ -3,7 +3,7 @@ package br.upe.controller.ui;
 import br.upe.controller.business.IUsuarioService;
 import br.upe.controller.business.UsuarioService;
 import br.upe.data.TipoUsuario;
-import br.upe.data.beans.Usuario;
+import br.upe.data.entity.Usuario;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
