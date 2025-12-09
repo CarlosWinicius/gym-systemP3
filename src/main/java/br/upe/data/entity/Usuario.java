@@ -20,14 +20,12 @@ public class Usuario {
     @Column(nullable = false)
     private String senha;
 
-    @Enumerated(EnumType.ORDINAL) // Mapeia o Enum para smallint (0, 1, 2...)
+    @Enumerated(EnumType.ORDINAL)
     @Column(nullable = false)
     private TipoUsuario tipo;
 
-    // Construtor vazio obrigatório do JPA
     public Usuario() {}
 
-    // Construtor utilitário (sem ID, pois o banco gera)
     public Usuario(String nome, String email, String senha, TipoUsuario tipo) {
         this.nome = nome;
         this.email = email;
