@@ -1,8 +1,8 @@
 //package br.upe;
 //
 //import br.upe.data.beans.Exercicio;
-//import br.upe.data.repository.IExercicioRepository;
-//import br.upe.data.repository.impl.ExercicioRepositoryImpl;
+//import br.upe.data.interfaces.IExercicioRepository;
+//import br.upe.data.dao.ExercicioRepositoryImpl;
 //import org.junit.jupiter.api.AfterEach;
 //import org.junit.jupiter.api.BeforeEach;
 //import org.junit.jupiter.api.Test;

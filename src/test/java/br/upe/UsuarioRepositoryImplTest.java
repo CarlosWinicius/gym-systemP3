@@ -2,8 +2,8 @@
 //
 //import br.upe.data.beans.Usuario;
 //import br.upe.data.TipoUsuario;
-//import br.upe.data.repository.IUsuarioRepository;
-//import br.upe.data.repository.impl.UsuarioRepositoryImpl;
+//import br.upe.data.interfaces.IUsuarioRepository;
+//import br.upe.data.dao.UsuarioRepositoryImpl;
 //import org.junit.jupiter.api.AfterEach;
 //import org.junit.jupiter.api.BeforeEach;
 //import org.junit.jupiter.api.Test;

@@ -1,12 +1,12 @@
 package br.upe.controller.business;
 
 import br.upe.data.beans.*;
-import br.upe.data.repository.IExercicioRepository;
-import br.upe.data.repository.IPlanoTreinoRepository;
-import br.upe.data.repository.ISessaoTreinoRepository;
-import br.upe.data.repository.impl.ExercicioRepositoryImpl;
-import br.upe.data.repository.impl.PlanoTreinoRepositoryImpl;
-import br.upe.data.repository.impl.SessaoTreinoRepositoryImpl;
+import br.upe.data.interfaces.IExercicioRepository;
+import br.upe.data.interfaces.IPlanoTreinoRepository;
+import br.upe.data.interfaces.ISessaoTreinoRepository;
+import br.upe.data.dao.ExercicioRepositoryImpl;
+import br.upe.data.dao.PlanoTreinoRepositoryImpl;
+import br.upe.data.dao.SessaoTreinoRepositoryImpl;
 
 import java.util.ArrayList;
 import java.util.List;

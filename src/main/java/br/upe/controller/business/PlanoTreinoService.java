@@ -3,10 +3,10 @@ package br.upe.controller.business;
 import br.upe.data.beans.Exercicio;
 import br.upe.data.beans.ItemPlanoTreino;
 import br.upe.data.beans.PlanoTreino;
-import br.upe.data.repository.IExercicioRepository;
-import br.upe.data.repository.IPlanoTreinoRepository;
-import br.upe.data.repository.impl.ExercicioRepositoryImpl;
-import br.upe.data.repository.impl.PlanoTreinoRepositoryImpl;
+import br.upe.data.interfaces.IExercicioRepository;
+import br.upe.data.interfaces.IPlanoTreinoRepository;
+import br.upe.data.dao.ExercicioRepositoryImpl;
+import br.upe.data.dao.PlanoTreinoRepositoryImpl;
 
 import java.util.List;
 import java.util.Optional;

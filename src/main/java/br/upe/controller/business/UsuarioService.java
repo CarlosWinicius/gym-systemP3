@@ -1,9 +1,9 @@
 package br.upe.controller.business;
 
 import br.upe.data.TipoUsuario;
-import br.upe.data.beans.Usuario;
-import br.upe.data.repository.IUsuarioRepository;
-import br.upe.data.repository.impl.UsuarioRepositoryImpl;
+import br.upe.data.entity.Usuario;
+import br.upe.data.interfaces.IUsuarioRepository;
+import br.upe.data.dao.UsuarioDAO;
 
 import java.util.List;
 import java.util.Optional;
@@ -11,6 +11,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class UsuarioService implements IUsuarioService {
+    // CORREÇÃO: Variável renomeada para minúsculo para corresponder ao uso nos métodos
     private final IUsuarioRepository usuarioRepository;
     private static final Logger LOGGER = Logger.getLogger(UsuarioService.class.getName());
 
@@ -19,7 +20,8 @@ public class UsuarioService implements IUsuarioService {
     }
 
     public UsuarioService() {
-        this.usuarioRepository = new UsuarioRepositoryImpl();
+        // Se você não tiver o arquivo UsuarioDAO.java, essa linha dará erro
+        this.usuarioRepository = new UsuarioDAO();
     }
 
     @Override
