@@ -1,8 +1,8 @@
 package br.upe.controller.business;
 
 import br.upe.data.TipoUsuario;
-import br.upe.data.beans.Usuario;
-import br.upe.data.repository.IUsuarioRepository;
+import br.upe.data.entity.Usuario;
+import br.upe.data.dao.UsuarioDAO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
 class UsuarioServiceTest {
 
     @Mock
-    private IUsuarioRepository usuarioRepository;
+    private UsuarioDAO usuarioRepository;
 
     @InjectMocks
     private UsuarioService usuarioService;
@@ -33,9 +33,9 @@ class UsuarioServiceTest {
 
     @BeforeEach
     void setUp() {
-        usuarioAdmin = new Usuario(1, "Admin", "admin@email.com", "senha123", TipoUsuario.ADMIN);
-        usuarioComum = new Usuario(2, "Comum", "comum@email.com", "senha456", TipoUsuario.COMUM);
-        outroAdmin = new Usuario(3, "Outro Admin", "outro@email.com", "senha789", TipoUsuario.ADMIN);
+        usuarioAdmin = new Usuario("Admin", "admin@email.com", "senha123", TipoUsuario.ADMIN);
+        usuarioComum = new Usuario("Comum", "comum@email.com", "senha456", TipoUsuario.COMUM);
+        outroAdmin = new Usuario("Outro Admin", "outro@email.com", "senha789", TipoUsuario.ADMIN);
     }
 
     @Test
@@ -148,7 +148,7 @@ class UsuarioServiceTest {
     @DisplayName("Deve cadastrar usuário com sucesso")
     void testCadastrarUsuario_Success() {
         when(usuarioRepository.buscarPorEmail("novo@email.com")).thenReturn(Optional.empty());
-        when(usuarioRepository.salvar(any(Usuario.class))).thenReturn(new Usuario(3, "Novo", "novo@email.com", "senha", TipoUsuario.COMUM));
+        when(usuarioRepository.salvar(any(Usuario.class))).thenReturn(new Usuario("Novo", "novo@email.com", "senha", TipoUsuario.COMUM));
 
         Usuario result = usuarioService.cadastrarUsuario("Novo", "novo@email.com", "senha", TipoUsuario.COMUM);
 
@@ -275,7 +275,7 @@ class UsuarioServiceTest {
     @DisplayName("Deve cadastrar usuário com tipo COMUM por padrão")
     void testCadastrarUsuario_TipoComum() {
         when(usuarioRepository.buscarPorEmail("novo@email.com")).thenReturn(Optional.empty());
-        when(usuarioRepository.salvar(any(Usuario.class))).thenReturn(new Usuario(4, "Novo", "novo@email.com", "senha", TipoUsuario.COMUM));
+        when(usuarioRepository.salvar(any(Usuario.class))).thenReturn(new Usuario("Novo", "novo@email.com", "senha", TipoUsuario.COMUM));
 
         Usuario result = usuarioService.cadastrarUsuario("Novo", "novo@email.com", "senha", TipoUsuario.COMUM);
 
@@ -312,7 +312,7 @@ class UsuarioServiceTest {
     @DisplayName("Deve cadastrar usuário ADMIN")
     void testCadastrarUsuario_Admin() {
         when(usuarioRepository.buscarPorEmail("admin2@email.com")).thenReturn(Optional.empty());
-        when(usuarioRepository.salvar(any(Usuario.class))).thenReturn(new Usuario(4, "Admin2", "admin2@email.com", "senha", TipoUsuario.ADMIN));
+        when(usuarioRepository.salvar(any(Usuario.class))).thenReturn(new Usuario("Admin2", "admin2@email.com", "senha", TipoUsuario.ADMIN));
 
         Usuario result = usuarioService.cadastrarUsuario("Admin2", "admin2@email.com", "senha", TipoUsuario.ADMIN);
 
