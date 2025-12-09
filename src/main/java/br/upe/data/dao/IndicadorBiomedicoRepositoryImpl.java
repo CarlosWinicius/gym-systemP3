@@ -1,7 +1,7 @@
-package br.upe.data.repository.impl;
+package br.upe.data.dao;
 
 import br.upe.data.beans.IndicadorBiomedico;
-import br.upe.data.repository.IIndicadorBiomedicoRepository;
+import br.upe.data.interfaces.IIndicadorBiomedicoRepository;
 
 import java.io.*;
 import java.nio.file.Files;

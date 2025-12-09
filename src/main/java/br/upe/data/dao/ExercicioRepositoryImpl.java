@@ -1,7 +1,7 @@
-package br.upe.data.repository.impl;
+package br.upe.data.dao;
 
 import br.upe.data.beans.Exercicio;
-import br.upe.data.repository.IExercicioRepository;
+import br.upe.data.interfaces.IExercicioRepository;
 
 import java.io.*;
 import java.nio.file.Files;

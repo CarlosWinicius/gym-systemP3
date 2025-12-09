@@ -1,4 +1,4 @@
-package br.upe.data.repository;
+package br.upe.data.interfaces;
 
 import br.upe.data.beans.Exercicio;
 
