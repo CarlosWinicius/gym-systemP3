@@ -1,7 +1,7 @@
 package br.upe.controller.ui;
 
 import br.upe.controller.business.ExercicioService;
-import br.upe.data.beans.Exercicio;
+import br.upe.data.entities.Exercicio;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;

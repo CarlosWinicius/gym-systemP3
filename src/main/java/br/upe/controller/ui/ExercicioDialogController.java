@@ -1,6 +1,6 @@
 package br.upe.controller.ui;
 
-import br.upe.data.beans.Exercicio;
+import br.upe.data.entities.Exercicio;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -83,9 +83,16 @@ public class ExercicioDialogController extends BaseController {
 
         if (nomeArquivoGif != null && !nomeArquivoGif.isEmpty()) {
             try {
+                // Tenta carregar do resources se for um caminho relativo ou nome de arquivo
                 String caminhoResource = "/gif/" + nomeArquivoGif;
-                Image image = new Image(getClass().getResourceAsStream(caminhoResource));
-                gifImageView.setImage(image);
+                URL url = getClass().getResource(caminhoResource);
+                if (url != null) {
+                    gifImageView.setImage(new Image(url.toExternalForm()));
+                } else {
+                    // Fallback se não achar
+                    Image placeholder = new Image(getClass().getResourceAsStream("/images/no image.png"));
+                    gifImageView.setImage(placeholder);
+                }
             } catch (Exception e) {
                 Image placeholder = new Image(getClass().getResourceAsStream("/images/no image.png"));
                 gifImageView.setImage(placeholder);
@@ -104,7 +111,6 @@ public class ExercicioDialogController extends BaseController {
         File arquivoSelecionado = fileChooser.showOpenDialog(dialogStage);
         if (arquivoSelecionado != null) {
             try {
-
                 URL resource = getClass().getResource("/gif/");
                 if (resource == null) {
                     throw new IOException("Diretório de resources '/gif/' não encontrado.");
@@ -126,8 +132,21 @@ public class ExercicioDialogController extends BaseController {
     @FXML
     private void handleSalvar() {
         if (isInputValid()) {
+            // Verificação de segurança: O BaseController deve ter o usuarioLogado preenchido
+            if (usuarioLogado == null) {
+                showAlert(Alert.AlertType.ERROR, "Sessão Inválida", "Não foi possível identificar o usuário logado.");
+                return;
+            }
+
             if (exercicio == null) {
-                this.exercicio = new Exercicio(usuarioLogado.getId(), nomeTextField.getText(), descricaoTextArea.getText(), nomeArquivoGif);
+                // ATENÇÃO: Certifique-se que sua classe 'Exercicio' tenha este construtor:
+                // public Exercicio(Integer usuarioId, String nome, String descricao, String caminhoGif)
+                this.exercicio = new Exercicio(
+                        usuarioLogado.getId(),
+                        nomeTextField.getText(),
+                        descricaoTextArea.getText(),
+                        nomeArquivoGif
+                );
             } else {
                 exercicio.setNome(nomeTextField.getText());
                 exercicio.setDescricao(descricaoTextArea.getText());

@@ -1,6 +1,6 @@
 package br.upe.controller.ui;
 
-import br.upe.data.beans.Exercicio;
+import br.upe.data.entities.Exercicio;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.event.ActionEvent;
@@ -59,7 +59,7 @@ public class ExerciseCardController extends BaseController {
             this.exerciseImage.setImage(placeholder);
         }
 
-        if (this.parentController != null && usuarioLogado != null && exercicio.getIdUsuario() == usuarioLogado.getId()) {
+        if (this.parentController != null && usuarioLogado != null && exercicio.getUsuario().getId() == usuarioLogado.getId()) {
             botoesBox.setVisible(true);
             botoesBox.setManaged(true);
         } else {

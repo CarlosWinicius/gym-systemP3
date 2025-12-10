@@ -3,7 +3,7 @@ package br.upe.controller.ui;
 
 import br.upe.controller.business.IPlanoTreinoService;
 import br.upe.controller.business.PlanoTreinoService;
-import br.upe.data.beans.PlanoTreino;
+import br.upe.data.entities.PlanoTreino;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -81,7 +81,7 @@ public class HomeScreenController extends BaseController implements Initializabl
         }
 
         btn.setOnAction((ActionEvent e) -> {
-            logger.info("Abrindo plano: " + plano.getNome() + " (ID: " + plano.getIdPlano() + ")");
+            logger.info("Abrindo plano: " + plano.getNome() + " (ID: " + plano.getId() + ")");
             try {
                 if (plano == null) return;
 

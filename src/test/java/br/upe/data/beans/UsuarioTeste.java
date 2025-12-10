@@ -1,7 +1,7 @@
 package br.upe.data.beans;
 
 import br.upe.data.dao.UsuarioDAO;
-import br.upe.data.entity.Usuario;
+import br.upe.data.entities.Usuario;
 import br.upe.data.TipoUsuario;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;

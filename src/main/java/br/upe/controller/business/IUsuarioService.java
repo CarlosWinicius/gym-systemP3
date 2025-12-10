@@ -1,7 +1,7 @@
 package br.upe.controller.business;
 
 import br.upe.data.TipoUsuario;
-import br.upe.data.entity.Usuario;
+import br.upe.data.entities.Usuario;
 
 import java.util.List;
 import java.util.Optional;
