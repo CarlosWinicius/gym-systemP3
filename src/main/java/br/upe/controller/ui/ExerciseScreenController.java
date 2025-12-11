@@ -2,6 +2,8 @@ package br.upe.controller.ui;
 
 import br.upe.controller.business.ExercicioService;
 import br.upe.data.entities.Exercicio;
+import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -9,6 +11,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.ProgressIndicator;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
@@ -25,33 +29,58 @@ public class ExerciseScreenController extends BaseController {
     @FXML private TilePane exerciciosTilePane;
     @FXML private Button adicionarButton;
 
+    private ProgressIndicator loadingSpinner = new ProgressIndicator();
+
     private final ExercicioService exercicioService = new ExercicioService();
 
     @FXML
     public void initialize() {
+
+        loadingSpinner.setVisible(false);
+        if (exerciciosTilePane.getParent() instanceof VBox) {
+        }
         carregarExercicios();
     }
 
     private void carregarExercicios() {
         if (usuarioLogado == null) return;
 
-        exerciciosTilePane.getChildren().clear();
+        exerciciosTilePane.setVisible(false);
 
+        Task<List<Exercicio>> task = new Task<>() {
+            @Override
+            protected List<Exercicio> call() throws Exception {
+                List<Exercicio> exerciciosSistema = exercicioService.listarExerciciosDoUsuario(0);
+                List<Exercicio> exerciciosUsuario = exercicioService.listarExerciciosDoUsuario(usuarioLogado.getId());
 
-        List<Exercicio> exerciciosSistema = exercicioService.listarExerciciosDoUsuario(0);
-        List<Exercicio> exerciciosUsuario = exercicioService.listarExerciciosDoUsuario(usuarioLogado.getId());
-
-        List<Exercicio> todosExercicios = new ArrayList<>(exerciciosSistema);
-        todosExercicios.addAll(exerciciosUsuario);
-
-
-        for (Exercicio exercicio : todosExercicios) {
-            try {
-                criarEAdicionarCard(exercicio);
-            } catch (IOException e) {
-                logger.log(Level.SEVERE, "Falha ao criar o card para o exercício ''{0}'': {1}", new Object[]{exercicio.getNome(), e});
+                List<Exercicio> todos = new ArrayList<>(exerciciosSistema);
+                todos.addAll(exerciciosUsuario);
+                return todos;
             }
-        }
+        };
+
+        task.setOnSucceeded(event -> {
+            List<Exercicio> exercicios = task.getValue();
+            exerciciosTilePane.getChildren().clear();
+
+            for (Exercicio exercicio : exercicios) {
+                try {
+                    criarEAdicionarCard(exercicio);
+                } catch (IOException e) {
+                    logger.log(Level.SEVERE, "Erro ao criar card", e);
+                }
+            }
+            exerciciosTilePane.setVisible(true);
+        });
+
+        task.setOnFailed(event -> {
+            Throwable erro = task.getException();
+            logger.log(Level.SEVERE, "Falha ao buscar exercícios", erro);
+            showAlert(Alert.AlertType.ERROR, "Erro de Conexão", "Não foi possível carregar os exercícios do servidor.");
+            exerciciosTilePane.setVisible(true);
+        });
+
+        new Thread(task).start();
     }
 
     private void criarEAdicionarCard(Exercicio exercicio) throws IOException {

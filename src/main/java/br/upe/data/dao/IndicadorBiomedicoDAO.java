@@ -18,8 +18,7 @@ public class IndicadorBiomedicoDAO extends GenericDAO<IndicadorBiomedico> implem
     public List<IndicadorBiomedico> listarPorUsuario(int idUsuario) {
         EntityManager em = getEntityManager();
         try {
-            // Ordena por data decrescente (mais recente primeiro)
-            String jpql = "SELECT i FROM IndicadorBiomedico i WHERE i.usuario.id = :idUsuario ORDER BY i.data DESC";
+            String jpql = "SELECT i FROM IndicadorBiomedico i WHERE i.usuario.id = :idUsuario ORDER BY i.dataRegistro DESC";
             TypedQuery<IndicadorBiomedico> query = em.createQuery(jpql, IndicadorBiomedico.class);
             query.setParameter("idUsuario", idUsuario);
             return query.getResultList();
@@ -33,7 +32,7 @@ public class IndicadorBiomedicoDAO extends GenericDAO<IndicadorBiomedico> implem
         EntityManager em = getEntityManager();
         try {
             String jpql = "SELECT i FROM IndicadorBiomedico i WHERE i.usuario.id = :idUsuario " +
-                    "AND i.data BETWEEN :inicio AND :fim ORDER BY i.data ASC";
+                    "AND i.dataRegistro BETWEEN :inicio AND :fim ORDER BY i.dataRegistro ASC";
             TypedQuery<IndicadorBiomedico> query = em.createQuery(jpql, IndicadorBiomedico.class);
             query.setParameter("idUsuario", idUsuario);
             query.setParameter("inicio", dataInicio);
