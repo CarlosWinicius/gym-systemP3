@@ -29,4 +29,5 @@ target/
 *.iml
 *.ipr
 
+# Variáveis de ambiente (Segurança)
 .env
