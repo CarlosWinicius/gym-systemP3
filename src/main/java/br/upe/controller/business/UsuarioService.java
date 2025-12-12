@@ -182,4 +182,12 @@ public class UsuarioService implements IUsuarioService {
     public List<Usuario> listarTodosUsuarios() {
         return usuarioRepository.listarTodos();
     }
+
+    @Override
+    public void atualizarFoto(Integer id, byte[] foto) {
+        Usuario usuario = buscarUsuarioOuLancarExcecao(id);
+        usuario.setFotoPerfil(foto);
+        usuarioRepository.editar(usuario);
+    }
+
 }
