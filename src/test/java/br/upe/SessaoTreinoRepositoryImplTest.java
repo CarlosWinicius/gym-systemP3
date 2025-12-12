@@ -37,6 +37,7 @@ class SessaoTreinoRepositoryImplTest {
         Optional<SessaoTreino> buscado = repository.buscarPorId(salvo.getId());
         assertTrue(buscado.isPresent());
         assertEquals(LocalDate.now(), buscado.get().getDataSessao());
+
     }
 
     @Test
