@@ -55,7 +55,9 @@ public class PlansScreenController extends BaseController {
     @FXML
     private void handleAdicionarPlano(ActionEvent event) {
         logger.info("Botão 'Adicionar Plano' pressionado.");
-        PlanoTreino novoPlano = new PlanoTreino(usuarioLogado.getId(), "Novo Plano de Treino");
+
+        PlanoTreino novoPlano = new PlanoTreino();
+        novoPlano.setNome("Novo Plano de Treino");
 
         EditPlanScreenController controller = navigateTo((Node) event.getSource(), "/ui/EditPlanScreen.fxml", EditPlanScreenController.class);
         if (controller != null) {

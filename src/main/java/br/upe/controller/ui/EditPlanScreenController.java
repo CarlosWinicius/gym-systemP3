@@ -119,10 +119,49 @@ public class EditPlanScreenController extends BaseController {
         }
     }
 
+    private void sincronizarItensDoPlano(PlanoTreino planoPersistido) throws Exception {
+
+
+        Set<Integer> idsNoBanco = new HashSet<>();
+        if (planoPersistido.getItensTreino() != null) {
+            idsNoBanco = planoPersistido.getItensTreino().stream()
+                    .map(item -> item.getExercicio().getId())
+                    .collect(Collectors.toSet());
+        }
+
+        Set<Integer> idsSelecionados = itensTemporarios.keySet();
+
+        for (Integer idBanco : idsNoBanco) {
+            if (!idsSelecionados.contains(idBanco)) {
+                planoTreinoService.removerExercicioDoPlano(usuarioLogado.getId(), planoPersistido.getNome(), idBanco);
+            }
+        }
+
+        for (Integer idNovo : idsSelecionados) {
+            ItemPlanoTreino item = itensTemporarios.get(idNovo);
+
+            if (idsNoBanco.contains(idNovo)) {
+                try {
+                    planoTreinoService.removerExercicioDoPlano(usuarioLogado.getId(), planoPersistido.getNome(), idNovo);
+                } catch (Exception ignored) { /* Ignora erro na remoção se o item já não existir */ }
+            }
+
+            planoTreinoService.adicionarExercicioAoPlano(
+                    usuarioLogado.getId(),
+                    planoPersistido.getNome(),
+                    item.getExercicio().getId(),
+                    item.getCargaKg(),
+                    item.getRepeticoes()
+            );
+        }
+    }
+
     @FXML
     void handleSavePlan(ActionEvent event) {
-        String nomeAntigo = planoAtual.getNome();
-        String novoNome = planNameField.getText();
+        final Integer idPlanoAntigo = planoAtual.getId();
+        final String nomeAntigo = planoAtual.getNome();
+        final String novoNome = planNameField.getText();
+        final boolean isNovoPlano = (idPlanoAntigo == null || idPlanoAntigo == 0);
 
         if (novoNome.isBlank()) {
             showAlert(Alert.AlertType.WARNING, "Atenção", "O nome do plano não pode ser vazio.");
@@ -135,50 +174,29 @@ public class EditPlanScreenController extends BaseController {
         Task<Void> saveTask = new Task<>() {
             @Override
             protected Void call() throws Exception {
-                if (planoAtual.getId() == null || planoAtual.getId() == 0) {
-                    planoAtual = planoTreinoService.criarPlano(usuarioLogado.getId(), novoNome);
-                } else if (!nomeAntigo.equals(novoNome)) {
-                    planoTreinoService.editarPlano(usuarioLogado.getId(), nomeAntigo, novoNome);
-                    planoAtual.setNome(novoNome);
-                }
+                PlanoTreino planoPersistido;
 
-                Set<Integer> idsNoBanco = new HashSet<>();
-                if (planoAtual.getItensTreino() != null) {
-                    idsNoBanco = planoAtual.getItensTreino().stream()
-                            .map(item -> item.getExercicio().getId())
-                            .collect(Collectors.toSet());
-                }
+                if (isNovoPlano) {
 
-                Set<Integer> idsSelecionados = itensTemporarios.keySet();
+                    planoPersistido = planoTreinoService.criarPlano(usuarioLogado.getId(), novoNome);
+                    planoAtual = planoPersistido;
+                } else {
+                    if (!nomeAntigo.equals(novoNome)) {
 
-                for (Integer idBanco : idsNoBanco) {
-                    if (!idsSelecionados.contains(idBanco)) {
-                        planoTreinoService.removerExercicioDoPlano(usuarioLogado.getId(), planoAtual.getNome(), idBanco);
+                        planoTreinoService.editarPlano(usuarioLogado.getId(), nomeAntigo, novoNome);
                     }
-                }
 
-                for (Integer idNovo : idsSelecionados) {
-                    ItemPlanoTreino item = itensTemporarios.get(idNovo);
+                    Optional<PlanoTreino> recarregadoOpt = planoTreinoService.buscarPlanoPorNomeEUsuario(usuarioLogado.getId(), novoNome);
 
-                    if (!idsNoBanco.contains(idNovo)) {
-                        planoTreinoService.adicionarExercicioAoPlano(
-                                usuarioLogado.getId(),
-                                planoAtual.getNome(),
-                                item.getExercicio().getId(),
-                                item.getRepeticoes(),
-                                item.getCargaKg()
-                        );
-                    } else {
-                        planoTreinoService.removerExercicioDoPlano(usuarioLogado.getId(), planoAtual.getNome(), idNovo);
-                        planoTreinoService.adicionarExercicioAoPlano(
-                                usuarioLogado.getId(),
-                                planoAtual.getNome(),
-                                item.getExercicio().getId(),
-                                item.getRepeticoes(),
-                                item.getCargaKg()
-                        );
+                    if (recarregadoOpt.isEmpty()) {
+                        throw new IllegalStateException("Plano existente não encontrado para recarregar dados (Nome: " + novoNome + ")");
                     }
+                    planoPersistido = recarregadoOpt.get();
+                    planoAtual = planoPersistido;
                 }
+
+                sincronizarItensDoPlano(planoPersistido);
+
                 return null;
             }
         };

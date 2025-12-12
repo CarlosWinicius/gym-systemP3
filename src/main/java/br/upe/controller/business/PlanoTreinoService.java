@@ -44,8 +44,8 @@ public class PlanoTreinoService implements IPlanoTreinoService {
         novoPlano.setUsuario(usuario);
         novoPlano.setNome(nome.trim());
 
-        planoTreinoDAO.salvar(novoPlano);
-        return novoPlano;
+        // CORREÇÃO: Deve retornar a entidade gerenciada/atualizada pelo DAO.
+        return planoTreinoDAO.salvar(novoPlano);
     }
 
     @Override
@@ -151,11 +151,9 @@ public class PlanoTreinoService implements IPlanoTreinoService {
         return planoTreinoDAO.buscarPorId(idPlanoEscolhido);
     }
 
-    // --- CORREÇÃO DO SONAR ---
     @Override
     public void atualizarItemTreino(ItemPlanoTreino item) {
         if (item == null || item.getId() == null) {
-            // Boa prática: validação simples para evitar NullPointerException no DAO
             throw new IllegalArgumentException("Item inválido para atualização.");
         }
         itemDAO.editar(item);
