@@ -1,11 +1,11 @@
 package br.upe;
 
+import br.upe.data.dao.PlanoTreinoDAO;
 import br.upe.data.entities.Exercicio;
 import br.upe.data.entities.ItemPlanoTreino;
 import br.upe.data.entities.PlanoTreino;
 import br.upe.data.entities.Usuario;
 import br.upe.data.interfaces.IPlanoTreinoRepository;
-import br.upe.data.dao.PlanoTreinoDAO;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

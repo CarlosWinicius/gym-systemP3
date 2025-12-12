@@ -1,7 +1,10 @@
 package br.upe;
+
 import br.upe.controller.business.RelatorioDiferencaIndicadores;
 import br.upe.data.entities.IndicadorBiomedico;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import java.time.LocalDate;
 import java.util.Optional;
 

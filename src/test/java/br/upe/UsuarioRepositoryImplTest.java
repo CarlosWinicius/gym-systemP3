@@ -1,9 +1,9 @@
 package br.upe;
 
-import br.upe.data.entities.Usuario;
 import br.upe.data.TipoUsuario;
-import br.upe.data.interfaces.IUsuarioRepository;
 import br.upe.data.dao.UsuarioDAO;
+import br.upe.data.entities.Usuario;
+import br.upe.data.interfaces.IUsuarioRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -127,7 +127,6 @@ class UsuarioRepositoryImplTest {
         Usuario salvo = repository.salvar(u);
         assertNotNull(salvo.getId());
         assertTrue(salvo.getId() > 0);
-
     }
 
     @Test

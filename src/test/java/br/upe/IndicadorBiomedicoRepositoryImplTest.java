@@ -1,9 +1,9 @@
 package br.upe;
 
+import br.upe.data.dao.IndicadorBiomedicoDAO;
 import br.upe.data.entities.IndicadorBiomedico;
 import br.upe.data.entities.Usuario;
 import br.upe.data.interfaces.IIndicadorBiomedicoRepository;
-import br.upe.data.dao.IndicadorBiomedicoDAO;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

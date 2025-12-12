@@ -1,11 +1,12 @@
 package br.upe;
 
+import br.upe.data.dao.SessaoTreinoDAO;
 import br.upe.data.entities.SessaoTreino;
 import br.upe.data.interfaces.ISessaoTreinoRepository;
-import br.upe.data.dao.SessaoTreinoDAO;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
