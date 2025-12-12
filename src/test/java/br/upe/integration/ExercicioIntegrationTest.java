@@ -1,13 +1,15 @@
-// language: java
 package br.upe.integration;
 
 import br.upe.controller.business.ExercicioService;
-import br.upe.data.dao.ExercicioDAO;
+import br.upe.data.TipoUsuario;
 import br.upe.data.entities.Exercicio;
+import br.upe.data.entities.Usuario;
+import br.upe.test.dao.TestExercicioDAO;
+import br.upe.test.dao.TestUsuarioDAO;
+import br.upe.test.utils.TestConnectionFactory;
+import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.*;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -15,86 +17,50 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Testes de integração para o fluxo completo de exercícios
- * Integra ExercicioService + ExercicioRepositoryImpl + arquivo CSV
+ * Integra ExercicioService + ExercicioDAO + banco H2 em memória
  */
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class ExercicioIntegrationTest {
 
     private ExercicioService exercicioService;
-    private static final String TEST_CSV_PATH = "src/test/resources/data/exercicios_integration_test.csv";
-    private static final int ID_USUARIO_TESTE = 1;
-    // Usuários usados nos testes (1 e 2 aparecem na suite)
-    private static final int[] TEST_USERS = {1, 2};
+    private TestExercicioDAO exercicioDAO;
+    private TestUsuarioDAO usuarioDAO;
+    private EntityManager em;
+    private Usuario usuarioTeste;
 
     @BeforeEach
-    void setUp() throws IOException {
-        Files.createDirectories(Paths.get("src/test/resources/data"));
-        Files.deleteIfExists(Paths.get(TEST_CSV_PATH));
+    void setUp() {
+        em = TestConnectionFactory.getTestEntityManager();
+        TestConnectionFactory.clearDatabase(em);
 
-        // Limpa exercícios pré-existentes dos usuários de teste para evitar colisões entre execuções
-        ExercicioDAO dao = new ExercicioDAO();
-        for (int userId : TEST_USERS) {
-            try {
-                List<Exercicio> lista = dao.buscarTodosDoUsuario(userId);
-                if (lista != null) {
-                    for (Exercicio e : lista) {
-                        if (e != null && e.getId() != null) {
-                            try {
-                                dao.deletar(e.getId());
-                            } catch (Exception ex) {
-                                System.err.println("Falha ao deletar exercício id=" + e.getId() + ": " + ex.getMessage());
-                            }
-                        }
-                    }
-                }
-            } catch (Exception ex) {
-                System.err.println("Falha ao buscar exercícios do usuário " + userId + ": " + ex.getMessage());
-            }
-        }
+        exercicioDAO = new TestExercicioDAO();
+        usuarioDAO = new TestUsuarioDAO();
+        exercicioService = new ExercicioService(exercicioDAO, usuarioDAO);
 
-        // Usa construtor sem parâmetros do service (ajuste caso a sua classe ExercicioService precise de outro construtor)
-        exercicioService = new ExercicioService();
+        // Criar usuário de teste
+        usuarioTeste = new Usuario();
+        usuarioTeste.setNome("Usuário Teste");
+        usuarioTeste.setEmail("teste@email.com");
+        usuarioTeste.setSenha("senha123");
+        usuarioTeste.setTipo(TipoUsuario.COMUM);
+        usuarioTeste = usuarioDAO.salvar(usuarioTeste);
     }
 
     @AfterEach
-    void tearDown() throws IOException {
-        Files.deleteIfExists(Paths.get(TEST_CSV_PATH));
+    void tearDown() {
+        if (em != null && em.isOpen()) {
+            em.close();
+        }
     }
 
     @AfterAll
-    static void cleanupDatabase() {
-        ExercicioDAO dao = new ExercicioDAO();
-        for (int userId : TEST_USERS) {
-            try {
-                List<Exercicio> lista = dao.buscarTodosDoUsuario(userId);
-                if (lista != null) {
-                    for (Exercicio e : lista) {
-                        if (e != null && e.getId() != null) {
-                            try {
-                                dao.deletar(e.getId());
-                            } catch (Exception ex) {
-                                // Não falhar a suíte por um erro de limpeza; log mínimo
-                                System.err.println("Falha ao deletar exercício id=" + e.getId() + ": " + ex.getMessage());
-                            }
-                        }
-                    }
-                }
-            } catch (Exception ex) {
-                System.err.println("Falha ao buscar exercícios do usuário " + userId + ": " + ex.getMessage());
-            }
-        }
-
-        // Remove arquivo de teste se ainda existir
-        try {
-            Files.deleteIfExists(Paths.get(TEST_CSV_PATH));
-        } catch (IOException e) {
-            System.err.println("Falha ao apagar arquivo de teste: " + e.getMessage());
-        }
+    static void tearDownAll() {
+        TestConnectionFactory.closeFactory();
     }
-
+//
     @Test
     @Order(1)
-    @DisplayName("Integração: Deve cadastrar exercício e persistir no CSV")
+    @DisplayName("Integração: Deve cadastrar exercício e persistir no banco")
     void testCadastrarExercicioCompleto() {
         // Dado
         String nome = "Supino Reto";
@@ -103,33 +69,35 @@ class ExercicioIntegrationTest {
 
         // Quando
         Exercicio exercicioCadastrado = exercicioService.cadastrarExercicio(
-                ID_USUARIO_TESTE, nome, descricao, caminhoGif
+                usuarioTeste.getId(), nome, descricao, caminhoGif
         );
 
         // Então
         assertNotNull(exercicioCadastrado);
-        assertNotEquals(0, exercicioCadastrado.getId());
+        assertNotNull(exercicioCadastrado.getId());
         assertEquals(nome, exercicioCadastrado.getNome());
         assertEquals(descricao, exercicioCadastrado.getDescricao());
         assertEquals(caminhoGif, exercicioCadastrado.getCaminhoGif());
-        assertEquals(ID_USUARIO_TESTE, exercicioCadastrado.getUsuario().getId());
+        assertEquals(usuarioTeste.getId(), exercicioCadastrado.getUsuario().getId());
 
-        // Verifica persistência via service
-        Optional<Exercicio> exercicioBuscado = exercicioService.buscarExercicioPorIdGlobal(exercicioCadastrado.getId());
+        // Verifica persistência
+        Optional<Exercicio> exercicioBuscado = exercicioDAO.buscarPorId(exercicioCadastrado.getId());
         assertTrue(exercicioBuscado.isPresent());
         assertEquals(nome, exercicioBuscado.get().getNome());
     }
-
+//
     @Test
     @Order(2)
     @DisplayName("Integração: Não deve permitir exercícios com nome duplicado para o mesmo usuário")
     void testValidacaoNomeDuplicado() {
         // Cadastra primeiro exercício
         String nomeDuplicado = "Agachamento";
-        exercicioService.cadastrarExercicio(ID_USUARIO_TESTE, nomeDuplicado, "Descrição 1", "/gif/1.gif");
+        exercicioService.cadastrarExercicio(usuarioTeste.getId(), nomeDuplicado, "Descrição 1", "/gif/1.gif");
 
         // Tenta cadastrar com mesmo nome (case insensitive)
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> exercicioService.cadastrarExercicio(ID_USUARIO_TESTE, "agachamento", "Descrição 2", "/gif/2.gif"));
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            exercicioService.cadastrarExercicio(usuarioTeste.getId(), "agachamento", "Descrição 2", "/gif/2.gif");
+        });
 
         assertTrue(exception.getMessage().contains("já possui um exercício com o nome"));
     }
@@ -138,72 +106,88 @@ class ExercicioIntegrationTest {
     @Order(3)
     @DisplayName("Integração: Deve permitir mesmo nome de exercício para usuários diferentes")
     void testExerciciosMesmoNomeUsuariosDiferentes() {
+        // Criar segundo usuário
+        Usuario usuario2 = new Usuario();
+        usuario2.setNome("Usuário 2");
+        usuario2.setEmail("usuario2@email.com");
+        usuario2.setSenha("senha123");
+        usuario2.setTipo(TipoUsuario.COMUM);
+        usuario2 = usuarioDAO.salvar(usuario2);
+
         String nomeExercicio = "Flexão";
 
         // Usuário 1 cadastra
         Exercicio exercicio1 = exercicioService.cadastrarExercicio(
-                1, nomeExercicio, "Descrição User 1", "/gif/1.gif"
+                usuarioTeste.getId(), nomeExercicio, "Descrição User 1", "/gif/1.gif"
         );
 
         // Usuário 2 cadastra com mesmo nome
         Exercicio exercicio2 = exercicioService.cadastrarExercicio(
-                2, nomeExercicio, "Descrição User 2", "/gif/2.gif"
+                usuario2.getId(), nomeExercicio, "Descrição User 2", "/gif/2.gif"
         );
 
         assertNotNull(exercicio1);
         assertNotNull(exercicio2);
         assertNotEquals(exercicio1.getId(), exercicio2.getId());
-        assertEquals(1, exercicio1.getUsuario().getId());
-        assertEquals(2, exercicio2.getUsuario().getId());
+        assertEquals(usuarioTeste.getId(), exercicio1.getUsuario().getId());
+        assertEquals(usuario2.getId(), exercicio2.getUsuario().getId());
     }
 
     @Test
     @Order(4)
     @DisplayName("Integração: Deve listar apenas exercícios do usuário")
     void testListarExerciciosDoUsuario() {
+        // Criar segundo usuário
+        Usuario usuario2 = new Usuario();
+        usuario2.setNome("Usuário 2");
+        usuario2.setEmail("usuario2@email.com");
+        usuario2.setSenha("senha123");
+        usuario2.setTipo(TipoUsuario.COMUM);
+        usuario2 = usuarioDAO.salvar(usuario2);
+
         // Cadastra exercícios para usuário 1
-        exercicioService.cadastrarExercicio(1, "Exercício User1 - 1", "Desc", "/gif/1.gif");
-        exercicioService.cadastrarExercicio(1, "Exercício User1 - 2", "Desc", "/gif/2.gif");
+        exercicioService.cadastrarExercicio(usuarioTeste.getId(), "Exercício User1 - 1", "Desc", "/gif/1.gif");
+        exercicioService.cadastrarExercicio(usuarioTeste.getId(), "Exercício User1 - 2", "Desc", "/gif/2.gif");
 
         // Cadastra exercício para usuário 2
-        exercicioService.cadastrarExercicio(2, "Exercício User2 - 1", "Desc", "/gif/3.gif");
+        exercicioService.cadastrarExercicio(usuario2.getId(), "Exercício User2 - 1", "Desc", "/gif/3.gif");
 
         // Lista exercícios do usuário 1
-        List<Exercicio> exerciciosUser1 = exercicioService.listarExerciciosDoUsuario(1);
+        List<Exercicio> exerciciosUser1 = exercicioService.listarExerciciosDoUsuario(usuarioTeste.getId());
         assertEquals(2, exerciciosUser1.size());
-        assertTrue(exerciciosUser1.stream().allMatch(e -> e.getUsuario().getId() == 1));
+        assertTrue(exerciciosUser1.stream().allMatch(e -> e.getUsuario().getId().equals(usuarioTeste.getId())));
 
         // Lista exercícios do usuário 2
-        List<Exercicio> exerciciosUser2 = exercicioService.listarExerciciosDoUsuario(2);
+        List<Exercicio> exerciciosUser2 = exercicioService.listarExerciciosDoUsuario(usuario2.getId());
         assertEquals(1, exerciciosUser2.size());
-        assertEquals(2, exerciciosUser2.getFirst().getUsuario().getId());
+        assertEquals(usuario2.getId(), exerciciosUser2.get(0).getUsuario().getId());
     }
-
+//
     @Test
     @Order(5)
     @DisplayName("Integração: Deve buscar exercício por nome do usuário")
     void testBuscarExercicioPorNome() {
         String nomeExercicio = "Rosca Direta";
         Exercicio cadastrado = exercicioService.cadastrarExercicio(
-                ID_USUARIO_TESTE, nomeExercicio, "Para bíceps", "/gif/rosca.gif"
+                usuarioTeste.getId(), nomeExercicio, "Para bíceps", "/gif/rosca.gif"
         );
 
         // Busca exata
         Optional<Exercicio> encontrado = exercicioService.buscarExercicioDoUsuarioPorNome(
-                ID_USUARIO_TESTE, nomeExercicio
+                usuarioTeste.getId(), nomeExercicio
         );
         assertTrue(encontrado.isPresent());
         assertEquals(cadastrado.getId(), encontrado.get().getId());
 
-        //Busca case insensitive
+        // Busca case insensitive
         Optional<Exercicio> encontradoLowerCase = exercicioService.buscarExercicioDoUsuarioPorNome(
-                ID_USUARIO_TESTE, "rosca direta"
+                usuarioTeste.getId(), "rosca direta"
         );
         assertTrue(encontradoLowerCase.isPresent());
 
-        //Busca inexistente
+        // Busca inexistente
         Optional<Exercicio> naoEncontrado = exercicioService.buscarExercicioDoUsuarioPorNome(
-                ID_USUARIO_TESTE, "Exercício Inexistente"
+                usuarioTeste.getId(), "Exercício Inexistente"
         );
         assertFalse(naoEncontrado.isPresent());
     }
@@ -212,25 +196,25 @@ class ExercicioIntegrationTest {
     @Order(6)
     @DisplayName("Integração: Deve deletar exercício por nome")
     void testDeletarExercicioPorNome() {
-        //Cadastra exercício
+        // Cadastra exercício
         String nomeExercicio = "Exercício Para Deletar";
-        exercicioService.cadastrarExercicio(ID_USUARIO_TESTE, nomeExercicio, "Descrição", "/gif/del.gif");
+        exercicioService.cadastrarExercicio(usuarioTeste.getId(), nomeExercicio, "Descrição", "/gif/del.gif");
 
-        //Verifica que existe
-        List<Exercicio> antes = exercicioService.listarExerciciosDoUsuario(ID_USUARIO_TESTE);
+        // Verifica que existe
+        List<Exercicio> antes = exercicioService.listarExerciciosDoUsuario(usuarioTeste.getId());
         assertTrue(antes.stream().anyMatch(e -> e.getNome().equals(nomeExercicio)));
 
-        //Deleta
-        boolean deletado = exercicioService.deletarExercicioPorNome(ID_USUARIO_TESTE, nomeExercicio);
+        // Deleta
+        boolean deletado = exercicioService.deletarExercicioPorNome(usuarioTeste.getId(), nomeExercicio);
         assertTrue(deletado);
 
-        //Verifica que foi deletado
-        List<Exercicio> depois = exercicioService.listarExerciciosDoUsuario(ID_USUARIO_TESTE);
+        // Verifica que foi deletado
+        List<Exercicio> depois = exercicioService.listarExerciciosDoUsuario(usuarioTeste.getId());
         assertFalse(depois.stream().anyMatch(e -> e.getNome().equals(nomeExercicio)));
 
-        //Verifica persistência
+        // Verifica persistência
         Optional<Exercicio> buscado = exercicioService.buscarExercicioDoUsuarioPorNome(
-                ID_USUARIO_TESTE, nomeExercicio
+                usuarioTeste.getId(), nomeExercicio
         );
         assertFalse(buscado.isPresent());
     }
@@ -239,24 +223,24 @@ class ExercicioIntegrationTest {
     @Order(7)
     @DisplayName("Integração: Deve atualizar exercício existente")
     void testAtualizarExercicio() {
-        //Cadastra exercício original
+        // Cadastra exercício original
         String nomeOriginal = "Exercício Original";
         Exercicio original = exercicioService.cadastrarExercicio(
-                ID_USUARIO_TESTE, nomeOriginal, "Descrição Original", "/gif/original.gif"
+                usuarioTeste.getId(), nomeOriginal, "Descrição Original", "/gif/original.gif"
         );
 
-        //Atualiza
+        // Atualiza
         String novoNome = "Exercício Atualizado";
         String novaDescricao = "Descrição Atualizada";
         String novoCaminhoGif = "/gif/atualizado.gif";
 
         exercicioService.atualizarExercicio(
-                ID_USUARIO_TESTE, nomeOriginal, novoNome, novaDescricao, novoCaminhoGif
+                usuarioTeste.getId(), nomeOriginal, novoNome, novaDescricao, novoCaminhoGif
         );
 
-        //Verifica atualização
+        // Verifica atualização
         Optional<Exercicio> atualizado = exercicioService.buscarExercicioDoUsuarioPorNome(
-                ID_USUARIO_TESTE, novoNome
+                usuarioTeste.getId(), novoNome
         );
         assertTrue(atualizado.isPresent());
         assertEquals(original.getId(), atualizado.get().getId());
@@ -264,9 +248,9 @@ class ExercicioIntegrationTest {
         assertEquals(novaDescricao, atualizado.get().getDescricao());
         assertEquals(novoCaminhoGif, atualizado.get().getCaminhoGif());
 
-        //Verifica que nome antigo não existe mais
+        // Verifica que nome antigo não existe mais
         Optional<Exercicio> antigoNome = exercicioService.buscarExercicioDoUsuarioPorNome(
-                ID_USUARIO_TESTE, nomeOriginal
+                usuarioTeste.getId(), nomeOriginal
         );
         assertFalse(antigoNome.isPresent());
     }
@@ -275,16 +259,22 @@ class ExercicioIntegrationTest {
     @Order(8)
     @DisplayName("Integração: Deve validar nome obrigatório no cadastro")
     void testValidacaoNomeObrigatorio() {
-        //Nome vazio
-        Exception exception1 = assertThrows(IllegalArgumentException.class, () -> exercicioService.cadastrarExercicio(ID_USUARIO_TESTE, "", "Descrição", "/gif/test.gif"));
+        // Nome vazio
+        Exception exception1 = assertThrows(IllegalArgumentException.class, () -> {
+            exercicioService.cadastrarExercicio(usuarioTeste.getId(), "", "Descrição", "/gif/test.gif");
+        });
         assertTrue(exception1.getMessage().contains("Nome do exercício não pode ser vazio"));
 
-        //Nome null
-        Exception exception2 = assertThrows(IllegalArgumentException.class, () -> exercicioService.cadastrarExercicio(ID_USUARIO_TESTE, null, "Descrição", "/gif/test.gif"));
+        // Nome null
+        Exception exception2 = assertThrows(IllegalArgumentException.class, () -> {
+            exercicioService.cadastrarExercicio(usuarioTeste.getId(), null, "Descrição", "/gif/test.gif");
+        });
         assertTrue(exception2.getMessage().contains("Nome do exercício não pode ser vazio"));
 
-        //Nome só com espaços
-        Exception exception3 = assertThrows(IllegalArgumentException.class, () -> exercicioService.cadastrarExercicio(ID_USUARIO_TESTE, "   ", "Descrição", "/gif/test.gif"));
+        // Nome só com espaços
+        Exception exception3 = assertThrows(IllegalArgumentException.class, () -> {
+            exercicioService.cadastrarExercicio(usuarioTeste.getId(), "   ", "Descrição", "/gif/test.gif");
+        });
         assertTrue(exception3.getMessage().contains("Nome do exercício não pode ser vazio"));
     }
 
@@ -293,7 +283,7 @@ class ExercicioIntegrationTest {
     @DisplayName("Integração: Não deve deletar exercício inexistente")
     void testDeletarExercicioInexistente() {
         boolean resultado = exercicioService.deletarExercicioPorNome(
-                ID_USUARIO_TESTE, "Exercício Que Não Existe"
+                usuarioTeste.getId(), "Exercício Que Não Existe"
         );
         assertFalse(resultado);
     }
@@ -302,12 +292,12 @@ class ExercicioIntegrationTest {
     @Order(10)
     @DisplayName("Integração: Deve buscar exercício por ID global")
     void testBuscarExercicioPorIdGlobal() {
-        //Cadastra exercício
+        // Cadastra exercício
         Exercicio cadastrado = exercicioService.cadastrarExercicio(
-                ID_USUARIO_TESTE, "Exercício Teste ID", "Descrição", "/gif/test.gif"
+                usuarioTeste.getId(), "Exercício Teste ID", "Descrição", "/gif/test.gif"
         );
 
-        //Busca por ID global
+        // Busca por ID global
         Optional<Exercicio> encontrado = exercicioService.buscarExercicioPorIdGlobal(
                 cadastrado.getId()
         );
@@ -315,7 +305,7 @@ class ExercicioIntegrationTest {
         assertEquals(cadastrado.getId(), encontrado.get().getId());
         assertEquals(cadastrado.getNome(), encontrado.get().getNome());
 
-        //Busca ID inexistente
+        // Busca ID inexistente
         Optional<Exercicio> naoEncontrado = exercicioService.buscarExercicioPorIdGlobal(99999);
         assertFalse(naoEncontrado.isPresent());
     }
@@ -326,13 +316,14 @@ class ExercicioIntegrationTest {
     void testTrimNomeExercicio() {
         String nomeComEspacos = "  Exercício Com Espaços  ";
         Exercicio cadastrado = exercicioService.cadastrarExercicio(
-                ID_USUARIO_TESTE, nomeComEspacos, "Descrição", "/gif/test.gif"
+                usuarioTeste.getId(), nomeComEspacos, "Descrição", "/gif/test.gif"
         );
 
         assertEquals("Exercício Com Espaços", cadastrado.getNome());
 
+        // Deve encontrar sem espaços
         Optional<Exercicio> encontrado = exercicioService.buscarExercicioDoUsuarioPorNome(
-                ID_USUARIO_TESTE, "Exercício Com Espaços"
+                usuarioTeste.getId(), "Exercício Com Espaços"
         );
         assertTrue(encontrado.isPresent());
     }
