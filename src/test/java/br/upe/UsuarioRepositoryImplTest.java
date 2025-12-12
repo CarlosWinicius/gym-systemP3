@@ -127,6 +127,7 @@ class UsuarioRepositoryImplTest {
         Usuario salvo = repository.salvar(u);
         assertNotNull(salvo.getId());
         assertTrue(salvo.getId() > 0);
+
     }
 
     @Test
