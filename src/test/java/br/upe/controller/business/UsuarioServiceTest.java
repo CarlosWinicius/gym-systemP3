@@ -138,6 +138,7 @@ class UsuarioServiceTest {
 //        Usuario result = usuarioService.autenticarUsuario("admin@email.com", "senhaErrada");
 //
 //        assertNull(result);
+
 //    }
 
     @Test
