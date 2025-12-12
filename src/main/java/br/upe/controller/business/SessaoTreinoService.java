@@ -1,0 +1,191 @@
+package br.upe.controller.business;
+
+import br.upe.data.dao.ExercicioDAO;
+import br.upe.data.dao.ItemPlanoTreinoDAO;
+import br.upe.data.dao.ItemSessaoTreinoDAO;
+import br.upe.data.dao.PlanoTreinoDAO;
+import br.upe.data.dao.SessaoTreinoDAO;
+import br.upe.data.dao.UsuarioDAO;
+import br.upe.data.entities.Exercicio;
+import br.upe.data.entities.ItemPlanoTreino;
+import br.upe.data.entities.ItemSessaoTreino;
+import br.upe.data.entities.PlanoTreino;
+import br.upe.data.entities.SessaoTreino;
+import br.upe.data.entities.Usuario;
+import br.upe.data.interfaces.IExercicioRepository;
+import br.upe.data.interfaces.IPlanoTreinoRepository;
+import br.upe.data.interfaces.ISessaoTreinoRepository;
+import br.upe.data.interfaces.IUsuarioRepository;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+public class SessaoTreinoService {
+
+    private final ISessaoTreinoRepository sessaoRepo;
+    private final IPlanoTreinoRepository planoRepo;
+    private final IExercicioRepository exercicioRepo;
+    private final IUsuarioRepository usuarioRepo;
+
+    private final ItemSessaoTreinoDAO itemSessaoRepo;
+    private final ItemPlanoTreinoDAO itemPlanoRepo;
+
+    private static final Logger logger = Logger.getLogger(SessaoTreinoService.class.getName());
+
+    public SessaoTreinoService(ISessaoTreinoRepository sessaoRepo,
+                               IPlanoTreinoRepository planoRepo,
+                               IExercicioRepository exercicioRepo,
+                               IUsuarioRepository usuarioRepo) {
+        this.sessaoRepo = sessaoRepo;
+        this.planoRepo = planoRepo;
+        this.exercicioRepo = exercicioRepo;
+        this.usuarioRepo = usuarioRepo;
+        this.itemSessaoRepo = new ItemSessaoTreinoDAO();
+        this.itemPlanoRepo = new ItemPlanoTreinoDAO();
+    }
+
+    public SessaoTreinoService() {
+        this.sessaoRepo = new SessaoTreinoDAO();
+        this.planoRepo = new PlanoTreinoDAO();
+        this.exercicioRepo = new ExercicioDAO();
+        this.usuarioRepo = new UsuarioDAO();
+        this.itemSessaoRepo = new ItemSessaoTreinoDAO();
+        this.itemPlanoRepo = new ItemPlanoTreinoDAO();
+    }
+
+    public SessaoTreino iniciarSessao(int idUsuario, int idPlano) {
+        Usuario usuario = usuarioRepo.buscarPorId(idUsuario)
+                .orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado."));
+
+        PlanoTreino plano = planoRepo.buscarPorId(idPlano)
+                .orElseThrow(() -> new IllegalArgumentException("Plano não encontrado."));
+
+        if (!plano.getUsuario().getId().equals(idUsuario)) {
+            throw new IllegalArgumentException("Este plano não pertence a você.");
+        }
+
+        SessaoTreino sessao = new SessaoTreino();
+        sessao.setUsuario(usuario);
+        sessao.setPlanoTreino(plano);
+        sessao.setDataSessao(LocalDate.now());
+
+        sessaoRepo.salvar(sessao);
+
+        return sessao;
+    }
+
+    public void registrarExecucao(SessaoTreino sessao, int idExercicio, int repeticoesRealizadas, double cargaRealizada) {
+        Exercicio exercicio = exercicioRepo.buscarPorId(idExercicio)
+                .orElseThrow(() -> new IllegalArgumentException("Exercício não encontrado: " + idExercicio));
+
+        ItemSessaoTreino item = new ItemSessaoTreino();
+        item.setSessaoTreino(sessao);
+        item.setExercicio(exercicio);
+        item.setRepeticoesRealizadas(repeticoesRealizadas);
+        item.setCargaRealizada(cargaRealizada);
+
+        itemSessaoRepo.salvar(item);
+    }
+
+    public void salvarSessao(SessaoTreino sessao) {
+        sessaoRepo.salvar(sessao);
+        logger.log(Level.INFO, "Sessão de treino ID {0} atualizada com sucesso!", sessao.getId());
+    }
+
+    public List<SugestaoAtualizacaoPlano> verificarAlteracoesEGerarSugestoes(SessaoTreino sessao) {
+        List<ItemPlanoTreino> itensPlanejados = itemPlanoRepo.listarPorPlano(sessao.getPlanoTreino().getId());
+        List<ItemSessaoTreino> itensExecutados = itemSessaoRepo.listarPorSessao(sessao.getId());
+
+        List<SugestaoAtualizacaoPlano> sugestoes = new ArrayList<>();
+
+        for (ItemPlanoTreino planejado : itensPlanejados) {
+            Optional<ItemSessaoTreino> executadoOpt = itensExecutados.stream()
+                    .filter(e -> e.getExercicio().getId().equals(planejado.getExercicio().getId()))
+                    .findFirst();
+
+            if (executadoOpt.isPresent()) {
+                ItemSessaoTreino executado = executadoOpt.get();
+
+                if (executado.getCargaRealizada() > planejado.getCargaKg() ||
+                        executado.getRepeticoesRealizadas() > planejado.getRepeticoes()) {
+
+                    sugestoes.add(new SugestaoAtualizacaoPlano(
+                            planejado.getExercicio().getId(),
+                            planejado.getExercicio().getNome(),
+                            planejado.getRepeticoes(),
+                            executado.getRepeticoesRealizadas(),
+                            planejado.getCargaKg(),
+                            executado.getCargaRealizada()
+                    ));
+                }
+            }
+        }
+
+        return sugestoes;
+    }
+
+    public void aplicarAtualizacoesNoPlano(int idPlano, int idExercicio, int novasRepeticoes, double novaCarga) {
+        List<ItemPlanoTreino> itens = itemPlanoRepo.listarPorPlano(idPlano);
+
+        Optional<ItemPlanoTreino> itemOpt = itens.stream()
+                .filter(i -> i.getExercicio().getId().equals(idExercicio))
+                .findFirst();
+
+        if (itemOpt.isPresent()) {
+            ItemPlanoTreino item = itemOpt.get();
+            item.setRepeticoes(novasRepeticoes);
+            item.setCargaKg((int) novaCarga);
+
+            itemPlanoRepo.editar(item);
+            logger.log(Level.INFO, "Plano atualizado para o exercício ID {0}.", idExercicio);
+        } else {
+            logger.log(Level.WARNING, "Exercício ID {0} não encontrado no plano.", idExercicio);
+        }
+    }
+
+    public static class SugestaoAtualizacaoPlano {
+        private final int idExercicio;
+        private final String nomeExercicio;
+        private final int repPlanejadas;
+        private final int repRealizadas;
+        private final double cargaPlanejada;
+        private final double cargaRealizada;
+
+        public SugestaoAtualizacaoPlano(int idExercicio, String nomeExercicio, int repPlanejadas, int repRealizadas, double cargaPlanejada, double cargaRealizada) {
+            this.idExercicio = idExercicio;
+            this.nomeExercicio = nomeExercicio;
+            this.repPlanejadas = repPlanejadas;
+            this.repRealizadas = repRealizadas;
+            this.cargaPlanejada = cargaPlanejada;
+            this.cargaRealizada = cargaRealizada;
+        }
+
+        public int getIdExercicio() {
+            return idExercicio;
+        }
+
+        public String getNomeExercicio() {
+            return nomeExercicio;
+        }
+
+        public int getRepPlanejadas() {
+            return repPlanejadas;
+        }
+
+        public int getRepRealizadas() {
+            return repRealizadas;
+        }
+
+        public double getCargaPlanejada() {
+            return cargaPlanejada;
+        }
+
+        public double getCargaRealizada() {
+            return cargaRealizada;
+        }
+    }
+}

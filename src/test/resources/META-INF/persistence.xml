@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="https://jakarta.ee/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd"
+             version="3.0">
+
+    <!-- Persistence Unit para Testes (H2 em memória) -->
+    <persistence-unit name="TestPU" transaction-type="RESOURCE_LOCAL">
+        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+
+        <!-- Entidades do projeto -->
+        <class>br.upe.data.entities.Usuario</class>
+        <class>br.upe.data.entities.Exercicio</class>
+        <class>br.upe.data.entities.IndicadorBiomedico</class>
+        <class>br.upe.data.entities.PlanoTreino</class>
+        <class>br.upe.data.entities.ItemPlanoTreino</class>
+        <class>br.upe.data.entities.SessaoTreino</class>
+        <class>br.upe.data.entities.ItemSessaoTreino</class>
+
+        <properties>
+            <!-- Driver H2 em memória com modo legacy -->
+            <property name="jakarta.persistence.jdbc.driver" value="org.h2.Driver"/>
+            <property name="jakarta.persistence.jdbc.url" value="jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;MODE=LEGACY"/>
+            <property name="jakarta.persistence.jdbc.user" value="sa"/>
+            <property name="jakarta.persistence.jdbc.password" value=""/>
+
+            <!-- Hibernate Settings - usar dialect automático -->
+            <property name="hibernate.hbm2ddl.auto" value="create-drop"/>
+            <property name="hibernate.show_sql" value="false"/>
+            <property name="hibernate.format_sql" value="false"/>
+        </properties>
+    </persistence-unit>
+
+</persistence>
+

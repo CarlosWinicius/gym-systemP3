@@ -1,0 +1,78 @@
+package br.upe.controller.ui;
+
+import br.upe.controller.business.IUsuarioService;
+import br.upe.controller.business.UsuarioService;
+import br.upe.data.TipoUsuario;
+import br.upe.data.entities.Usuario;
+import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
+
+public class UserAdminRowController extends BaseController {
+
+    @FXML private HBox rootPane;
+    @FXML private Label nameLabel;
+    @FXML private ComboBox<TipoUsuario> userTypeComboBox;
+    @FXML private Button deleteButton;
+
+    private Usuario usuario;
+    private UserAdminScreenController adminScreenController;
+    private final IUsuarioService usuarioService = new UsuarioService();
+
+    private static final String EMAIL_SUPER_ADMIN = "adm@email.com";
+
+    @FXML
+    public void initialize() {
+        userTypeComboBox.setItems(FXCollections.observableArrayList(TipoUsuario.values()));
+        userTypeComboBox.valueProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal != null && usuario != null && usuario.getTipo() != newVal) {
+                updateUserRole(newVal);
+            }
+        });
+    }
+
+    public void setData(Usuario usuario, UserAdminScreenController adminScreenController) {
+        this.usuario = usuario;
+        this.adminScreenController = adminScreenController;
+
+        nameLabel.setText(usuario.getNome());
+        userTypeComboBox.setValue(usuario.getTipo());
+
+
+        if (EMAIL_SUPER_ADMIN.equalsIgnoreCase(usuario.getEmail())) {
+            deleteButton.setDisable(true);      // Não pode clicar
+            deleteButton.setVisible(false);     // Nem vê o botão
+            userTypeComboBox.setDisable(true);  // Não pode mudar o cargo
+
+            nameLabel.setStyle("-fx-text-fill: #c0392b; -fx-font-weight: bold;");
+        } else {
+            deleteButton.setDisable(false);
+            deleteButton.setVisible(true);
+            userTypeComboBox.setDisable(false);
+            nameLabel.setStyle("");
+        }
+    }
+
+    private void updateUserRole(TipoUsuario newRole) {
+        try {
+            usuarioService.atualizarUsuario(usuario.getId(), null, null, null, newRole);
+            usuario.setTipo(newRole);
+            showAlert(Alert.AlertType.INFORMATION, "Sucesso", "Permissão atualizada.");
+        } catch (Exception e) {
+            showAlert(Alert.AlertType.ERROR, "Erro", e.getMessage());
+            userTypeComboBox.setValue(usuario.getTipo());
+        }
+    }
+
+    @FXML
+    private void handleDeleteUser(ActionEvent event) {
+        if (adminScreenController != null) {
+            adminScreenController.handleDeleteUser(usuario);
+        }
+    }
+}

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+
+<HBox alignment="CENTER_LEFT" prefHeight="50.0" prefWidth="700.0" spacing="15.0" style="-fx-background-color: #FFFFFF; -fx-background-radius: 5;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.upe.controller.ui.UserAdminRowController">
+    <padding>
+        <Insets bottom="10.0" left="20.0" right="20.0" top="10.0" />
+    </padding>
+    <children>
+        <Label fx:id="nameLabel" prefWidth="250.0" style="-fx-font-size: 14px;" text="Nome do Usuário" />
+        <ComboBox fx:id="userTypeComboBox" prefWidth="150.0" style="-fx-background-color: #BBB8B2;">
+         <HBox.margin>
+            <Insets left="158.0" />
+         </HBox.margin></ComboBox>
+        <Region HBox.hgrow="ALWAYS" />
+        <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#handleDeleteUser" style="-fx-background-color: #c0392b; -fx-text-fill: white;" text="Excluir" />
+    </children>
+</HBox>

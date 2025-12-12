@@ -1,0 +1,66 @@
+.exercise-card {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 8;
+    -fx-border-color: #E0E0E0;
+    -fx-border-radius: 8;
+    -fx-border-width: 1.5;
+}
+
+.exercise-card:selected {
+    -fx-border-color: #A6917E;
+    -fx-border-width: 2.5;
+    -fx-effect: drop shadow(gaussian, rgba(166, 145, 126, 0.5), 10, 0.3, 0, 0);
+}
+
+.plans-container {
+    -fx-padding: 20;
+    -fx-background-color: transparent;
+}
+
+.card-plano {
+    -fx-background-color: #8A806F;
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+    -fx-border-color: transparent;
+    -fx-pref-width: 260px;
+    -fx-pref-height: 80px;
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 0 0 0 20;
+    -fx-font-family: 'Inter', 'System', sans-serif;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #FFFFFF;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.15), 10, 0, 0, 4);
+    -fx-cursor: hand;
+}
+
+.card-plano:hover {
+    -fx-background-color: #7A7060;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.25), 15, 0, 0, 5);
+    -fx-translate-y: -2px;
+}
+
+.card-plano .image-view {
+    -fx-effect: none;
+}
+
+.welcome-label {
+    -fx-font-family: 'Inter', 'System', sans-serif;
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #8A806F;
+    -fx-padding: 0 0 10 20;
+}
+
+.button-padrao {
+    -fx-background-color: #8A806F;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 5;
+    -fx-cursor: hand;
+    -fx-font-size: 14px;
+}
+
+.button-padrao:hover {
+    -fx-background-color: #7A7060;
+}
