@@ -104,7 +104,7 @@
                                         <Font size="14.0" />
                                     </font>
                                 </Button>
-                                <ImageView fx:id="foto" fitHeight="158.0" fitWidth="200.0" layoutX="75.0" layoutY="126.0" pickOnBounds="true" preserveRatio="true" />
+                                <ImageView fx:id="foto" fitHeight="200.0" fitWidth="150.0" layoutX="75.0" layoutY="126.0" pickOnBounds="true" preserveRatio="true" />
                                 <Button fx:id="escolherImagem" layoutX="87.0" layoutY="294.0" onAction="#escolherImagem" prefHeight="33.0" prefWidth="175.0" style="-fx-background-color: transparet; -fx-text-fill: black; -fx-border-width: 1; -fx-border-color: black; -fx-border-radius: 6;" text="Escolher imagem">
                                     <font>
                                         <Font size="14.0" />
