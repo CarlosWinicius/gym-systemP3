@@ -3,8 +3,12 @@ package br.upe.data.beans;
 import br.upe.data.infra.ConnectionFactory;
 import jakarta.persistence.EntityManager;
 
+import java.util.logging.Logger;
+
 
 public class DbTest {
+
+    private static final Logger logger = Logger.getLogger(DbTest.class.getName());
     public static void main(String[] args) {
         System.out.println("--------------------------------------------------");
         System.out.println("⏳ TESTANDO CONEXÃO COM O SUPABASE...");
@@ -26,7 +30,7 @@ public class DbTest {
         } catch (Exception e) {
             System.err.println("❌ FALHA: Não foi possível conectar.");
             System.err.println("Erro: " + e.getMessage());
-            e.printStackTrace();
+            logger.severe("Erro ao conectar ao banco: " + e.getMessage());
         }
     }
 }
