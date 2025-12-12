@@ -17,8 +17,6 @@ public class ExercicioDAO extends GenericDAO<Exercicio> implements IExercicioRep
         super(Exercicio.class);
     }
 
-    // --- Métodos Específicos (que o GenericDAO não sabe fazer) ---
-
     @Override
     public List<Exercicio> buscarTodosDoUsuario(int idUsuario) {
         EntityManager em = getEntityManager();
