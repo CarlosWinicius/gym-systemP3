@@ -32,7 +32,8 @@ public class UsuarioService implements IUsuarioService {
     private static final String MSG_USUARIO_NAO_ENCONTRADO = "Usuário não encontrado.";
     private static final String MSG_SUPER_ADMIN_RESTRICAO = "O Super Administrador não pode sofrer esta alteração.";
 
-    private static final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$");
+    // CORREÇÃO: Padrão regex ajustado para ser mais robusto, exigindo pelo menos um ponto após o @ (ex: a@b.com)
+    private static final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Za-z0-9+_.-]+@(.+\\.)+.+$");
 
     public UsuarioService(IUsuarioRepository usuarioRepository) {
         this.usuarioRepository = usuarioRepository;
@@ -89,6 +90,7 @@ public class UsuarioService implements IUsuarioService {
             throw new IllegalArgumentException("Todos os campos são obrigatórios.");
         }
 
+        // CORREÇÃO: A validação do formato de e-mail agora está correta
         if (!EMAIL_PATTERN.matcher(email.trim()).matches()) {
             throw new IllegalArgumentException("Email inválido.");
         }
