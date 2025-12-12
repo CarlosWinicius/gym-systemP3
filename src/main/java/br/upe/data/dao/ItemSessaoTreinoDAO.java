@@ -5,8 +5,12 @@ import br.upe.data.interfaces.IGenericRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ItemSessaoTreinoDAO extends GenericDAO<ItemSessaoTreino> implements IGenericRepository<ItemSessaoTreino> {
+
+    private static final Logger logger = Logger.getLogger(ItemSessaoTreinoDAO.class.getName());
 
     public ItemSessaoTreinoDAO() {
         super(ItemSessaoTreino.class);
@@ -28,7 +32,7 @@ public class ItemSessaoTreinoDAO extends GenericDAO<ItemSessaoTreino> implements
 
             return query.getResultList();
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Erro ao listar itens por sessão: {0}", e.getMessage());
             return List.of();
         } finally {
             if (em != null && em.isOpen()) {
