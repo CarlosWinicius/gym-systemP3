@@ -182,12 +182,12 @@ class SessaoTreinoServiceTest {
 
         assertEquals(1, sugestoes.size());
         SessaoTreinoService.SugestaoAtualizacaoPlano sugestao = sugestoes.get(0);
-        assertEquals(1, sugestao.idExercicio);
-        assertEquals("Exercicio 1", sugestao.nomeExercicio);
-        assertEquals(10, sugestao.repPlanejadas);
-        assertEquals(12, sugestao.repRealizadas);
-        assertEquals(50.0, sugestao.cargaPlanejada);
-        assertEquals(55.0, sugestao.cargaRealizada);
+        assertEquals(1, sugestao.getIdExercicio());
+        assertEquals("Exercicio 1", sugestao.getNomeExercicio());
+        assertEquals(10, sugestao.getRepPlanejadas());
+        assertEquals(12, sugestao.getRepRealizadas());
+        assertEquals(50.0, sugestao.getCargaPlanejada());
+        assertEquals(55.0, sugestao.getCargaRealizada());
     }
 
     @Test
