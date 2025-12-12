@@ -1,7 +1,7 @@
 package br.upe.controller.ui;
 
 import br.upe.controller.business.UsuarioService;
-import br.upe.data.beans.Usuario;
+import br.upe.data.entities.Usuario;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -30,17 +30,41 @@ public class LoginScreenController extends BaseController {
     private void handleLogin() {
         String email = emailField.getText();
         String senha = passwordField.getText();
-        try {
-            Usuario usuario = usuarioService.autenticarUsuario(email, senha);
+
+        loginButton.setDisable(true);
+        loginButton.setText("Entrando...");
+
+        javafx.concurrent.Task<Usuario> loginTask = new javafx.concurrent.Task<>() {
+            @Override
+            protected Usuario call() throws Exception {
+                return usuarioService.autenticarUsuario(email, senha);
+            }
+        };
+
+        loginTask.setOnSucceeded(event -> {
+            Usuario usuario = loginTask.getValue();
             if (usuario != null) {
                 BaseController.usuarioLogado = usuario;
                 navigateTo(loginButton, "/ui/HomeScreen.fxml");
             } else {
                 showAlert(Alert.AlertType.ERROR, "Erro de Login", "Credenciais inválidas. Tente novamente.");
+                resetLoginButton();
             }
-        } catch (Exception e) {
-            showAlert(Alert.AlertType.ERROR, "Erro Inesperado", "Ocorreu um erro inesperado: " + e.getMessage());
-        }
+        });
+
+        loginTask.setOnFailed(event -> {
+            Throwable erro = loginTask.getException();
+            logger.log(java.util.logging.Level.SEVERE, "Erro no login", erro);
+            showAlert(Alert.AlertType.ERROR, "Erro de Conexão", "Não foi possível conectar ao servidor: " + erro.getMessage());
+            resetLoginButton();
+        });
+
+        new Thread(loginTask).start();
+    }
+
+    private void resetLoginButton() {
+        loginButton.setDisable(false);
+        loginButton.setText("Entrar");
     }
 
     @FXML

@@ -1,9 +1,9 @@
 package br.upe.controller.business;
 
 import br.upe.data.TipoUsuario;
-import br.upe.data.beans.Usuario;
-import br.upe.data.repository.IUsuarioRepository;
-import br.upe.data.repository.impl.UsuarioRepositoryImpl;
+import br.upe.data.entities.Usuario;
+import br.upe.data.interfaces.IUsuarioRepository;
+import br.upe.data.dao.UsuarioDAO;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,7 +19,7 @@ public class UsuarioService implements IUsuarioService {
     }
 
     public UsuarioService() {
-        this.usuarioRepository = new UsuarioRepositoryImpl();
+        this.usuarioRepository = new UsuarioDAO();
     }
 
     @Override

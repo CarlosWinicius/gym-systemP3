@@ -1,8 +1,11 @@
 package br.upe.controller.business;
 
-import br.upe.data.beans.Exercicio;
-import br.upe.data.repository.IExercicioRepository;
-import br.upe.data.repository.impl.ExercicioRepositoryImpl;
+import br.upe.data.dao.ExercicioDAO;
+import br.upe.data.dao.UsuarioDAO; // Assumindo que você tem esse DAO
+import br.upe.data.entities.Exercicio;
+import br.upe.data.entities.Usuario;
+import br.upe.data.interfaces.IExercicioRepository;
+import br.upe.data.interfaces.IUsuarioRepository;
 
 import java.util.List;
 import java.util.Optional;
@@ -11,49 +14,67 @@ import java.util.logging.Logger;
 
 public class ExercicioService implements IExercicioService {
 
-    private IExercicioRepository exercicioRepository;
+    private final IExercicioRepository exercicioRepository;
+    private final IUsuarioRepository usuarioRepository; // Necessário para buscar o dono do exercício
     private static final Logger logger = Logger.getLogger(ExercicioService.class.getName());
 
-    public ExercicioService(IExercicioRepository exercicioRepository) {
+    // Construtor com Injeção (Ideal para testes)
+    public ExercicioService(IExercicioRepository exercicioRepository, IUsuarioRepository usuarioRepository) {
         this.exercicioRepository = exercicioRepository;
+        this.usuarioRepository = usuarioRepository;
     }
 
+    // Construtor Padrão (Instancia seus DAOs concretos)
     public ExercicioService() {
-        this.exercicioRepository = new ExercicioRepositoryImpl();
+        this.exercicioRepository = new ExercicioDAO();
+        this.usuarioRepository = new UsuarioDAO(); // Precisa existir para pegar o objeto Usuario
     }
 
-    // Verifica condições e cadastra exercicios no repositorio
     @Override
     public Exercicio cadastrarExercicio(int idUsuario, String nome, String descricao, String caminhoGif) {
         if (nome == null || nome.trim().isEmpty()) {
             throw new IllegalArgumentException("Nome do exercício não pode ser vazio.");
         }
 
+        // 1. Validar nome duplicado
         List<Exercicio> exerciciosDoUsuario = exercicioRepository.buscarTodosDoUsuario(idUsuario);
         boolean nomeJaExiste = exerciciosDoUsuario.stream()
                 .anyMatch(e -> e.getNome().equalsIgnoreCase(nome.trim()));
+
         if (nomeJaExiste) {
             throw new IllegalArgumentException("Você já possui um exercício com o nome '" + nome + "'.");
         }
 
-        Exercicio novoExercicio = new Exercicio(idUsuario, nome.trim(), descricao, caminhoGif);
+        // 2. BUSCAR O OBJETO USUÁRIO (A mudança principal)
+        // O JPA exige o objeto Usuario real para salvar a relação, não apenas o ID inteiro.
+        Usuario usuario = usuarioRepository.buscarPorId(idUsuario)
+                .orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado."));
+
+        // 3. Montar a Entity
+        Exercicio novoExercicio = new Exercicio();
+        novoExercicio.setUsuario(usuario); // Vincula o objeto Usuario
+        novoExercicio.setNome(nome.trim());
+        novoExercicio.setDescricao(descricao);
+        novoExercicio.setCaminhoGif(caminhoGif);
+
+        // 4. Salvar usando o DAO
         return exercicioRepository.salvar(novoExercicio);
     }
 
-    // Lista exercicios do usuario
     @Override
     public List<Exercicio> listarExerciciosDoUsuario(int idUsuario) {
+        // O seu ExercicioDAO já implementa isso com JPQL
         return exercicioRepository.buscarTodosDoUsuario(idUsuario);
     }
 
-
-    // Busca o exercicio pelo nome
     @Override
     public Optional<Exercicio> buscarExercicioDoUsuarioPorNome(int idUsuario, String nomeExercicio) {
         if (nomeExercicio == null || nomeExercicio.trim().isEmpty()) {
             return Optional.empty();
         }
 
+        // Otimização: Se quiser, pode criar um método específico no DAO para isso (buscarPorNomeEUsuario)
+        // Mas filtrar a lista aqui funciona bem para volumes pequenos de dados.
         List<Exercicio> exerciciosDoUsuario = exercicioRepository.buscarTodosDoUsuario(idUsuario);
 
         return exerciciosDoUsuario.stream()
@@ -61,77 +82,58 @@ public class ExercicioService implements IExercicioService {
                 .findFirst();
     }
 
-    // Busca o exercicio pelo id
     @Override
     public Optional<Exercicio> buscarExercicioPorIdGlobal(int idExercicio) {
+        // O GenericDAO já fornece o buscarPorId
         return exercicioRepository.buscarPorId(idExercicio);
     }
 
-    // verifica condições e deleta o exercicio pelo nome
     @Override
     public boolean deletarExercicioPorNome(int idUsuario, String nomeExercicio) {
         if (nomeExercicio == null || nomeExercicio.trim().isEmpty()) {
-            throw new IllegalArgumentException("Nome do exercício para deletar não pode ser vazio.");
+            throw new IllegalArgumentException("Nome inválido.");
         }
 
-        Optional<Exercicio> exercicioParaDeletarOpt = buscarExercicioDoUsuarioPorNome(idUsuario, nomeExercicio);
+        Optional<Exercicio> exercicioOpt = buscarExercicioDoUsuarioPorNome(idUsuario, nomeExercicio);
 
-        if (exercicioParaDeletarOpt.isPresent()) {
-            Exercicio exercicioParaDeletar = exercicioParaDeletarOpt.get();
-            exercicioRepository.deletar(exercicioParaDeletar.getIdExercicio());
+        if (exercicioOpt.isPresent()) {
+            // O GenericDAO fornece o deletar pelo ID
+            exercicioRepository.deletar(exercicioOpt.get().getId());
             return true;
         } else {
-            logger.log(Level.WARNING, "Exercício com nome ''{0}'' não encontrado entre os seus exercícios.", nomeExercicio);
+            logger.log(Level.WARNING, "Exercício ''{0}'' não encontrado.", nomeExercicio);
             return false;
         }
     }
 
-    // Alterar exercicios
     @Override
     public void atualizarExercicio(int idUsuario, String nomeAtualExercicio, String novoNome, String novaDescricao, String novoCaminhoGif) {
-        validarNomeAtual(nomeAtualExercicio);
+        if (nomeAtualExercicio == null || nomeAtualExercicio.trim().isEmpty()) {
+            throw new IllegalArgumentException("Nome atual inválido.");
+        }
 
         Optional<Exercicio> exercicioOpt = buscarExercicioDoUsuarioPorNome(idUsuario, nomeAtualExercicio);
 
         if (exercicioOpt.isPresent()) {
             Exercicio exercicio = exercicioOpt.get();
 
-            validarNovoNome(exercicio, novoNome, idUsuario);
+            // Valida se o novo nome já existe para OUTRO exercício
+            if (novoNome != null && !novoNome.trim().isEmpty() && !novoNome.trim().equalsIgnoreCase(exercicio.getNome())) {
+                boolean nomeJaExiste = listarExerciciosDoUsuario(idUsuario).stream()
+                        .anyMatch(e -> e.getNome().equalsIgnoreCase(novoNome.trim()));
+                if (nomeJaExiste) {
+                    throw new IllegalArgumentException("Já existe um exercício com o nome '" + novoNome + "'.");
+                }
+                exercicio.setNome(novoNome.trim());
+            }
 
-            atualizarCampos(exercicio, novoNome, novaDescricao, novoCaminhoGif);
+            if (novaDescricao != null) exercicio.setDescricao(novaDescricao);
+            if (novoCaminhoGif != null) exercicio.setCaminhoGif(novoCaminhoGif);
 
+            // O GenericDAO fornece o editar
             exercicioRepository.editar(exercicio);
         } else {
-            throw new IllegalArgumentException("Erro: Exercício '" + nomeAtualExercicio + "' não encontrado entre os seus exercícios para atualização.");
-        }
-    }
-
-    private void validarNomeAtual(String nomeAtualExercicio) {
-        if (nomeAtualExercicio == null || nomeAtualExercicio.trim().isEmpty()) {
-            throw new IllegalArgumentException("O nome atual do exercício não pode ser vazio.");
-        }
-    }
-
-    private void validarNovoNome(Exercicio exercicio, String novoNome, int idUsuario) {
-        if (novoNome != null && !novoNome.trim().isEmpty() && !novoNome.trim().equalsIgnoreCase(exercicio.getNome())) {
-            List<Exercicio> exerciciosDoUsuario = exercicioRepository.buscarTodosDoUsuario(idUsuario);
-            boolean nomeJaExiste = exerciciosDoUsuario.stream()
-                    .anyMatch(e -> e.getNome().equalsIgnoreCase(novoNome.trim()));
-            if (nomeJaExiste) {
-                throw new IllegalArgumentException("Você já possui um exercício com o novo nome '" + novoNome + "'.");
-            }
-        }
-    }
-
-    private void atualizarCampos(Exercicio exercicio, String novoNome, String novaDescricao, String novoCaminhoGif) {
-        if (novoNome != null && !novoNome.trim().isEmpty()) {
-            exercicio.setNome(novoNome.trim());
-        }
-        if (novaDescricao != null) {
-            exercicio.setDescricao(novaDescricao);
-        }
-        if (novoCaminhoGif != null) {
-            exercicio.setCaminhoGif(novoCaminhoGif);
+            throw new IllegalArgumentException("Exercício '" + nomeAtualExercicio + "' não encontrado.");
         }
     }
 }
