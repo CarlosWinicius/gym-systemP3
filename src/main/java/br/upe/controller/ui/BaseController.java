@@ -1,6 +1,6 @@
 package br.upe.controller.ui;
 
-import br.upe.data.entities.Usuario;
+import br.upe.data.entities.EUsuario;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -15,7 +15,7 @@ public abstract class BaseController {
     protected static final double APP_WIDTH = 900;
     protected static final double APP_HEIGHT = 600;
 
-    protected static Usuario usuarioLogado;
+    protected static EUsuario usuarioLogado;
 
     protected final Logger logger = Logger.getLogger(getClass().getName());
 

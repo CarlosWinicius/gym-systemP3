@@ -1,6 +1,6 @@
 package br.upe.data.dao;
 
-import br.upe.data.entities.Usuario;
+import br.upe.data.entities.EUsuario;
 import br.upe.data.infra.ConnectionFactory;
 import br.upe.data.interfaces.IUsuarioRepository;
 import jakarta.persistence.EntityManager;
@@ -13,7 +13,7 @@ import java.util.Optional;
 public class UsuarioDAO implements IUsuarioRepository {
 
     @Override
-    public Usuario salvar(Usuario usuario) {
+    public EUsuario salvar(EUsuario usuario) {
         EntityManager em = ConnectionFactory.getConnection();
         try {
             em.getTransaction().begin();
@@ -36,7 +36,7 @@ public class UsuarioDAO implements IUsuarioRepository {
     }
 
     @Override
-    public void editar(Usuario usuario) {
+    public void editar(EUsuario usuario) {
         // No JPA, editar e salvar muitas vezes são a mesma operação (merge)
         salvar(usuario);
     }
@@ -46,7 +46,7 @@ public class UsuarioDAO implements IUsuarioRepository {
         EntityManager em = ConnectionFactory.getConnection();
         try {
             em.getTransaction().begin();
-            Usuario usuario = em.find(Usuario.class, id);
+            EUsuario usuario = em.find(EUsuario.class, id);
             if (usuario != null) {
                 em.remove(usuario);
             }
@@ -60,10 +60,10 @@ public class UsuarioDAO implements IUsuarioRepository {
     }
 
     @Override
-    public Optional<Usuario> buscarPorId(int id) {
+    public Optional<EUsuario> buscarPorId(int id) {
         EntityManager em = ConnectionFactory.getConnection();
         try {
-            Usuario usuario = em.find(Usuario.class, id);
+            EUsuario usuario = em.find(EUsuario.class, id);
             return Optional.ofNullable(usuario);
         } finally {
             em.close();
@@ -71,11 +71,11 @@ public class UsuarioDAO implements IUsuarioRepository {
     }
 
     @Override
-    public Optional<Usuario> buscarPorEmail(String email) {
+    public Optional<EUsuario> buscarPorEmail(String email) {
         EntityManager em = ConnectionFactory.getConnection();
         try {
-            String jpql = "SELECT u FROM Usuario u WHERE u.email = :email";
-            TypedQuery<Usuario> query = em.createQuery(jpql, Usuario.class);
+            String jpql = "SELECT u FROM EUsuario u WHERE u.email = :email";
+            TypedQuery<EUsuario> query = em.createQuery(jpql, EUsuario.class);
             query.setParameter("email", email);
 
             return Optional.of(query.getSingleResult());
@@ -87,10 +87,10 @@ public class UsuarioDAO implements IUsuarioRepository {
     }
 
     @Override
-    public List<Usuario> listarTodos() {
+    public List<EUsuario> listarTodos() {
         EntityManager em = ConnectionFactory.getConnection();
         try {
-            return em.createQuery("FROM Usuario", Usuario.class).getResultList();
+            return em.createQuery("FROM EUsuario", EUsuario.class).getResultList();
         } finally {
             em.close();
         }
@@ -101,7 +101,7 @@ public class UsuarioDAO implements IUsuarioRepository {
         EntityManager em = ConnectionFactory.getConnection();
         try {
             em.getTransaction().begin();
-            Usuario u = em.find(Usuario.class, id);
+            EUsuario u = em.find(EUsuario.class, id);
             u.setFotoPerfil(foto);
             em.getTransaction().commit();
         } finally {

@@ -4,7 +4,7 @@ import br.upe.controller.business.CalculadoraIMC;
 import br.upe.controller.business.IUsuarioService;
 import br.upe.controller.business.IndicadorBiomedicoService;
 import br.upe.controller.business.UsuarioService;
-import br.upe.data.entities.Usuario;
+import br.upe.data.entities.EUsuario;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -37,7 +37,7 @@ public class PerfilEditController extends BaseController {
     private final IUsuarioService usuarioService = new UsuarioService();
     private final IndicadorBiomedicoService indicadorService = new IndicadorBiomedicoService();
 
-    public void setUsuarioLogado(Usuario usuarioLogado) {
+    public void setUsuarioLogado(EUsuario usuarioLogado) {
         this.usuarioLogado = usuarioLogado;
         carregarDadosNaTela();
     }
@@ -182,7 +182,7 @@ public class PerfilEditController extends BaseController {
             PerfilController controller = loader.getController();
 
             // ✅ recarrega do banco para garantir que vem com foto e dados atualizados
-            Usuario usuarioAtualizado = usuarioService.buscarUsuarioPorId(usuarioLogado.getId())
+            EUsuario usuarioAtualizado = usuarioService.buscarUsuarioPorId(usuarioLogado.getId())
                     .orElse(usuarioLogado);
 
             controller.setUsuarioLogado(usuarioAtualizado);

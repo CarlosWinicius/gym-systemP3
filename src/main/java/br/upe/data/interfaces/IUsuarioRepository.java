@@ -1,14 +1,14 @@
 package br.upe.data.interfaces;
 
-import br.upe.data.entities.Usuario;
+import br.upe.data.entities.EUsuario;
 import java.util.List;
 import java.util.Optional;
 
 public interface IUsuarioRepository {
-    Usuario salvar(Usuario usuario);
-    Optional<Usuario> buscarPorId(int id);
-    Optional<Usuario> buscarPorEmail(String email);
-    List<Usuario> listarTodos();
-    void editar(Usuario usuario);
+    EUsuario salvar(EUsuario usuario);
+    Optional<EUsuario> buscarPorId(int id);
+    Optional<EUsuario> buscarPorEmail(String email);
+    List<EUsuario> listarTodos();
+    void editar(EUsuario usuario);
     void deletar(int id);
 }

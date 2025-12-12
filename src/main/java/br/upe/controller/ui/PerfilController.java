@@ -4,7 +4,7 @@ import br.upe.controller.business.CalculadoraIMC;
 import br.upe.controller.business.IUsuarioService;
 import br.upe.controller.business.IndicadorBiomedicoService;
 import br.upe.controller.business.UsuarioService;
-import br.upe.data.entities.Usuario;
+import br.upe.data.entities.EUsuario;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -15,6 +15,8 @@ import javafx.scene.image.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -182,14 +184,25 @@ public class PerfilController extends BaseController {
             alert.showAndWait();
         }
     }
-    public void setUsuarioLogado(Usuario usuarioLogado) {
+    public void setUsuarioLogado(EUsuario usuarioLogado) {
         this.usuarioLogado = usuarioLogado;
     }
 
     @FXML
     private void voltarTela(javafx.event.ActionEvent event) {
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("/ui/PerfilScreen.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/ui/PerfilScreen.fxml"));
+            Parent root = loader.load();
+
+            // Recupera o controller e passa o usuário atualizado
+            PerfilController controller = loader.getController();
+            controller.setUsuarioLogado(usuarioLogado);
+
+            // Atualiza a foto se existir
+            if (usuarioLogado.getFotoPerfil() != null) {
+                controller.foto.setImage(new Image(new ByteArrayInputStream(usuarioLogado.getFotoPerfil())));
+            }
+
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.show();
@@ -197,6 +210,7 @@ public class PerfilController extends BaseController {
             logger.log(Level.SEVERE, "Erro ao carregar a tela de perfil", e);
         }
     }
+
 
     @FXML
     private void editarTela(javafx.event.ActionEvent event) {

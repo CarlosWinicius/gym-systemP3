@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "usuario") // Nome exato da tabela no SQL
-public class Usuario {
+public class EUsuario {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // O banco gera o ID (auto-increment)
@@ -37,9 +37,9 @@ public class Usuario {
     }
 
 
-    public Usuario() {}
+    public EUsuario() {}
 
-    public Usuario(String nome, String email, String senha, TipoUsuario tipo) {
+    public EUsuario(String nome, String email, String senha, TipoUsuario tipo) {
         this.nome = nome;
         this.email = email;
         this.senha = senha;

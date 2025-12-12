@@ -2,7 +2,7 @@ package br.upe.controller.business;
 
 import br.upe.data.TipoUsuario;
 import br.upe.data.dao.UsuarioDAO;
-import br.upe.data.entities.Usuario;
+import br.upe.data.entities.EUsuario;
 import br.upe.data.interfaces.IUsuarioRepository;
 
 import java.util.List;
@@ -35,10 +35,10 @@ public class UsuarioService implements IUsuarioService {
     }
 
     public void verificarECriarAdminPadrao() {
-        Optional<Usuario> admin = usuarioRepository.buscarPorEmail(EMAIL_SUPER_ADMIN);
+        Optional<EUsuario> admin = usuarioRepository.buscarPorEmail(EMAIL_SUPER_ADMIN);
 
         if (admin.isEmpty()) {
-            Usuario superAdmin = new Usuario();
+            EUsuario superAdmin = new EUsuario();
             superAdmin.setNome(NOME_SUPER_ADMIN);
             superAdmin.setEmail(EMAIL_SUPER_ADMIN);
             superAdmin.setSenha(SENHA_SUPER_ADMIN);
@@ -50,15 +50,15 @@ public class UsuarioService implements IUsuarioService {
     }
 
     @Override
-    public Usuario autenticarUsuario(String email, String senha) {
+    public EUsuario autenticarUsuario(String email, String senha) {
         if (isStringInvalid(email) || isStringInvalid(senha)) {
             throw new IllegalArgumentException(MSG_EMAIL_SENHA_OBRIGATORIOS);
         }
 
-        Optional<Usuario> usuarioOpt = usuarioRepository.buscarPorEmail(email.trim());
+        Optional<EUsuario> usuarioOpt = usuarioRepository.buscarPorEmail(email.trim());
 
         if (usuarioOpt.isPresent()) {
-            Usuario usuario = usuarioOpt.get();
+            EUsuario usuario = usuarioOpt.get();
             if (usuario.getSenha().equals(senha)) {
                 return usuario;
             }
@@ -68,7 +68,7 @@ public class UsuarioService implements IUsuarioService {
     }
 
     @Override
-    public Usuario cadastrarUsuario(String nome, String email, String senha, TipoUsuario tipo) {
+    public EUsuario cadastrarUsuario(String nome, String email, String senha, TipoUsuario tipo) {
         if (isStringInvalid(nome) || isStringInvalid(email) || isStringInvalid(senha)) {
             throw new IllegalArgumentException("Todos os campos são obrigatórios.");
         }
@@ -81,13 +81,13 @@ public class UsuarioService implements IUsuarioService {
             throw new IllegalArgumentException("Já existe um usuário com este email.");
         }
 
-        Usuario novoUsuario = new Usuario(nome.trim(), email.trim(), senha.trim(), tipo);
+        EUsuario novoUsuario = new EUsuario(nome.trim(), email.trim(), senha.trim(), tipo);
         return usuarioRepository.salvar(novoUsuario);
     }
 
     @Override
     public void removerUsuario(int id) {
-        Usuario usuario = buscarUsuarioOuLancarExcecao(id);
+        EUsuario usuario = buscarUsuarioOuLancarExcecao(id);
 
         if (EMAIL_SUPER_ADMIN.equalsIgnoreCase(usuario.getEmail())) {
             throw new IllegalArgumentException("O Super Administrador não pode ser excluído.");
@@ -98,7 +98,7 @@ public class UsuarioService implements IUsuarioService {
 
     @Override
     public void atualizarUsuario(int id, String novoNome, String novoEmail, String novaSenha, TipoUsuario novoTipo) {
-        Usuario usuario = buscarUsuarioOuLancarExcecao(id);
+        EUsuario usuario = buscarUsuarioOuLancarExcecao(id);
 
         validarRestricoesSuperAdmin(usuario, novoEmail, novoTipo);
 
@@ -114,7 +114,7 @@ public class UsuarioService implements IUsuarioService {
 
     @Override
     public void rebaixarUsuarioAComum(int idUsuario) {
-        Usuario usuario = buscarUsuarioOuLancarExcecao(idUsuario);
+        EUsuario usuario = buscarUsuarioOuLancarExcecao(idUsuario);
 
         if (EMAIL_SUPER_ADMIN.equalsIgnoreCase(usuario.getEmail())) {
             throw new IllegalArgumentException(MSG_SUPER_ADMIN_RESTRICAO);
@@ -128,14 +128,14 @@ public class UsuarioService implements IUsuarioService {
 
     @Override
     public void promoverUsuarioAAdmin(int idUsuario) {
-        Usuario usuario = buscarUsuarioOuLancarExcecao(idUsuario);
+        EUsuario usuario = buscarUsuarioOuLancarExcecao(idUsuario);
         if (usuario.getTipo() == TipoUsuario.ADMIN) return;
 
         usuario.setTipo(TipoUsuario.ADMIN);
         usuarioRepository.editar(usuario);
     }
 
-    private void validarRestricoesSuperAdmin(Usuario usuario, String novoEmail, TipoUsuario novoTipo) {
+    private void validarRestricoesSuperAdmin(EUsuario usuario, String novoEmail, TipoUsuario novoTipo) {
         boolean isSuperAdmin = EMAIL_SUPER_ADMIN.equalsIgnoreCase(usuario.getEmail());
 
         if (isSuperAdmin) {
@@ -148,9 +148,9 @@ public class UsuarioService implements IUsuarioService {
         }
     }
 
-    private void processarAtualizacaoEmail(Usuario usuario, String novoEmail) {
+    private void processarAtualizacaoEmail(EUsuario usuario, String novoEmail) {
         if (!isStringInvalid(novoEmail) && !novoEmail.equalsIgnoreCase(usuario.getEmail())) {
-            Optional<Usuario> emailExistente = usuarioRepository.buscarPorEmail(novoEmail.trim());
+            Optional<EUsuario> emailExistente = usuarioRepository.buscarPorEmail(novoEmail.trim());
 
             if (emailExistente.isPresent() && !emailExistente.get().getId().equals(usuario.getId())) {
                 throw new IllegalArgumentException("Este e-mail já está em uso.");
@@ -159,7 +159,7 @@ public class UsuarioService implements IUsuarioService {
         }
     }
 
-    private Usuario buscarUsuarioOuLancarExcecao(int id) {
+    private EUsuario buscarUsuarioOuLancarExcecao(int id) {
         return usuarioRepository.buscarPorId(id)
                 .orElseThrow(() -> new IllegalArgumentException(MSG_USUARIO_NAO_ENCONTRADO));
     }
@@ -169,23 +169,23 @@ public class UsuarioService implements IUsuarioService {
     }
 
     @Override
-    public Optional<Usuario> buscarUsuarioPorId(int id) {
+    public Optional<EUsuario> buscarUsuarioPorId(int id) {
         return usuarioRepository.buscarPorId(id);
     }
 
     @Override
-    public Optional<Usuario> buscarUsuarioPorEmail(String email) {
+    public Optional<EUsuario> buscarUsuarioPorEmail(String email) {
         return usuarioRepository.buscarPorEmail(email);
     }
 
     @Override
-    public List<Usuario> listarTodosUsuarios() {
+    public List<EUsuario> listarTodosUsuarios() {
         return usuarioRepository.listarTodos();
     }
 
     @Override
     public void atualizarFoto(Integer id, byte[] foto) {
-        Usuario usuario = buscarUsuarioOuLancarExcecao(id);
+        EUsuario usuario = buscarUsuarioOuLancarExcecao(id);
         usuario.setFotoPerfil(foto);
         usuarioRepository.editar(usuario);
     }
