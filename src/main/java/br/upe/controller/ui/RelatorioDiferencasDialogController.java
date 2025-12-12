@@ -1,7 +1,7 @@
 package br.upe.controller.ui;
 
 import br.upe.controller.business.RelatorioDiferencaIndicadores;
-import br.upe.data.beans.IndicadorBiomedico;
+import br.upe.data.entities.IndicadorBiomedico;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -116,7 +116,7 @@ public class RelatorioDiferencasDialogController {
         serieImc.setName("IMC");
 
         for (IndicadorBiomedico ind : evolucao) {
-            String data = ind.getData() != null ? ind.getData().format(DATE_FMT) : "";
+            String data = ind.getDataRegistro() != null ? ind.getDataRegistro().format(DATE_FMT) : "";
             seriePeso.getData().add(new XYChart.Data<>(data, ind.getPesoKg()));
             serieGordura.getData().add(new XYChart.Data<>(data, ind.getPercentualGordura()));
             serieMassa.getData().add(new XYChart.Data<>(data, ind.getPercentualMassaMagra()));

@@ -19,7 +19,6 @@
         <junit.jupiter.version>5.10.0</junit.jupiter.version>
         <mockito.version>5.9.0</mockito.version>
         <hibernate.version>6.5.2.Final</hibernate.version>
-        <mysql.connector.version>8.2.0</mysql.connector.version>
         <sonar.organization>winiciuscx</sonar.organization>
         <sonar.sources>src/main/java</sonar.sources>
         <sonar.tests>src/test/java</sonar.tests>
@@ -52,6 +51,12 @@
             <artifactId>javafx-fxml</artifactId>
             <version>21.0.9</version>
         </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.30</version>
+            <scope>provided</scope>
+        </dependency>
 
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -79,6 +84,14 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- H2 Database for integration tests -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>2.2.224</version>
+            <scope>test</scope>
+        </dependency>
+
         <dependency>
             <groupId>jakarta.persistence</groupId>
             <artifactId>jakarta.persistence-api</artifactId>
@@ -89,20 +102,13 @@
             <artifactId>hibernate-core</artifactId>
             <version>${hibernate.version}</version>
         </dependency>
-        <dependency>
-            <groupId>com.mysql</groupId>
-            <artifactId>mysql-connector-j</artifactId>
-            <version>${mysql.connector.version}</version>
-        </dependency>
 
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <version>42.7.2</version>
         </dependency>
-        <!-- As três dependências abaixo são explicitamente declaradas apenas  
-             para resolver vulnerabilidades de versões mais antigas 
-             que estavam sendo declaras implicitamente-->
+
         <dependency>
             <groupId>com.google.protobuf</groupId>
             <artifactId>protobuf-java</artifactId>
