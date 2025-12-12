@@ -2,10 +2,6 @@ package br.upe.controller.business;
 
 import br.upe.data.TipoUsuario;
 import br.upe.data.dao.UsuarioDAO;
-import br.upe.data.dao.ExercicioDAO;
-import br.upe.data.dao.IndicadorBiomedicoDAO;
-import br.upe.data.dao.PlanoTreinoDAO;
-import br.upe.data.dao.SessaoTreinoDAO;
 import br.upe.data.entities.Usuario;
 import br.upe.data.interfaces.IUsuarioRepository;
 
@@ -18,10 +14,6 @@ import java.util.regex.Pattern;
 public class UsuarioService implements IUsuarioService {
 
     private final IUsuarioRepository usuarioRepository;
-    private final IndicadorBiomedicoDAO indicadorBiomedicoDAO;
-    private final PlanoTreinoDAO planoTreinoDAO;
-    private final SessaoTreinoDAO sessaoTreinoDAO;
-    private final ExercicioDAO exercicioDAO;
     private static final Logger LOGGER = Logger.getLogger(UsuarioService.class.getName());
 
     private static final String EMAIL_SUPER_ADMIN = "adm@email.com";
@@ -32,23 +24,14 @@ public class UsuarioService implements IUsuarioService {
     private static final String MSG_USUARIO_NAO_ENCONTRADO = "Usuário não encontrado.";
     private static final String MSG_SUPER_ADMIN_RESTRICAO = "O Super Administrador não pode sofrer esta alteração.";
 
-    // CORREÇÃO: Padrão regex ajustado para ser mais robusto, exigindo pelo menos um ponto após o @ (ex: a@b.com)
-    private static final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Za-z0-9+_.-]+@(.+\\.)+.+$");
+    private static final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$");
 
     public UsuarioService(IUsuarioRepository usuarioRepository) {
         this.usuarioRepository = usuarioRepository;
-        this.indicadorBiomedicoDAO = new IndicadorBiomedicoDAO();
-        this.planoTreinoDAO = new PlanoTreinoDAO();
-        this.sessaoTreinoDAO = new SessaoTreinoDAO();
-        this.exercicioDAO = new ExercicioDAO();
     }
 
     public UsuarioService() {
         this.usuarioRepository = new UsuarioDAO();
-        this.indicadorBiomedicoDAO = new IndicadorBiomedicoDAO();
-        this.planoTreinoDAO = new PlanoTreinoDAO();
-        this.sessaoTreinoDAO = new SessaoTreinoDAO();
-        this.exercicioDAO = new ExercicioDAO();
     }
 
     public void verificarECriarAdminPadrao() {
@@ -90,7 +73,6 @@ public class UsuarioService implements IUsuarioService {
             throw new IllegalArgumentException("Todos os campos são obrigatórios.");
         }
 
-        // CORREÇÃO: A validação do formato de e-mail agora está correta
         if (!EMAIL_PATTERN.matcher(email.trim()).matches()) {
             throw new IllegalArgumentException("Email inválido.");
         }
@@ -111,23 +93,7 @@ public class UsuarioService implements IUsuarioService {
             throw new IllegalArgumentException("O Super Administrador não pode ser excluído.");
         }
 
-        removerEntidadesFilhas(id);
-
         usuarioRepository.deletar(id);
-    }
-
-    private void removerEntidadesFilhas(int idUsuario) {
-        // 1. Remove Sessões de Treino (deleta ItemSessaoTreino via cascade)
-        sessaoTreinoDAO.buscarTodosDoUsuario(idUsuario).forEach(s -> sessaoTreinoDAO.deletar(s.getId()));
-
-        // 2. Remove Planos de Treino (deleta ItemPlanoTreino via cascade)
-        planoTreinoDAO.buscarTodosDoUsuario(idUsuario).forEach(p -> planoTreinoDAO.deletar(p.getId()));
-
-        // 3. Remove Indicadores Biomédicos
-        indicadorBiomedicoDAO.listarPorUsuario(idUsuario).forEach(i -> indicadorBiomedicoDAO.deletar(i.getId()));
-
-        // 4. Remove Exercícios
-        exercicioDAO.buscarTodosDoUsuario(idUsuario).forEach(e -> exercicioDAO.deletar(e.getId()));
     }
 
     @Override
