@@ -2,7 +2,7 @@ package br.upe.controller.ui;
 
 import br.upe.controller.business.IPlanoTreinoService;
 import br.upe.controller.business.PlanoTreinoService;
-import br.upe.data.beans.PlanoTreino;
+import br.upe.data.entities.PlanoTreino;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;

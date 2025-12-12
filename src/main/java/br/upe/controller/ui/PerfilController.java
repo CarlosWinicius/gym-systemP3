@@ -4,7 +4,7 @@ import br.upe.controller.business.CalculadoraIMC;
 import br.upe.controller.business.IUsuarioService;
 import br.upe.controller.business.IndicadorBiomedicoService;
 import br.upe.controller.business.UsuarioService;
-import br.upe.data.beans.Usuario;
+import br.upe.data.entities.Usuario;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -18,7 +18,6 @@ import javafx.stage.Stage;
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class PerfilController extends BaseController {
 

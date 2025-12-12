@@ -7,7 +7,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.InjectMocks;
 
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 class ExercicioTest {
@@ -29,21 +29,21 @@ class ExercicioTest {
     @Test
     @DisplayName("Teste do construtor completo")
     void testConstrutorCompleto() {
-        assert exercicioCompleto.getIdExercicio() == 1;
-        assert exercicioCompleto.getIdUsuario() == 100;
-        assert exercicioCompleto.getNome().equals("Flexão");
-        assert exercicioCompleto.getDescricao().equals("Exercício para peitoral");
-        assert exercicioCompleto.getCaminhoGif().equals("flexao.gif");
+        assertEquals(1, exercicioCompleto.getIdExercicio());
+        assertEquals(100, exercicioCompleto.getIdUsuario());
+        assertEquals("Flexão", exercicioCompleto.getNome());
+        assertEquals("Exercício para peitoral", exercicioCompleto.getDescricao());
+        assertEquals("flexao.gif", exercicioCompleto.getCaminhoGif());
     }
 
     @Test
     @DisplayName("Teste do construtor sem ID")
     void testConstrutorSemId() {
-        assert exercicioSemId.getIdExercicio() == 0; // ID padrão é 0
-        assert exercicioSemId.getIdUsuario() == 100;
-        assert exercicioSemId.getNome().equals("Agachamento");
-        assert exercicioSemId.getDescricao().equals("Exercício para pernas");
-        assert exercicioSemId.getCaminhoGif().equals("agachamento.gif");
+        assertEquals(0, exercicioSemId.getIdExercicio()); // ID padrão é 0
+        assertEquals(100, exercicioSemId.getIdUsuario());
+        assertEquals("Agachamento", exercicioSemId.getNome());
+        assertEquals("Exercício para pernas", exercicioSemId.getDescricao());
+        assertEquals("agachamento.gif", exercicioSemId.getCaminhoGif());
     }
 
     //testar getters e setters
@@ -52,19 +52,19 @@ class ExercicioTest {
     void testGettersAndSetters() {
         //ID exercício
         exercicioCompleto.setIdExercicio(2);
-        assert exercicioCompleto.getIdExercicio() == 2;
+        assertEquals(2, exercicioCompleto.getIdExercicio());
         //ID usuário
         exercicioCompleto.setIdUsuario(200);
-        assert exercicioCompleto.getIdUsuario() == 200;
+        assertEquals(200, exercicioCompleto.getIdUsuario());
         //nome do exercício
         exercicioCompleto.setNome("Supino");
-        assert exercicioCompleto.getNome().equals("Supino");
+        assertEquals("Supino", exercicioCompleto.getNome());
         //descrição do exercício
         exercicioCompleto.setDescricao("Exercício para peito");
-        assert exercicioCompleto.getDescricao().equals("Exercício para peito");
+        assertEquals("Exercício para peito", exercicioCompleto.getDescricao());
         //caminho do gif
         exercicioCompleto.setCaminhoGif("supino.gif");
-        assert exercicioCompleto.getCaminhoGif().equals("supino.gif");
+        assertEquals("supino.gif", exercicioCompleto.getCaminhoGif());
     }
 
     //testar valores nulos
@@ -90,7 +90,7 @@ class ExercicioTest {
     @DisplayName("Teste do método toString do exercício completo")
     void testToString() {
         String resultado = "ID: 1 | Nome: Flexão | Descrição: Exercício para peitoral | GIF: flexao.gif";
-        assert exercicioCompleto.toString().equals(resultado);
+        assertEquals(resultado, exercicioCompleto.toString());
     }
 
     @Test
@@ -98,7 +98,7 @@ class ExercicioTest {
     void testToStringSemId() {
         //(ID deve ser 0)
         String resultadosemID = "ID: 0 | Nome: Agachamento | Descrição: Exercício para pernas | GIF: agachamento.gif";
-        assert exercicioSemId.toString().equals(resultadosemID);
+        assertEquals(resultadosemID, exercicioSemId.toString());
     }
 
     //testar valores limites
@@ -108,13 +108,13 @@ class ExercicioTest {
         //valores maximos
         exercicioCompleto.setIdExercicio(Integer.MAX_VALUE);
         exercicioCompleto.setIdUsuario(Integer.MAX_VALUE);
-        assert exercicioCompleto.getIdExercicio() == Integer.MAX_VALUE;
-        assert exercicioCompleto.getIdUsuario() == Integer.MAX_VALUE;
+        assertEquals(Integer.MAX_VALUE, exercicioCompleto.getIdExercicio());
+        assertEquals(Integer.MAX_VALUE, exercicioCompleto.getIdUsuario());
         //valores minimos
         exercicioCompleto.setIdExercicio(Integer.MIN_VALUE);
         exercicioCompleto.setIdUsuario(Integer.MIN_VALUE);
-        assert exercicioCompleto.getIdExercicio() == Integer.MIN_VALUE;
-        assert exercicioCompleto.getIdUsuario() == Integer.MIN_VALUE;
+        assertEquals(Integer.MIN_VALUE, exercicioCompleto.getIdExercicio());
+        assertEquals(Integer.MIN_VALUE, exercicioCompleto.getIdUsuario());
     }
     @Test
     @DisplayName("Deve aceitar strings vazias")
@@ -123,9 +123,9 @@ class ExercicioTest {
         exercicioCompleto.setDescricao("");
         exercicioCompleto.setCaminhoGif("");
 
-        assert exercicioCompleto.getNome().isEmpty();
-        assert exercicioCompleto.getDescricao().isEmpty();
-        assert exercicioCompleto.getCaminhoGif().isEmpty();
+        assertTrue(exercicioCompleto.getNome().isEmpty());
+        assertTrue(exercicioCompleto.getDescricao().isEmpty());
+        assertTrue(exercicioCompleto.getCaminhoGif().isEmpty());
     }
 
     //testar comportamento com caracteres especiais
@@ -136,7 +136,7 @@ class ExercicioTest {
         //atribuindo valor com caracteres especiais
         exercicioCompleto.setNome(nomeEspecial);
         //verificando se o valor foi atribuído corretamente
-        assert exercicioCompleto.getNome().equals(nomeEspecial);
+        assertEquals(nomeEspecial, exercicioCompleto.getNome());
     }
 
     //testar comportamento com strings muito longas
@@ -149,7 +149,7 @@ class ExercicioTest {
         //atribuindo string muito longa
         exercicioCompleto.setDescricao(stringLonga);
         //verificando se a string foi atribuída corretamente
-        assert exercicioCompleto.getDescricao().equals(stringLonga);
+        assertEquals(stringLonga, exercicioCompleto.getDescricao());
     }
 
 }

@@ -3,17 +3,15 @@ package br.upe.controller.ui;
 
 import br.upe.controller.business.IPlanoTreinoService;
 import br.upe.controller.business.PlanoTreinoService;
-import br.upe.data.beans.PlanoTreino;
+import br.upe.data.entities.PlanoTreino;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-//import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 
 import java.io.InputStream;
@@ -83,7 +81,7 @@ public class HomeScreenController extends BaseController implements Initializabl
         }
 
         btn.setOnAction((ActionEvent e) -> {
-            logger.info("Abrindo plano: " + plano.getNome() + " (ID: " + plano.getIdPlano() + ")");
+            logger.info("Abrindo plano: " + plano.getNome() + " (ID: " + plano.getId() + ")");
             try {
                 if (plano == null) return;
 

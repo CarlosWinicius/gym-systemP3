@@ -1,6 +1,6 @@
-package br.upe.data.repository;
+package br.upe.data.interfaces;
 
-import br.upe.data.beans.Usuario;
+import br.upe.data.entities.Usuario;
 import java.util.List;
 import java.util.Optional;
 
@@ -11,5 +11,4 @@ public interface IUsuarioRepository {
     List<Usuario> listarTodos();
     void editar(Usuario usuario);
     void deletar(int id);
-    int gerarProximoId();
 }
