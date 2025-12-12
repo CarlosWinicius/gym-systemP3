@@ -1,7 +1,7 @@
 package br.upe.controller.business;
 
 import br.upe.data.TipoUsuario;
-import br.upe.data.entity.Usuario;
+import br.upe.data.entities.Usuario;
 import br.upe.data.interfaces.IUsuarioRepository;
 import br.upe.data.dao.UsuarioDAO;
 
@@ -11,7 +11,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class UsuarioService implements IUsuarioService {
-    // CORREÇÃO: Variável renomeada para minúsculo para corresponder ao uso nos métodos
     private final IUsuarioRepository usuarioRepository;
     private static final Logger LOGGER = Logger.getLogger(UsuarioService.class.getName());
 
@@ -20,7 +19,6 @@ public class UsuarioService implements IUsuarioService {
     }
 
     public UsuarioService() {
-        // Se você não tiver o arquivo UsuarioDAO.java, essa linha dará erro
         this.usuarioRepository = new UsuarioDAO();
     }
 

@@ -1,6 +1,6 @@
 package br.upe.controller.business;
 
-import br.upe.data.beans.PlanoTreino;
+import br.upe.data.entities.PlanoTreino;
 
 import java.util.List;
 import java.util.Optional;
