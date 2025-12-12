@@ -176,6 +176,6 @@ class PlanoTreinoRepositoryImplTest {
 
         List<PlanoTreino> planos = repository.buscarTodosDoUsuario(1);
         assertFalse(planos.isEmpty());
-        assertEquals("Plano Persistente", planos.get(0).getNome());
+        assertEquals("Plano Persistente", planos.getFirst().getNome());
     }
 }
