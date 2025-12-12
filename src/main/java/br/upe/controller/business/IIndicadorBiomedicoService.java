@@ -1,6 +1,6 @@
 package br.upe.controller.business;
 
-import br.upe.data.beans.IndicadorBiomedico;
+import br.upe.data.entities.IndicadorBiomedico;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -16,5 +16,7 @@ public interface IIndicadorBiomedicoService {
     RelatorioDiferencaIndicadores gerarRelatorioDiferenca(int idUsuario, LocalDate dataInicio, LocalDate dataFim);
 
     List<IndicadorBiomedico> listarTodosDoUsuario(int idUsuario);
+
+    void exportarRelatorioPorDataParaCsv(int idUsuario, LocalDate dataInicio, LocalDate dataFim, String caminhoArquivo);
 
 }
