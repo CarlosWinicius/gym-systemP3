@@ -4,6 +4,8 @@ import br.upe.data.entities.IndicadorBiomedico;
 import br.upe.data.entities.Usuario;
 import br.upe.data.dao.IndicadorBiomedicoDAO;
 import br.upe.data.dao.UsuarioDAO;
+import br.upe.data.interfaces.IIndicadorBiomedicoRepository;
+import br.upe.data.interfaces.IUsuarioRepository;
 
 import java.io.*;
 import java.time.LocalDate;
@@ -16,10 +18,17 @@ import java.util.logging.Logger;
 // CORREÇÃO: Adicionado "implements IIndicadorBiomedicoService"
 public class IndicadorBiomedicoService implements IIndicadorBiomedicoService {
 
-    private final IndicadorBiomedicoDAO indicadorDAO;
-    private final UsuarioDAO usuarioDAO;
+    private final IIndicadorBiomedicoRepository indicadorDAO;
+    private final IUsuarioRepository usuarioDAO;
     private static final Logger logger = Logger.getLogger(IndicadorBiomedicoService.class.getName());
 
+    // Construtor com Injeção de Dependência (para testes)
+    public IndicadorBiomedicoService(IIndicadorBiomedicoRepository indicadorDAO, IUsuarioRepository usuarioDAO) {
+        this.indicadorDAO = indicadorDAO;
+        this.usuarioDAO = usuarioDAO;
+    }
+
+    // Construtor Padrão
     public IndicadorBiomedicoService() {
         this.indicadorDAO = new IndicadorBiomedicoDAO();
         this.usuarioDAO = new UsuarioDAO();
