@@ -1,8 +1,21 @@
 package br.upe.controller.business;
 
-import br.upe.data.entities.*;
-import br.upe.data.dao.*;
-import br.upe.data.interfaces.*;
+import br.upe.data.dao.ExercicioDAO;
+import br.upe.data.dao.ItemPlanoTreinoDAO;
+import br.upe.data.dao.ItemSessaoTreinoDAO;
+import br.upe.data.dao.PlanoTreinoDAO;
+import br.upe.data.dao.SessaoTreinoDAO;
+import br.upe.data.dao.UsuarioDAO;
+import br.upe.data.entities.Exercicio;
+import br.upe.data.entities.ItemPlanoTreino;
+import br.upe.data.entities.ItemSessaoTreino;
+import br.upe.data.entities.PlanoTreino;
+import br.upe.data.entities.SessaoTreino;
+import br.upe.data.entities.Usuario;
+import br.upe.data.interfaces.IExercicioRepository;
+import br.upe.data.interfaces.IPlanoTreinoRepository;
+import br.upe.data.interfaces.ISessaoTreinoRepository;
+import br.upe.data.interfaces.IUsuarioRepository;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -77,7 +90,6 @@ public class SessaoTreinoService {
         sessao.setPlanoTreino(plano);
         sessao.setDataSessao(LocalDate.now());
 
-        // ALTERAÇÃO NECESSÁRIA 1: Salvar aqui para gerar o ID da sessão
         sessaoRepo.salvar(sessao);
 
         return sessao;
@@ -96,9 +108,8 @@ public class SessaoTreinoService {
         itemSessaoRepo.salvar(item);
     }
 
-
     public void salvarSessao(SessaoTreino sessao) {
-        sessaoRepo.salvar(sessao); // Ou atualizar, dependendo do seu DAO
+        sessaoRepo.salvar(sessao);
         logger.log(Level.INFO, "Sessão de treino ID {0} atualizada com sucesso!", sessao.getId());
     }
 
@@ -111,9 +122,7 @@ public class SessaoTreinoService {
 
         List<SugestaoAtualizacaoPlano> sugestoes = new ArrayList<>();
 
-        // 3. Compara o Realizado vs Planejado
         for (ItemPlanoTreino planejado : itensPlanejados) {
-            // Procura o item executado correspondente ao exercicio planejado
             Optional<ItemSessaoTreino> executadoOpt = itensExecutados.stream()
                     .filter(e -> e.getExercicio().getId().equals(planejado.getExercicio().getId()))
                     .findFirst();
@@ -121,7 +130,6 @@ public class SessaoTreinoService {
             if (executadoOpt.isPresent()) {
                 ItemSessaoTreino executado = executadoOpt.get();
 
-                // Lógica simples: Se fez mais carga ou mais repetições, sugere update
                 if (executado.getCargaRealizada() > planejado.getCargaKg() ||
                         executado.getRepeticoesRealizadas() > planejado.getRepeticoes()) {
 
@@ -144,7 +152,7 @@ public class SessaoTreinoService {
         List<ItemPlanoTreino> itens = itemPlanoRepo.listarPorPlano(idPlano);
 
         Optional<ItemPlanoTreino> itemOpt = itens.stream()
-                .filter(i -> i.getExercicio().getId() == idExercicio)
+                .filter(i -> i.getExercicio().getId().equals(idExercicio))
                 .findFirst();
 
         if (itemOpt.isPresent()) {
@@ -160,12 +168,12 @@ public class SessaoTreinoService {
     }
 
     public static class SugestaoAtualizacaoPlano {
-        public final int idExercicio;
-        public final String nomeExercicio;
-        public final int repPlanejadas;
-        public final int repRealizadas;
-        public final double cargaPlanejada;
-        public final double cargaRealizada;
+        private final int idExercicio;
+        private final String nomeExercicio;
+        private final int repPlanejadas;
+        private final int repRealizadas;
+        private final double cargaPlanejada;
+        private final double cargaRealizada;
 
         public SugestaoAtualizacaoPlano(int idExercicio, String nomeExercicio, int repPlanejadas, int repRealizadas, double cargaPlanejada, double cargaRealizada) {
             this.idExercicio = idExercicio;
@@ -174,6 +182,30 @@ public class SessaoTreinoService {
             this.repRealizadas = repRealizadas;
             this.cargaPlanejada = cargaPlanejada;
             this.cargaRealizada = cargaRealizada;
+        }
+
+        public int getIdExercicio() {
+            return idExercicio;
+        }
+
+        public String getNomeExercicio() {
+            return nomeExercicio;
+        }
+
+        public int getRepPlanejadas() {
+            return repPlanejadas;
+        }
+
+        public int getRepRealizadas() {
+            return repRealizadas;
+        }
+
+        public double getCargaPlanejada() {
+            return cargaPlanejada;
+        }
+
+        public double getCargaRealizada() {
+            return cargaRealizada;
         }
     }
 }

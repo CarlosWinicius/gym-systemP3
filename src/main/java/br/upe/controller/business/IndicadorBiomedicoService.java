@@ -15,7 +15,6 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-// CORREÇÃO: Adicionado "implements IIndicadorBiomedicoService"
 public class IndicadorBiomedicoService implements IIndicadorBiomedicoService {
 
     private final IIndicadorBiomedicoRepository indicadorDAO;
@@ -148,10 +147,8 @@ public class IndicadorBiomedicoService implements IIndicadorBiomedicoService {
         }
     }
 
-    // Método privado auxiliar não precisa estar na interface
     private void processarLinhaCsv(String linha, int linhaNum, int idUsuario) {
         String[] partes = linha.split(";");
-        // Espera-se: Data;Peso;Altura;Gordura;MassaMagra
         if (partes.length >= 5) {
             try {
                 LocalDate data = LocalDate.parse(partes[0].trim());
