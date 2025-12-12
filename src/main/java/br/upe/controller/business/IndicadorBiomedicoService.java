@@ -46,6 +46,7 @@ public class IndicadorBiomedicoService implements IIndicadorBiomedicoService {
         novoIndicador.setUsuario(usuario);
         novoIndicador.setDataRegistro(data);
         novoIndicador.setPesoKg(pesoKg);
+        novoIndicador.setAlturaCm(alturaCm);
         novoIndicador.setPercentualGordura(percentualGordura);
         novoIndicador.setPercentualMassaMagra(percentualMassaMagra);
         novoIndicador.setImc(imc);
@@ -118,13 +119,14 @@ public class IndicadorBiomedicoService implements IIndicadorBiomedicoService {
         List<IndicadorBiomedico> relatorio = gerarRelatorioPorData(idUsuario, dataInicio, dataFim);
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(caminhoArquivo))) {
-            writer.write("Data;Peso (Kg);Gordura (%);Massa Magra (%);IMC");
+            writer.write("Data;Peso (Kg);Altura (cm);Gordura (%);Massa Magra (%);IMC");
             writer.newLine();
 
             for (IndicadorBiomedico i : relatorio) {
                 writer.write(
                         i.getDataRegistro() + ";" +
                                 i.getPesoKg() + ";" +
+                                i.getAlturaCm() + ";" +
                                 i.getPercentualGordura() + ";" +
                                 i.getPercentualMassaMagra() + ";" +
                                 String.format("%.2f", i.getImc())

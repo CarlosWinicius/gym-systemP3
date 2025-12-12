@@ -8,7 +8,6 @@ import br.upe.data.dao.ExercicioDAO;
 import br.upe.data.dao.PlanoTreinoDAO;
 import br.upe.data.dao.ItemPlanoTreinoDAO;
 import br.upe.data.dao.UsuarioDAO;
-import br.upe.controller.business.IPlanoTreinoService;
 import java.util.List;
 import java.util.Optional;
 

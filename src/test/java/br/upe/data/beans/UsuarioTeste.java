@@ -6,10 +6,10 @@ import br.upe.data.TipoUsuario;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class UsuarioTeste {
+class UsuarioTeste {
 
     @Test
-    public void deveCriarUsuarioComSucesso() {
+    void deveCriarUsuarioComSucesso() {
         // 1. Prepara
         UsuarioDAO dao = new UsuarioDAO();
         Usuario novoUser = new Usuario("Teste JUnit", "teste.junit@email.com", "123", TipoUsuario.COMUM);

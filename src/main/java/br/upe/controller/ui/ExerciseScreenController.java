@@ -2,7 +2,6 @@ package br.upe.controller.ui;
 
 import br.upe.controller.business.ExercicioService;
 import br.upe.data.entities.Exercicio;
-import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -12,7 +11,6 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ProgressIndicator;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
@@ -38,6 +36,7 @@ public class ExerciseScreenController extends BaseController {
 
         loadingSpinner.setVisible(false);
         if (exerciciosTilePane.getParent() instanceof VBox) {
+            // Adiciona o spinner ao layout pai
         }
         carregarExercicios();
     }

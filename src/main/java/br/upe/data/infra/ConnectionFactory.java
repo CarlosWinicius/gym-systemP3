@@ -6,8 +6,12 @@ import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ConnectionFactory {
+
+    private static final Logger logger = Logger.getLogger(ConnectionFactory.class.getName());
 
     // O objeto "pesado" que deve ser único na aplicação
     private static EntityManagerFactory emf;
@@ -39,7 +43,7 @@ public class ConnectionFactory {
 
         } catch (Exception e) {
             // Logar o erro de forma clara é crucial aqui
-            System.err.println("Erro ao inicializar o banco de dados: " + e.getMessage());
+            logger.log(Level.SEVERE, "Erro ao inicializar o banco de dados: {0}", e.getMessage());
             throw new RuntimeException("Falha na conexão com o banco de dados", e);
         }
     }
@@ -48,7 +52,7 @@ public class ConnectionFactory {
     public static void closeFactory() {
         if (emf != null && emf.isOpen()) {
             emf.close();
-            System.out.println("EntityManagerFactory fechada com sucesso.");
+            logger.info("EntityManagerFactory fechada com sucesso.");
         }
     }
 }

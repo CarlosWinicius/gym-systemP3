@@ -56,22 +56,33 @@
             </TitledPane>
 
 
-            <HBox spacing="10" alignment="CENTER_LEFT">
-                <children>
-                    <Label text="Período:"/>
-                    <DatePicker fx:id="inicioPicker" promptText="Início"/>
-                    <DatePicker fx:id="fimPicker" promptText="Fim"/>
-                    <Button fx:id="filtrarButton" text="Filtrar" onAction="#handleFiltrar"
-                            style="-fx-background-color: #A6917E; -fx-text-fill: white; -fx-font-weight: bold;"/>
-                    <Button fx:id="mostrarTodosButton" text="Mostrar todos" onAction="#handleMostrarTodos"/>
-                    <Pane HBox.hgrow="ALWAYS"/>
-                    <Button fx:id="relatorioDiferencaButton" text="Relatório Diferença"
-                            onAction="#handleRelatorioDiferenca"/>
-                    <Button fx:id="exportarListaButton" text="Exportar Lista" onAction="#handleExportarLista"/>
-                    <Button fx:id="exportarDiffButton" text="Exportar Diferença" onAction="#handleExportarDiferenca"/>
-                    <Button fx:id="importarCsvButton" text="Importar CSV" onAction="#handleImportarCsv"/>
-                </children>
-            </HBox>
+            <VBox spacing="10">
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <children>
+                        <Label text="Período:"/>
+                        <DatePicker fx:id="inicioPicker" promptText="Início" prefWidth="140"/>
+                        <DatePicker fx:id="fimPicker" promptText="Fim" prefWidth="140"/>
+                        <Button fx:id="filtrarButton" text="Filtrar" onAction="#handleFiltrar"
+                                style="-fx-background-color: #A6917E; -fx-text-fill: white; -fx-font-weight: bold;"
+                                prefWidth="80" minWidth="80"/>
+                        <Button fx:id="mostrarTodosButton" text="Mostrar todos" onAction="#handleMostrarTodos"
+                                prefWidth="120" minWidth="120"/>
+                    </children>
+                </HBox>
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <children>
+                        <Button fx:id="relatorioDiferencaButton" text="Relatório Diferença"
+                                onAction="#handleRelatorioDiferenca"
+                                prefWidth="150" minWidth="150"/>
+                        <Button fx:id="exportarListaButton" text="Exportar Lista" onAction="#handleExportarLista"
+                                prefWidth="120" minWidth="120"/>
+                        <Button fx:id="exportarDiffButton" text="Exportar Diferença" onAction="#handleExportarDiferenca"
+                                prefWidth="150" minWidth="150"/>
+                        <Button fx:id="importarCsvButton" text="Importar CSV" onAction="#handleImportarCsv"
+                                prefWidth="120" minWidth="120"/>
+                    </children>
+                </HBox>
+            </VBox>
 
 
             <TableView fx:id="indicadoresTable" VBox.vgrow="ALWAYS">

@@ -41,6 +41,8 @@ public class ExercicioDialogController extends BaseController {
     private boolean salvo = false;
     private String nomeArquivoGif = null;
 
+    private static final String EXERCICIO_NO_IMAGE_PATH = "/images/no image.png";
+
     public void setDialogStage(Stage dialogStage) {
         this.dialogStage = dialogStage;
     }
@@ -90,15 +92,15 @@ public class ExercicioDialogController extends BaseController {
                     gifImageView.setImage(new Image(url.toExternalForm()));
                 } else {
                     // Fallback se não achar
-                    Image placeholder = new Image(getClass().getResourceAsStream("/images/no image.png"));
+                    Image placeholder = new Image(getClass().getResourceAsStream(EXERCICIO_NO_IMAGE_PATH));
                     gifImageView.setImage(placeholder);
                 }
             } catch (Exception e) {
-                Image placeholder = new Image(getClass().getResourceAsStream("/images/no image.png"));
+                Image placeholder = new Image(getClass().getResourceAsStream(EXERCICIO_NO_IMAGE_PATH));
                 gifImageView.setImage(placeholder);
             }
         } else {
-            Image placeholder = new Image(getClass().getResourceAsStream("/images/no image.png"));
+            Image placeholder = new Image(getClass().getResourceAsStream(EXERCICIO_NO_IMAGE_PATH));
             gifImageView.setImage(placeholder);
         }
     }
