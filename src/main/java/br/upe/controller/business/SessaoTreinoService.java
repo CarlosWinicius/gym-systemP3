@@ -36,6 +36,22 @@ public class SessaoTreinoService {
 
     private static final Logger logger = Logger.getLogger(SessaoTreinoService.class.getName());
 
+    // Construtor com Injeção de Dependência completa (para testes)
+    public SessaoTreinoService(ISessaoTreinoRepository sessaoRepo,
+                               IPlanoTreinoRepository planoRepo,
+                               IExercicioRepository exercicioRepo,
+                               IUsuarioRepository usuarioRepo,
+                               ItemSessaoTreinoDAO itemSessaoRepo,
+                               ItemPlanoTreinoDAO itemPlanoRepo) {
+        this.sessaoRepo = sessaoRepo;
+        this.planoRepo = planoRepo;
+        this.exercicioRepo = exercicioRepo;
+        this.usuarioRepo = usuarioRepo;
+        this.itemSessaoRepo = itemSessaoRepo;
+        this.itemPlanoRepo = itemPlanoRepo;
+    }
+
+    // Construtor parcial (mantido para compatibilidade)
     public SessaoTreinoService(ISessaoTreinoRepository sessaoRepo,
                                IPlanoTreinoRepository planoRepo,
                                IExercicioRepository exercicioRepo,
@@ -48,6 +64,7 @@ public class SessaoTreinoService {
         this.itemPlanoRepo = new ItemPlanoTreinoDAO();
     }
 
+    // Construtor Padrão
     public SessaoTreinoService() {
         this.sessaoRepo = new SessaoTreinoDAO();
         this.planoRepo = new PlanoTreinoDAO();
@@ -97,7 +114,10 @@ public class SessaoTreinoService {
     }
 
     public List<SugestaoAtualizacaoPlano> verificarAlteracoesEGerarSugestoes(SessaoTreino sessao) {
+
         List<ItemPlanoTreino> itensPlanejados = itemPlanoRepo.listarPorPlano(sessao.getPlanoTreino().getId());
+
+        // 2. Busca itens executados na sessão atual
         List<ItemSessaoTreino> itensExecutados = itemSessaoRepo.listarPorSessao(sessao.getId());
 
         List<SugestaoAtualizacaoPlano> sugestoes = new ArrayList<>();
