@@ -18,4 +18,5 @@ public interface IUsuarioService {
 
     void promoverUsuarioAAdmin(int idUsuario);
     void rebaixarUsuarioAComum(int idUsuario);
+    void atualizarFoto(Integer id, byte[] foto);
 }
