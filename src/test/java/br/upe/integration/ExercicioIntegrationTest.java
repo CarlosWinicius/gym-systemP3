@@ -129,9 +129,7 @@ class ExercicioIntegrationTest {
         exercicioService.cadastrarExercicio(ID_USUARIO_TESTE, nomeDuplicado, "Descrição 1", "/gif/1.gif");
 
         // Tenta cadastrar com mesmo nome (case insensitive)
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-            exercicioService.cadastrarExercicio(ID_USUARIO_TESTE, "agachamento", "Descrição 2", "/gif/2.gif");
-        });
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> exercicioService.cadastrarExercicio(ID_USUARIO_TESTE, "agachamento", "Descrição 2", "/gif/2.gif"));
 
         assertTrue(exception.getMessage().contains("já possui um exercício com o nome"));
     }
@@ -178,7 +176,7 @@ class ExercicioIntegrationTest {
         // Lista exercícios do usuário 2
         List<Exercicio> exerciciosUser2 = exercicioService.listarExerciciosDoUsuario(2);
         assertEquals(1, exerciciosUser2.size());
-        assertEquals(2, exerciciosUser2.get(0).getUsuario().getId());
+        assertEquals(2, exerciciosUser2.getFirst().getUsuario().getId());
     }
 
     @Test
@@ -278,21 +276,15 @@ class ExercicioIntegrationTest {
     @DisplayName("Integração: Deve validar nome obrigatório no cadastro")
     void testValidacaoNomeObrigatorio() {
         //Nome vazio
-        Exception exception1 = assertThrows(IllegalArgumentException.class, () -> {
-            exercicioService.cadastrarExercicio(ID_USUARIO_TESTE, "", "Descrição", "/gif/test.gif");
-        });
+        Exception exception1 = assertThrows(IllegalArgumentException.class, () -> exercicioService.cadastrarExercicio(ID_USUARIO_TESTE, "", "Descrição", "/gif/test.gif"));
         assertTrue(exception1.getMessage().contains("Nome do exercício não pode ser vazio"));
 
         //Nome null
-        Exception exception2 = assertThrows(IllegalArgumentException.class, () -> {
-            exercicioService.cadastrarExercicio(ID_USUARIO_TESTE, null, "Descrição", "/gif/test.gif");
-        });
+        Exception exception2 = assertThrows(IllegalArgumentException.class, () -> exercicioService.cadastrarExercicio(ID_USUARIO_TESTE, null, "Descrição", "/gif/test.gif"));
         assertTrue(exception2.getMessage().contains("Nome do exercício não pode ser vazio"));
 
         //Nome só com espaços
-        Exception exception3 = assertThrows(IllegalArgumentException.class, () -> {
-            exercicioService.cadastrarExercicio(ID_USUARIO_TESTE, "   ", "Descrição", "/gif/test.gif");
-        });
+        Exception exception3 = assertThrows(IllegalArgumentException.class, () -> exercicioService.cadastrarExercicio(ID_USUARIO_TESTE, "   ", "Descrição", "/gif/test.gif"));
         assertTrue(exception3.getMessage().contains("Nome do exercício não pode ser vazio"));
     }
 

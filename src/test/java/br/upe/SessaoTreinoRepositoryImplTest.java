@@ -1,6 +1,5 @@
 package br.upe;
 
-import br.upe.data.entities.ItemSessaoTreino;
 import br.upe.data.entities.SessaoTreino;
 import br.upe.data.interfaces.ISessaoTreinoRepository;
 import br.upe.data.dao.SessaoTreinoDAO;
@@ -20,12 +19,12 @@ class SessaoTreinoRepositoryImplTest {
     private ISessaoTreinoRepository repository;
 
     @BeforeEach
-    void setUp() throws IOException {
+    void setUp() {
         repository = new SessaoTreinoDAO();
     }
 
     @AfterEach
-    void tearDown() throws IOException {
+    void tearDown(){
         // sem limpeza de arquivo ao usar DAO JPA
     }
 

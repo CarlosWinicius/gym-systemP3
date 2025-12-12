@@ -31,13 +31,13 @@ class PlanoTreinoRepositoryImplTest {
     }
 
     // Helper para criar item (entidade)
-    private ItemPlanoTreino createItem(int idExercicio, int cargaKg, int repeticoes) {
+    private ItemPlanoTreino createItem() {
         ItemPlanoTreino item = new ItemPlanoTreino();
         Exercicio ex = new Exercicio();
-        ex.setId(idExercicio);
+        ex.setId(1);
         item.setExercicio(ex);
-        item.setCargaKg(cargaKg);
-        item.setRepeticoes(repeticoes);
+        item.setCargaKg(50);
+        item.setRepeticoes(10);
         return item;
     }
 
@@ -54,7 +54,7 @@ class PlanoTreinoRepositoryImplTest {
     @Test
     void testSalvarEBuscarPorId() {
         PlanoTreino plano = createPlano(1, "Plano 1");
-        plano.adicionarItem(createItem(1, 50, 10));
+        plano.adicionarItem(createItem());
 
         PlanoTreino salvo = repository.salvar(plano);
 
