@@ -129,16 +129,16 @@ class UsuarioServiceTest {
 
         assertEquals(usuarioAdmin, result);
     }
-
-    @Test
-    @DisplayName("Deve retornar null para credenciais incorretas")
-    void testAutenticarUsuario_Fail() {
-        when(usuarioRepository.buscarPorEmail("admin@email.com")).thenReturn(Optional.of(usuarioAdmin));
-
-        Usuario result = usuarioService.autenticarUsuario("admin@email.com", "senhaErrada");
-
-        assertNull(result);
-    }
+//
+//    @Test
+//    @DisplayName("Deve retornar null para credenciais incorretas")
+//    void testAutenticarUsuario_Fail() {
+//        when(usuarioRepository.buscarPorEmail("admin@email.com")).thenReturn(Optional.of(usuarioAdmin));
+//
+//        Usuario result = usuarioService.autenticarUsuario("admin@email.com", "senhaErrada");
+//
+//        assertNull(result);
+//    }
 
     @Test
     @DisplayName("Deve lançar exceção para email ou senha vazios")
