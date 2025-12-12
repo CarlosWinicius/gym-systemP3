@@ -94,12 +94,6 @@
   </build>
   <dependencies>
     <dependency>
-      <groupId>org.projectlombok</groupId>
-      <artifactId>lombok</artifactId>
-      <version>1.18.30</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-api</artifactId>
       <version>5.10.0</version>
@@ -157,12 +151,6 @@
       <version>5.9.0</version>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>com.h2database</groupId>
-      <artifactId>h2</artifactId>
-      <version>2.2.224</version>
-      <scope>test</scope>
-    </dependency>
   </dependencies>
   <properties>
     <hibernate.version>6.5.2.Final</hibernate.version>
@@ -177,6 +165,7 @@
     <sonar.tests>src/test/java</sonar.tests>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <sonar.java.binaries>target/classes</sonar.java.binaries>
+    <mysql.connector.version>8.2.0</mysql.connector.version>
     <sonar.coverage.jacoco.xmlReportPaths>target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
   </properties>
 </project>

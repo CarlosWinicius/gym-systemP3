@@ -3,7 +3,7 @@ package br.upe.controller.ui;
 import br.upe.controller.business.IIndicadorBiomedicoService;
 import br.upe.controller.business.IndicadorBiomedicoService;
 import br.upe.controller.business.RelatorioDiferencaIndicadores;
-import br.upe.data.entities.*; // USANDO ENTITY
+import br.upe.data.beans.IndicadorBiomedico;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -66,20 +66,12 @@ public class MetricasScreenController extends BaseController {
 
     private void configurarTabela() {
         // Formatters para display
-        // CORREÇÃO: getData() -> getDataRegistro()
         colData.setCellValueFactory(cell -> new SimpleStringProperty(
-                cell.getValue().getDataRegistro() != null ? cell.getValue().getDataRegistro().format(DATE_FORMATTER) : ""));
-
+                cell.getValue().getData() != null ? cell.getValue().getData().format(DATE_FORMATTER) : ""));
         colPeso.setCellValueFactory(cell -> new SimpleStringProperty(String.format("%.1f", cell.getValue().getPesoKg())));
         colAltura.setCellValueFactory(cell -> new SimpleStringProperty(String.format("%.0f", cell.getValue().getAlturaCm())));
-
-        // CORREÇÃO: Validação de nulos para campos opcionais
-        colGordura.setCellValueFactory(cell -> new SimpleStringProperty(
-                cell.getValue().getPercentualGordura() != null ? String.format("%.1f", cell.getValue().getPercentualGordura()) : "-"));
-
-        colMassaMagra.setCellValueFactory(cell -> new SimpleStringProperty(
-                cell.getValue().getPercentualMassaMagra() != null ? String.format("%.1f", cell.getValue().getPercentualMassaMagra()) : "-"));
-
+        colGordura.setCellValueFactory(cell -> new SimpleStringProperty(String.format("%.1f", cell.getValue().getPercentualGordura())));
+        colMassaMagra.setCellValueFactory(cell -> new SimpleStringProperty(String.format("%.1f", cell.getValue().getPercentualMassaMagra())));
         colImc.setCellValueFactory(cell -> new SimpleStringProperty(String.format("%.2f", cell.getValue().getImc())));
 
         indicadoresTable.setItems(indicadoresObservable);
@@ -91,11 +83,10 @@ public class MetricasScreenController extends BaseController {
             return;
         }
 
-        // CORREÇÃO: Comparator usando getDataRegistro
         List<IndicadorBiomedico> lista = indicadorService.listarTodosDoUsuario(usuarioLogado.getId())
                 .stream()
-                .sorted(Comparator.comparing(IndicadorBiomedico::getDataRegistro))
-                .toList();
+                .sorted(Comparator.comparing(IndicadorBiomedico::getData))
+                .toList(); // cria uma lista nova já ordenada
 
         indicadoresObservable.setAll(lista);
     }
@@ -145,8 +136,7 @@ public class MetricasScreenController extends BaseController {
         }
         try {
             List<IndicadorBiomedico> lista = indicadorService.gerarRelatorioPorData(usuarioLogado.getId(), inicio, fim);
-
-            lista.sort(Comparator.comparing(IndicadorBiomedico::getDataRegistro));
+            lista.sort(Comparator.comparing(IndicadorBiomedico::getData));
             indicadoresObservable.setAll(lista);
         } catch (IllegalArgumentException ex) {
             showAlert(Alert.AlertType.ERROR, "Filtro inválido", ex.getMessage());
@@ -155,6 +145,7 @@ public class MetricasScreenController extends BaseController {
 
     @FXML
     private void handleMostrarTodos() {
+        // Limpar filtros e recarregar todos os indicadores
         if (inicioPicker != null) inicioPicker.setValue(null);
         if (fimPicker != null) fimPicker.setValue(null);
         carregarTodosIndicadores();
@@ -173,7 +164,9 @@ public class MetricasScreenController extends BaseController {
             return;
         }
         try {
+            // Gera o relatório de diferenças (inicial x final)
             RelatorioDiferencaIndicadores rel = indicadorService.gerarRelatorioDiferenca(usuarioLogado.getId(), inicio, fim);
+            // Dados completos do período para montar o gráfico
             List<IndicadorBiomedico> evolucao = indicadorService.gerarRelatorioPorData(usuarioLogado.getId(), inicio, fim);
 
             if (evolucao == null || evolucao.isEmpty()) {
@@ -181,10 +174,11 @@ public class MetricasScreenController extends BaseController {
                 return;
             }
 
+            // Carrega o FXML do relatório (tabela + gráfico)
             java.net.URL fxmlUrl = getClass().getResource("/ui/RelatorioDiferencasDialog.fxml");
             if (fxmlUrl == null) {
-                logger.severe("FXML '/ui/RelatorioDiferencasDialog.fxml' não encontrado.");
-                showAlert(Alert.AlertType.ERROR, "Erro", "Arquivo de interface não encontrado.");
+                logger.severe("FXML '/ui/RelatorioDiferencasDialog.fxml' não encontrado no classpath.");
+                showAlert(Alert.AlertType.ERROR, "Erro", "Arquivo de interface do Relatório de Diferenças não encontrado.");
                 return;
             }
             javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(fxmlUrl);
@@ -197,6 +191,7 @@ public class MetricasScreenController extends BaseController {
             dialog.getDialogPane().setContent(root);
             dialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
 
+            // Define o ícone quando o Stage do diálogo estiver disponível
             dialog.setOnShown(e -> {
                 Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
                 stage.getIcons().clear();
@@ -254,10 +249,11 @@ public class MetricasScreenController extends BaseController {
         File file = chooser.showSaveDialog(obterStageAtual());
         if (file != null) {
             try {
+                // Usa o helper de exportação já presente no service
                 if (indicadorService instanceof IndicadorBiomedicoService impl) {
                     impl.exportarRelatorioPorDataParaCsv(usuarioLogado.getId(), inicio, fim, file.getAbsolutePath());
                 } else {
-                    showAlert(Alert.AlertType.INFORMATION, "Exportação", "Recurso indisponível.");
+                    showAlert(Alert.AlertType.INFORMATION, "Exportação", "Recurso de exportação indisponível neste momento.");
                 }
             } catch (Exception ex) {
                 showAlert(Alert.AlertType.ERROR, "Falha na exportação", ex.getMessage());
@@ -274,7 +270,7 @@ public class MetricasScreenController extends BaseController {
         LocalDate inicio = inicioPicker.getValue();
         LocalDate fim = fimPicker.getValue();
         if (inicio == null || fim == null) {
-            showAlert(Alert.AlertType.WARNING, MSG_PERIODO_REQUERIDO, "Informe as datas de início e fim.");
+            showAlert(Alert.AlertType.WARNING, MSG_PERIODO_REQUERIDO, "Informe as datas de início e fim para exportar a diferença.");
             return;
         }
         FileChooser chooser = new FileChooser();

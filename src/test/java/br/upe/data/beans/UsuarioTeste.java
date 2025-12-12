@@ -1,15 +1,15 @@
 package br.upe.data.beans;
 
 import br.upe.data.dao.UsuarioDAO;
-import br.upe.data.entities.Usuario;
+import br.upe.data.entity.Usuario;
 import br.upe.data.TipoUsuario;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-class UsuarioTeste {
+public class UsuarioTeste {
 
     @Test
-    void deveCriarUsuarioComSucesso() {
+    public void deveCriarUsuarioComSucesso() {
         // 1. Prepara
         UsuarioDAO dao = new UsuarioDAO();
         Usuario novoUser = new Usuario("Teste JUnit", "teste.junit@email.com", "123", TipoUsuario.COMUM);

@@ -1,12 +1,17 @@
 package br.upe.data.interfaces;
 
-import br.upe.data.entities.PlanoTreino;
+import br.upe.data.beans.PlanoTreino;
+
 import java.util.List;
 import java.util.Optional;
 
-public interface IPlanoTreinoRepository extends IGenericRepository<PlanoTreino> {
-    //
+public interface IPlanoTreinoRepository {
+    PlanoTreino salvar(PlanoTreino plano);
     List<PlanoTreino> buscarTodosDoUsuario(int idUsuario);
+    void editar(PlanoTreino plano);
+    void atualizar(PlanoTreino plano);
+    void deletar(int idPlano);
     Optional<PlanoTreino> buscarPorNomeEUsuario(int idUsuario, String nomePlano);
-    void atualizar(PlanoTreino plano); // Se for diferente de editar, mantenha. Se for igual, apague.
+    Optional<PlanoTreino> buscarPorId(int idPlano);
+    int proximoId();
 }

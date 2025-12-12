@@ -1,10 +1,13 @@
 package br.upe.controller.business;
 
-import br.upe.data.entities.*;
-import br.upe.data.dao.*;
-import br.upe.data.interfaces.*;
+import br.upe.data.beans.*;
+import br.upe.data.interfaces.IExercicioRepository;
+import br.upe.data.interfaces.IPlanoTreinoRepository;
+import br.upe.data.interfaces.ISessaoTreinoRepository;
+import br.upe.data.dao.ExercicioRepositoryImpl;
+import br.upe.data.dao.PlanoTreinoRepositoryImpl;
+import br.upe.data.dao.SessaoTreinoRepositoryImpl;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -16,101 +19,75 @@ public class SessaoTreinoService {
     private final ISessaoTreinoRepository sessaoRepo;
     private final IPlanoTreinoRepository planoRepo;
     private final IExercicioRepository exercicioRepo;
-    private final IUsuarioRepository usuarioRepo;
-
-    private final GenericDAO<ItemSessaoTreino> itemSessaoRepo;
-    private final GenericDAO<ItemPlanoTreino> itemPlanoRepo;
-
     private static final Logger logger = Logger.getLogger(SessaoTreinoService.class.getName());
 
-    public SessaoTreinoService(ISessaoTreinoRepository sessaoRepo,
-                               IPlanoTreinoRepository planoRepo,
-                               IExercicioRepository exercicioRepo,
-                               IUsuarioRepository usuarioRepo) {
+    public SessaoTreinoService(ISessaoTreinoRepository sessaoRepo, IPlanoTreinoRepository planoRepo, IExercicioRepository exercicioRepo) {
         this.sessaoRepo = sessaoRepo;
         this.planoRepo = planoRepo;
         this.exercicioRepo = exercicioRepo;
-        this.usuarioRepo = usuarioRepo;
-        this.itemSessaoRepo = new ItemSessaoTreinoDAO();
-        this.itemPlanoRepo = new ItemPlanoTreinoDAO();
     }
 
     public SessaoTreinoService() {
-        this.sessaoRepo = new SessaoTreinoDAO();
-        this.planoRepo = new PlanoTreinoDAO();
-        this.exercicioRepo = new ExercicioDAO();
-        this.usuarioRepo = new UsuarioDAO();
-        this.itemSessaoRepo = new ItemSessaoTreinoDAO();
-        this.itemPlanoRepo = new ItemPlanoTreinoDAO();
+        this.sessaoRepo = new SessaoTreinoRepositoryImpl();
+        this.planoRepo = new PlanoTreinoRepositoryImpl();
+        this.exercicioRepo = new ExercicioRepositoryImpl();
     }
 
+    // Inicia a sessao de um usuario
     public SessaoTreino iniciarSessao(int idUsuario, int idPlano) {
-        Usuario usuario = usuarioRepo.buscarPorId(idUsuario)
-                .orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado."));
-
-        PlanoTreino plano = planoRepo.buscarPorId(idPlano)
-                .orElseThrow(() -> new IllegalArgumentException("Plano não encontrado."));
-
-        if (!plano.getUsuario().getId().equals(idUsuario)) {
-            throw new IllegalArgumentException("Este plano não pertence a você.");
+        Optional<PlanoTreino> planoOpt = planoRepo.buscarPorId(idPlano);
+        if (!planoOpt.isPresent() || planoOpt.get().getIdUsuario() != idUsuario) {
+            throw new IllegalArgumentException("Plano de treino com ID " + idPlano + " não encontrado ou não pertence a você.");
         }
 
-        SessaoTreino sessao = new SessaoTreino();
-        sessao.setUsuario(usuario);
-        sessao.setPlanoTreino(plano);
-        sessao.setDataSessao(LocalDate.now());
-
-        // ALTERAÇÃO NECESSÁRIA 1: Salvar aqui para gerar o ID da sessão
-        sessaoRepo.salvar(sessao);
-
-        return sessao;
+        return new SessaoTreino(idUsuario, idPlano);
     }
 
+    // Registra a execucao de um exercicio
     public void registrarExecucao(SessaoTreino sessao, int idExercicio, int repeticoesRealizadas, double cargaRealizada) {
-        Exercicio exercicio = exercicioRepo.buscarPorId(idExercicio)
-                .orElseThrow(() -> new IllegalArgumentException("Exercício não encontrado: " + idExercicio));
-
-        ItemSessaoTreino item = new ItemSessaoTreino();
-        item.setSessaoTreino(sessao);
-        item.setExercicio(exercicio);
-        item.setRepeticoesRealizadas(repeticoesRealizadas);
-        item.setCargaRealizada(cargaRealizada);
-
-        itemSessaoRepo.salvar(item);
+        ItemSessaoTreino itemExecutado = new ItemSessaoTreino(idExercicio, repeticoesRealizadas, cargaRealizada);
+        sessao.adicionarItemExecutado(itemExecutado);
     }
 
-
+    // Verifica as condições e registra uma sessao de treino
     public void salvarSessao(SessaoTreino sessao) {
-        sessaoRepo.salvar(sessao); // Ou atualizar, dependendo do seu DAO
-        logger.log(Level.INFO, "Sessão de treino ID {0} atualizada com sucesso!", sessao.getId());
+        if (sessao.getItensExecutados().isEmpty()) {
+            logger.log(Level.WARNING, "Sessão vazia. Não será salva.");
+            return;
+        }
+        sessaoRepo.salvar(sessao);
+        logger.log(Level.INFO, "Sessão de treino ID {0} salva com sucesso!", new Object[]{sessao.getIdSessao()});
     }
 
+    // Verifica condições e gera sugestões de acordo com sessao de treino
     public List<SugestaoAtualizacaoPlano> verificarAlteracoesEGerarSugestoes(SessaoTreino sessao) {
-
-        List<ItemPlanoTreino> itensPlanejados = ((ItemPlanoTreinoDAO)itemPlanoRepo).listarPorPlano(sessao.getPlanoTreino().getId());
-
-        // 2. Busca itens executados na sessão atual
-        List<ItemSessaoTreino> itensExecutados = ((ItemSessaoTreinoDAO)itemSessaoRepo).listarPorSessao(sessao.getId());
+        Optional<PlanoTreino> planoOpt = planoRepo.buscarPorId(sessao.getIdPlanoTreino());
+        if (!planoOpt.isPresent()) {
+            logger.log(Level.SEVERE, "Plano de treino com ID {0} não encontrado para verificação de alterações.", new Object[]{sessao.getIdPlanoTreino()});
+            return List.of();
+        }
+        PlanoTreino plano = planoOpt.get();
 
         List<SugestaoAtualizacaoPlano> sugestoes = new ArrayList<>();
 
-        // 3. Compara o Realizado vs Planejado
-        for (ItemPlanoTreino planejado : itensPlanejados) {
-            // Procura o item executado correspondente ao exercicio planejado
-            Optional<ItemSessaoTreino> executadoOpt = itensExecutados.stream()
-                    .filter(e -> e.getExercicio().getId() == planejado.getExercicio().getId())
+        for (ItemSessaoTreino executado : sessao.getItensExecutados()) {
+            Optional<ItemPlanoTreino> planejadoOpt = plano.getItensTreino().stream()
+                    .filter(pItem -> pItem.getIdExercicio() == executado.getIdExercicio())
                     .findFirst();
 
-            if (executadoOpt.isPresent()) {
-                ItemSessaoTreino executado = executadoOpt.get();
+            if (planejadoOpt.isPresent()) {
+                ItemPlanoTreino planejado = planejadoOpt.get();
 
-                // Lógica simples: Se fez mais carga ou mais repetições, sugere update
-                if (executado.getCargaRealizada() > planejado.getCargaKg() ||
-                        executado.getRepeticoesRealizadas() > planejado.getRepeticoes()) {
+                boolean mudouRepeticoes = executado.getRepeticoesRealizadas() != planejado.getRepeticoes();
+                boolean mudouCarga = executado.getCargaRealizada() != planejado.getCargaKg(); // Cast para double é automático no java
+
+                if (mudouRepeticoes || mudouCarga) {
+                    Optional<Exercicio> exercicioDetalhesOpt = exercicioRepo.buscarPorId(executado.getIdExercicio());
+                    String nomeExercicio = exercicioDetalhesOpt.isPresent() ? exercicioDetalhesOpt.get().getNome() : "Exercício Desconhecido";
 
                     sugestoes.add(new SugestaoAtualizacaoPlano(
-                            planejado.getExercicio().getId(),
-                            planejado.getExercicio().getNome(),
+                            executado.getIdExercicio(),
+                            nomeExercicio,
                             planejado.getRepeticoes(),
                             executado.getRepeticoesRealizadas(),
                             planejado.getCargaKg(),
@@ -119,26 +96,30 @@ public class SessaoTreinoService {
                 }
             }
         }
-
         return sugestoes;
     }
 
+    // Verifica condições e atualiza o plano de acordo com a sessao
     public void aplicarAtualizacoesNoPlano(int idPlano, int idExercicio, int novasRepeticoes, double novaCarga) {
-        List<ItemPlanoTreino> itens = ((ItemPlanoTreinoDAO)itemPlanoRepo).listarPorPlano(idPlano);
+        Optional<PlanoTreino> planoOpt = planoRepo.buscarPorId(idPlano);
+        if (!planoOpt.isPresent()) {
+            logger.log(Level.SEVERE, "Plano de treino com ID {0} não encontrado para aplicar atualização.", new Object[]{idPlano});
+            return;
+        }
+        PlanoTreino plano = planoOpt.get();
 
-        Optional<ItemPlanoTreino> itemOpt = itens.stream()
-                .filter(i -> i.getExercicio().getId() == idExercicio)
+        Optional<ItemPlanoTreino> itemParaAtualizarOpt = plano.getItensTreino().stream()
+                .filter(item -> item.getIdExercicio() == idExercicio)
                 .findFirst();
 
-        if (itemOpt.isPresent()) {
-            ItemPlanoTreino item = itemOpt.get();
+        if (itemParaAtualizarOpt.isPresent()) {
+            ItemPlanoTreino item = itemParaAtualizarOpt.get();
             item.setRepeticoes(novasRepeticoes);
-            item.setCargaKg((int) novaCarga);
-
-            itemPlanoRepo.editar(item);
-            logger.log(Level.INFO, "Plano atualizado para o exercício ID {0}.", idExercicio);
+            item.setCargaKg((int)novaCarga);
+            planoRepo.editar(plano);
+            logger.log(Level.INFO, "Plano de treino ID {0} atualizado para o exercício ID {1}.", new Object[]{idPlano, idExercicio});
         } else {
-            logger.log(Level.WARNING, "Exercício ID {0} não encontrado no plano.", idExercicio);
+            logger.log(Level.SEVERE, "Exercício ID {0} não encontrado no plano ID {1} para atualização.", new Object[]{idExercicio, idPlano});
         }
     }
 

@@ -1,6 +1,6 @@
 package br.upe.controller.ui;
 
-import br.upe.data.entities.Usuario;
+import br.upe.data.entity.Usuario;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;

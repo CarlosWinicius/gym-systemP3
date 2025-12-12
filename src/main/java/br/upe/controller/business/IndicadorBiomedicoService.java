@@ -1,30 +1,33 @@
 package br.upe.controller.business;
 
-import br.upe.data.entities.IndicadorBiomedico;
-import br.upe.data.entities.Usuario;
-import br.upe.data.dao.IndicadorBiomedicoDAO;
-import br.upe.data.dao.UsuarioDAO;
+import br.upe.data.beans.IndicadorBiomedico;
+import br.upe.data.interfaces.IIndicadorBiomedicoRepository;
+import br.upe.data.dao.IndicadorBiomedicoRepositoryImpl;
 
 import java.io.*;
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-// CORREÇÃO: Adicionado "implements IIndicadorBiomedicoService"
 public class IndicadorBiomedicoService implements IIndicadorBiomedicoService {
 
-    private final IndicadorBiomedicoDAO indicadorDAO;
-    private final UsuarioDAO usuarioDAO;
+    private final IIndicadorBiomedicoRepository indicadorRepository;
     private static final Logger logger = Logger.getLogger(IndicadorBiomedicoService.class.getName());
 
-    public IndicadorBiomedicoService() {
-        this.indicadorDAO = new IndicadorBiomedicoDAO();
-        this.usuarioDAO = new UsuarioDAO();
+    public IndicadorBiomedicoService(IIndicadorBiomedicoRepository indicadorRepository) {
+        this.indicadorRepository = indicadorRepository;
     }
 
+    public IndicadorBiomedicoService() {
+        this.indicadorRepository = new IndicadorBiomedicoRepositoryImpl();
+    }
+
+    // Verifica condições e cadastra os indicadores
     @Override
     public IndicadorBiomedico cadastrarIndicador(int idUsuario, LocalDate data, double pesoKg, double alturaCm, double percentualGordura, double percentualMassaMagra) {
         if (pesoKg <= 0 || alturaCm <= 0) {
@@ -37,23 +40,21 @@ public class IndicadorBiomedicoService implements IIndicadorBiomedicoService {
             data = LocalDate.now();
         }
 
-        Usuario usuario = usuarioDAO.buscarPorId(idUsuario)
-                .orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado."));
+        double imc = CalculadoraIMC.calcular(pesoKg, alturaCm);
 
-        double imc = pesoKg / Math.pow(alturaCm / 100.0, 2);
-
-        IndicadorBiomedico novoIndicador = new IndicadorBiomedico();
-        novoIndicador.setUsuario(usuario);
-        novoIndicador.setDataRegistro(data);
-        novoIndicador.setPesoKg(pesoKg);
-        novoIndicador.setAlturaCm(alturaCm);
-        novoIndicador.setPercentualGordura(percentualGordura);
-        novoIndicador.setPercentualMassaMagra(percentualMassaMagra);
-        novoIndicador.setImc(imc);
-
-        return indicadorDAO.salvar(novoIndicador);
+        IndicadorBiomedico novoIndicador = IndicadorBiomedico.builder()
+                .idUsuario(idUsuario)
+                .data(data)
+                .pesoKg(pesoKg)
+                .alturaCm(alturaCm)
+                .percentualGordura(percentualGordura)
+                .percentualMassaMagra(percentualMassaMagra)
+                .imc(imc)
+                .build();
+        return indicadorRepository.salvar(novoIndicador);
     }
 
+    // Importa os indicadores do arquivo CSV
     @Override
     public void importarIndicadoresCsv(int idUsuario, String caminhoArquivoCsv) {
         try (BufferedReader br = new BufferedReader(new FileReader(caminhoArquivoCsv))) {
@@ -65,14 +66,15 @@ public class IndicadorBiomedicoService implements IIndicadorBiomedicoService {
 
                 processarLinhaCsv(linha, linhaNum, idUsuario);
             }
-            logger.log(Level.INFO, "Importação de indicadores concluída.");
+            logger.log(Level.INFO, "Importação de indicadores concluída (verifique mensagens no console).");
         } catch (FileNotFoundException e) {
             throw new IllegalArgumentException("Arquivo CSV não encontrado: " + caminhoArquivoCsv);
         } catch (IOException e) {
-            logger.log(Level.SEVERE, "Erro ao ler o arquivo CSV: {0}", e.getMessage());
+            logger.log(Level.SEVERE, "Erro ao ler o arquivo CSV para importação: {0}", e.getMessage());
         }
     }
 
+    // Verifica as condições e gera o relatorio pela data
     @Override
     public List<IndicadorBiomedico> gerarRelatorioPorData(int idUsuario, LocalDate dataInicio, LocalDate dataFim) {
         if (dataInicio == null || dataFim == null) {
@@ -81,40 +83,45 @@ public class IndicadorBiomedicoService implements IIndicadorBiomedicoService {
         if (dataInicio.isAfter(dataFim)) {
             throw new IllegalArgumentException("Data de início não pode ser posterior à data de fim.");
         }
-
-        List<IndicadorBiomedico> resultados = indicadorDAO.buscarPorPeriodo(idUsuario, dataInicio, dataFim);
-        resultados.sort(Comparator.comparing(IndicadorBiomedico::getDataRegistro));
+        List<IndicadorBiomedico> resultadosRepo = indicadorRepository.buscarPorPeriodo(idUsuario, dataInicio, dataFim);
+        List<IndicadorBiomedico> resultados = new ArrayList<>(resultadosRepo);
+        resultados.sort(Comparator.comparing(IndicadorBiomedico::getData));
         return resultados;
     }
 
+    // Verificas as condicoes e gera um relatorio da diferenca entre duas datas
     @Override
     public RelatorioDiferencaIndicadores gerarRelatorioDiferenca(int idUsuario, LocalDate dataInicio, LocalDate dataFim) {
         if (dataInicio == null || dataFim == null) {
-            throw new IllegalArgumentException("Datas inválidas.");
+            throw new IllegalArgumentException("Datas de início e fim não podem ser nulas.");
+        }
+        if (dataInicio.isAfter(dataFim)) {
+            throw new IllegalArgumentException("Data de início não pode ser posterior à data de fim.");
         }
 
-        List<IndicadorBiomedico> lista = indicadorDAO.buscarPorPeriodo(idUsuario, dataInicio, dataFim);
+        List<IndicadorBiomedico> indicadoresNoPeriodoRepo = indicadorRepository.buscarPorPeriodo(idUsuario, dataInicio, dataFim);
+        List<IndicadorBiomedico> indicadoresNoPeriodo = new ArrayList<>(indicadoresNoPeriodoRepo);
+        indicadoresNoPeriodo.sort(Comparator.comparing(IndicadorBiomedico::getData));
 
         RelatorioDiferencaIndicadores relatorio = new RelatorioDiferencaIndicadores();
         relatorio.setDataInicio(dataInicio);
         relatorio.setDataFim(dataFim);
 
-        if (!lista.isEmpty()) {
-            lista.sort(Comparator.comparing(IndicadorBiomedico::getDataRegistro));
+        if (!indicadoresNoPeriodo.isEmpty()) {
+            relatorio.setIndicadorInicial(Optional.of(indicadoresNoPeriodo.get(0)));
+            relatorio.setIndicadorFinal(Optional.of(indicadoresNoPeriodo.get(indicadoresNoPeriodo.size() - 1)));
 
-            relatorio.setIndicadorInicial(Optional.of(lista.get(0)));
-            relatorio.setIndicadorFinal(Optional.of(lista.get(lista.size() - 1)));
             relatorio.calcularDiferencas();
         }
         return relatorio;
     }
 
+    // Lista todos os indicadores do usuario
     @Override
     public List<IndicadorBiomedico> listarTodosDoUsuario(int idUsuario) {
-        return indicadorDAO.listarPorUsuario(idUsuario);
+        return indicadorRepository.listarPorUsuario(idUsuario);
     }
 
-    @Override
     public void exportarRelatorioPorDataParaCsv(int idUsuario, LocalDate dataInicio, LocalDate dataFim, String caminhoArquivo) {
         List<IndicadorBiomedico> relatorio = gerarRelatorioPorData(idUsuario, dataInicio, dataFim);
 
@@ -124,7 +131,7 @@ public class IndicadorBiomedicoService implements IIndicadorBiomedicoService {
 
             for (IndicadorBiomedico i : relatorio) {
                 writer.write(
-                        i.getDataRegistro() + ";" +
+                        i.getData() + ";" +
                                 i.getPesoKg() + ";" +
                                 i.getAlturaCm() + ";" +
                                 i.getPercentualGordura() + ";" +
@@ -133,17 +140,16 @@ public class IndicadorBiomedicoService implements IIndicadorBiomedicoService {
                 );
                 writer.newLine();
             }
-            logger.log(Level.INFO, "Relatório exportado para: {0}", caminhoArquivo);
+
+            logger.log(Level.INFO, "Relatório exportado com sucesso para: {0}", caminhoArquivo);
         } catch (IOException e) {
-            logger.log(Level.SEVERE, "Erro ao exportar: {0}", e.getMessage());
+            logger.log(Level.SEVERE, "Erro ao exportar relatório: {0}", e.getMessage());
         }
     }
 
-    // Método privado auxiliar não precisa estar na interface
     private void processarLinhaCsv(String linha, int linhaNum, int idUsuario) {
         String[] partes = linha.split(";");
-        // Espera-se: Data;Peso;Altura;Gordura;MassaMagra
-        if (partes.length >= 5) {
+        if (partes.length == 5) {
             try {
                 LocalDate data = LocalDate.parse(partes[0].trim());
                 double pesoKg = Double.parseDouble(partes[1].trim());
@@ -152,9 +158,13 @@ public class IndicadorBiomedicoService implements IIndicadorBiomedicoService {
                 double percentualMassaMagra = Double.parseDouble(partes[4].trim());
 
                 cadastrarIndicador(idUsuario, data, pesoKg, alturaCm, percentualGordura, percentualMassaMagra);
-            } catch (Exception e) {
-                logger.log(Level.SEVERE, "Erro na linha {0}: {1}", new Object[]{linhaNum, e.getMessage()});
+            } catch (NumberFormatException | DateTimeParseException e) {
+                logger.log(Level.SEVERE, "Erro de formato na linha {0} do CSV: {1} - {2}", new Object[]{linhaNum, linha, e.getMessage()});
+            } catch (IllegalArgumentException e) {
+                logger.log(Level.SEVERE, "Erro de validação na linha {0} do CSV: {1} - {2}", new Object[]{linhaNum, linha, e.getMessage()});
             }
+        } else {
+            logger.log(Level.SEVERE, "Formato inválido na linha {0} do CSV (esperado 5 colunas): {1}", new Object[]{linhaNum, linha});
         }
     }
 }

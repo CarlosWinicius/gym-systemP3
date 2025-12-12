@@ -3,7 +3,7 @@ package br.upe.controller.ui;
 import br.upe.controller.business.IUsuarioService;
 import br.upe.controller.business.UsuarioService;
 import br.upe.data.TipoUsuario;
-import br.upe.data.entities.Usuario;
+import br.upe.data.entity.Usuario;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -59,44 +59,23 @@ public class SignInScreenController extends BaseController {
             return;
         }
 
-        toggleLoading(true);
-
-        javafx.concurrent.Task<Usuario> cadastroTask = new javafx.concurrent.Task<>() {
-            @Override
-            protected Usuario call() throws Exception {
-                return usuarioService.cadastrarUsuario(nome, email, senha, TipoUsuario.COMUM);
-            }
-        };
-
-        cadastroTask.setOnSucceeded(event -> {
-            toggleLoading(false);
-            Usuario usuario = cadastroTask.getValue();
+        try {
+            Usuario usuario = usuarioService.cadastrarUsuario(nome, email, senha, TipoUsuario.COMUM);
 
             if (usuario != null) {
+
+                showAlert(Alert.AlertType.INFORMATION, "Cadastro Realizado", "Usuário " + usuario.getNome() + " cadastrado com sucesso!");
+
                 BaseController.usuarioLogado = usuario;
+
                 navigateTo(signInButton, "/ui/HomeScreen.fxml");
             } else {
                 showAlert(Alert.AlertType.ERROR, ERRO_CADASTRO_TITULO, "Não foi possível completar o cadastro. Tente novamente.");
             }
-        });
+        } catch (Exception e) {
 
-        cadastroTask.setOnFailed(event -> {
-            toggleLoading(false);
-            Throwable erro = cadastroTask.getException();
-            showAlert(Alert.AlertType.ERROR, ERRO_CADASTRO_TITULO, erro.getMessage());
-        });
-
-        new Thread(cadastroTask).start();
-    }
-
-    private void toggleLoading(boolean isLoading) {
-        signInButton.setDisable(isLoading);
-        signInButton.setText(isLoading ? "Cadastrando..." : "Cadastrar");
-
-        nameField.setDisable(isLoading);
-        emailField.setDisable(isLoading);
-        passwordField.setDisable(isLoading);
-        confirmPasswordField.setDisable(isLoading);
+            showAlert(Alert.AlertType.ERROR, ERRO_CADASTRO_TITULO, "Ocorreu um erro: " + e.getMessage());
+        }
     }
 
     @FXML

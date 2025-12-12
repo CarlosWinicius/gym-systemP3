@@ -2,11 +2,11 @@ package br.upe.controller.ui;
 
 import br.upe.controller.business.ExercicioService;
 import br.upe.controller.business.IExercicioService;
-import br.upe.controller.business.IPlanoTreinoService; // Adicionado Interface
+import br.upe.controller.business.IPlanoTreinoService;
 import br.upe.controller.business.PlanoTreinoService;
-import br.upe.data.entities.Exercicio;
-import br.upe.data.entities.ItemPlanoTreino;
-import br.upe.data.entities.PlanoTreino;
+import br.upe.data.beans.Exercicio;
+import br.upe.data.beans.ItemPlanoTreino;
+import br.upe.data.beans.PlanoTreino;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -36,21 +36,14 @@ public class EditPlanScreenController extends BaseController {
     private Button deleteButton;
 
     private PlanoTreino planoAtual;
-
-    // CORREÇÃO 1: Usar a Interface para o tipo, mas instanciar a classe concreta
     private final IPlanoTreinoService planoTreinoService = new PlanoTreinoService();
     private final IExercicioService exercicioService = new ExercicioService();
-
     private final List<ExerciseCardController> cardControllers = new ArrayList<>();
 
     public void initData(PlanoTreino plano) {
         this.planoAtual = plano;
         this.planNameField.setText(plano.getNome());
-
-        // CORREÇÃO 2: getId() em vez de getIdPlano(). E verificação de nulo (Integer).
-        boolean isNovoPlano = (plano.getId() == null || plano.getId() == 0);
-        deleteButton.setDisable(isNovoPlano);
-
+        deleteButton.setDisable(plano.getIdPlano() == 0);
         populateExerciseGrid();
     }
 
@@ -58,18 +51,10 @@ public class EditPlanScreenController extends BaseController {
         exercisesTilePane.getChildren().clear();
         cardControllers.clear();
 
-        // Busca todos os exercícios disponíveis
         List<Exercicio> todosExercicios = exercicioService.listarExerciciosDoUsuario(usuarioLogado.getId());
-
-        // CORREÇÃO 3: Navegar pelo objeto Exercicio dentro do Item
-        // Antes: ItemPlanoTreino::getIdExercicio
-        // Agora: item -> item.getExercicio().getId()
-        List<Integer> idsExerciciosNoPlano = new ArrayList<>();
-        if (planoAtual.getItensTreino() != null) {
-            idsExerciciosNoPlano = planoAtual.getItensTreino().stream()
-                    .map(item -> item.getExercicio().getId())
-                    .collect(Collectors.toList());
-        }
+        List<Integer> idsExerciciosNoPlano = planoAtual.getItensTreino().stream()
+                .map(ItemPlanoTreino::getIdExercicio)
+                .collect(Collectors.toList());
 
         for (Exercicio exercicio : todosExercicios) {
             try {
@@ -78,8 +63,7 @@ public class EditPlanScreenController extends BaseController {
                 ExerciseCardController controller = loader.getController();
                 controller.setData(exercicio);
 
-                // CORREÇÃO 4: getId() em vez de getIdExercicio()
-                if (idsExerciciosNoPlano.contains(exercicio.getId())) {
+                if (idsExerciciosNoPlano.contains(exercicio.getIdExercicio())) {
                     controller.setSelected(true);
                 }
 
@@ -105,10 +89,9 @@ public class EditPlanScreenController extends BaseController {
         String novoNomeDoPlano = planNameField.getText();
 
         try {
-            // CORREÇÃO 5: getId() e verificação de nulo/zero
-            if (planoAtual.getId() == null || planoAtual.getId() == 0) {
+            if (planoAtual.getIdPlano() == 0) {
                 logger.log(Level.INFO, "Criando novo plano com nome: {0}", novoNomeDoPlano);
-                // Assume que o service retorna a nova Entity salva
+
                 this.planoAtual = planoTreinoService.criarPlano(usuarioLogado.getId(), novoNomeDoPlano);
             } else if (!nomeAntigoDoPlano.equals(novoNomeDoPlano)) {
                 logger.log(Level.INFO, "Editando nome do plano de ''{0}'' para ''{1}''", new Object[]{nomeAntigoDoPlano, novoNomeDoPlano});
@@ -116,18 +99,15 @@ public class EditPlanScreenController extends BaseController {
                 planoAtual.setNome(novoNomeDoPlano);
             }
 
-            // CORREÇÃO 6: Mapeamento correto dos IDs Originais (Item -> Exercicio -> Id)
             Set<Integer> idsOriginais = planoAtual.getItensTreino().stream()
-                    .map(item -> item.getExercicio().getId())
+                    .map(ItemPlanoTreino::getIdExercicio)
                     .collect(Collectors.toSet());
 
-            // CORREÇÃO 7: Mapeamento correto dos IDs Novos (Controller -> Exercicio -> Id)
             Set<Integer> idsNovos = cardControllers.stream()
                     .filter(ExerciseCardController::isSelected)
-                    .map(controller -> controller.getExercicio().getId())
+                    .map(controller -> controller.getExercicio().getIdExercicio())
                     .collect(Collectors.toSet());
 
-            // Lógica de Diferença (Diff) para saber quem remover
             for (Integer idOriginal : idsOriginais) {
                 if (!idsNovos.contains(idOriginal)) {
                     logger.log(Level.INFO, "Removendo exercício ID {0} do plano ''{1}''", new Object[]{idOriginal, planoAtual.getNome()});
@@ -135,11 +115,10 @@ public class EditPlanScreenController extends BaseController {
                 }
             }
 
-            // Lógica de Diferença (Diff) para saber quem adicionar
             for (Integer idNovo : idsNovos) {
                 if (!idsOriginais.contains(idNovo)) {
                     logger.log(Level.INFO, "Adicionando exercício ID {0} ao plano ''{1}''", new Object[]{idNovo, planoAtual.getNome()});
-                    // Assumindo carga 0 e repeticoes 0 como padrão ao adicionar via tela de edição rápida
+
                     planoTreinoService.adicionarExercicioAoPlano(usuarioLogado.getId(), planoAtual.getNome(), idNovo, 0, 0);
                 }
             }

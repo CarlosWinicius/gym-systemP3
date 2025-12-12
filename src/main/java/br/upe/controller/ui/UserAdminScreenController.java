@@ -2,7 +2,7 @@ package br.upe.controller.ui;
 
 import br.upe.controller.business.IUsuarioService;
 import br.upe.controller.business.UsuarioService;
-import br.upe.data.entities.Usuario;
+import br.upe.data.entity.Usuario;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Alert;
