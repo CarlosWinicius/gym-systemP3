@@ -1,411 +1,356 @@
-//package br.upe.integration;
-//
-//import br.upe.controller.business.ExercicioService;
-//import br.upe.controller.business.PlanoTreinoService;
-//import br.upe.controller.business.SessaoTreinoService;
-//import br.upe.data.beans.*;
-//import br.upe.data.repository.IExercicioRepository;
-//import br.upe.data.repository.IPlanoTreinoRepository;
-//import br.upe.data.repository.ISessaoTreinoRepository;
-//import br.upe.data.repository.impl.ExercicioRepositoryImpl;
-//import br.upe.data.repository.impl.PlanoTreinoRepositoryImpl;
-//import br.upe.data.repository.impl.SessaoTreinoRepositoryImpl;
-//import org.junit.jupiter.api.*;
-//
-//import java.io.IOException;
-//import java.nio.file.Files;
-//import java.nio.file.Paths;
-//import java.time.LocalDate;
-//import java.util.List;
-//import java.util.Optional;
-//
-//import static org.junit.jupiter.api.Assertions.*;
-//
-///**
-// * Testes de integração para o fluxo completo de sessões de treino
-// * Integra SessaoTreinoService + PlanoTreinoService + ExercicioService + repositórios + arquivos CSV
-// */
-//@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-//class SessaoTreinoIntegrationTest {
-//
-//    private SessaoTreinoService sessaoTreinoService;
-//    private PlanoTreinoService planoTreinoService;
-//    private ExercicioService exercicioService;
-//
-//    private ISessaoTreinoRepository sessaoRepository;
-//    private IPlanoTreinoRepository planoRepository;
-//    private IExercicioRepository exercicioRepository;
-//
-//    private static final String TEST_SESSAO_CSV_PATH = "src/test/resources/data/sessoes_integration_test.csv";
-//    private static final String TEST_PLANO_CSV_PATH = "src/test/resources/data/planos_sessao_integration_test.csv";
-//    private static final String TEST_EXERCICIO_CSV_PATH = "src/test/resources/data/exercicios_sessao_integration_test.csv";
-//    private static final int ID_USUARIO_TESTE = 1;
-//
-//    @BeforeEach
-//    void setUp() throws IOException {
-//        Files.createDirectories(Paths.get("src/test/resources/data"));
-//        Files.deleteIfExists(Paths.get(TEST_SESSAO_CSV_PATH));
-//        Files.deleteIfExists(Paths.get(TEST_PLANO_CSV_PATH));
-//        Files.deleteIfExists(Paths.get(TEST_EXERCICIO_CSV_PATH));
-//
-//        sessaoRepository = new SessaoTreinoRepositoryImpl(TEST_SESSAO_CSV_PATH);
-//        planoRepository = new PlanoTreinoRepositoryImpl(TEST_PLANO_CSV_PATH);
-//        exercicioRepository = new ExercicioRepositoryImpl(TEST_EXERCICIO_CSV_PATH);
-//
-//        sessaoTreinoService = new SessaoTreinoService(sessaoRepository, planoRepository, exercicioRepository);
-//        planoTreinoService = new PlanoTreinoService(planoRepository, exercicioRepository);
-//        exercicioService = new ExercicioService(exercicioRepository);
-//    }
-//
-//    @AfterEach
-//    void tearDown() throws IOException {
-//        Files.deleteIfExists(Paths.get(TEST_SESSAO_CSV_PATH));
-//        Files.deleteIfExists(Paths.get(TEST_PLANO_CSV_PATH));
-//        Files.deleteIfExists(Paths.get(TEST_EXERCICIO_CSV_PATH));
-//    }
-//
-//    @Test
-//    @Order(1)
-//    @DisplayName("Integração: Deve iniciar sessão de treino baseada em plano")
-//    void testIniciarSessao() {
-//        // Cria plano
-//        PlanoTreino plano = planoTreinoService.criarPlano(ID_USUARIO_TESTE, "Treino A");
-//
-//        // Inicia sessão
-//        SessaoTreino sessao = sessaoTreinoService.iniciarSessao(ID_USUARIO_TESTE, plano.getIdPlano());
-//
-//        // Verifica
-//        assertNotNull(sessao);
-//        assertEquals(ID_USUARIO_TESTE, sessao.getIdUsuario());
-//        assertEquals(plano.getIdPlano(), sessao.getIdPlanoTreino());
-//        assertEquals(LocalDate.now(), sessao.getDataSessao());
-//        assertNotNull(sessao.getItensExecutados());
-//        assertTrue(sessao.getItensExecutados().isEmpty());
-//    }
-//
-//    @Test
-//    @Order(2)
-//    @DisplayName("Integração: Não deve iniciar sessão com plano inexistente")
-//    void testIniciarSessaoPlanoInexistente() {
-//        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-//            sessaoTreinoService.iniciarSessao(ID_USUARIO_TESTE, 99999);
-//        });
-//        assertTrue(exception.getMessage().contains("não encontrado ou não pertence a você"));
-//    }
-//
-//    @Test
-//    @Order(3)
-//    @DisplayName("Integração: Não deve iniciar sessão com plano de outro usuário")
-//    void testIniciarSessaoPlanoOutroUsuario() {
-//        // Usuário 1 cria plano
-//        PlanoTreino planoUser1 = planoTreinoService.criarPlano(1, "Plano User1");
-//
-//        // Usuário 2 tenta iniciar sessão com plano do usuário 1
-//        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-//            sessaoTreinoService.iniciarSessao(2, planoUser1.getIdPlano());
-//        });
-//        assertTrue(exception.getMessage().contains("não encontrado ou não pertence a você"));
-//    }
-//
-//    @Test
-//    @Order(4)
-//    @DisplayName("Integração: Deve registrar execuções de exercícios na sessão")
-//    void testRegistrarExecucoes() {
-//        // Setup: cria exercícios e plano
-//        Exercicio ex1 = exercicioService.cadastrarExercicio(ID_USUARIO_TESTE, "Supino", "Desc", "/gif/1.gif");
-//        Exercicio ex2 = exercicioService.cadastrarExercicio(ID_USUARIO_TESTE, "Crucifixo", "Desc", "/gif/2.gif");
-//
-//        PlanoTreino plano = planoTreinoService.criarPlano(ID_USUARIO_TESTE, "Treino Peito");
-//        planoTreinoService.adicionarExercicioAoPlano(ID_USUARIO_TESTE, plano.getNome(), ex1.getIdExercicio(), 80, 12);
-//        planoTreinoService.adicionarExercicioAoPlano(ID_USUARIO_TESTE, plano.getNome(), ex2.getIdExercicio(), 30, 15);
-//
-//        // Inicia sessão
-//        SessaoTreino sessao = sessaoTreinoService.iniciarSessao(ID_USUARIO_TESTE, plano.getIdPlano());
-//
-//        // Registra execuções
-//        sessaoTreinoService.registrarExecucao(sessao, ex1.getIdExercicio(), 12, 80.0);
-//        sessaoTreinoService.registrarExecucao(sessao, ex2.getIdExercicio(), 15, 30.0);
-//
-//        // Verifica
-//        assertEquals(2, sessao.getItensExecutados().size());
-//
-//        ItemSessaoTreino item1 = sessao.getItensExecutados().get(0);
-//        assertEquals(ex1.getIdExercicio(), item1.getIdExercicio());
-//        assertEquals(12, item1.getRepeticoesRealizadas());
-//        assertEquals(80.0, item1.getCargaRealizada());
-//
-//        ItemSessaoTreino item2 = sessao.getItensExecutados().get(1);
-//        assertEquals(ex2.getIdExercicio(), item2.getIdExercicio());
-//        assertEquals(15, item2.getRepeticoesRealizadas());
-//        assertEquals(30.0, item2.getCargaRealizada());
-//    }
-//
-//    @Test
-//    @Order(5)
-//    @DisplayName("Integração: Deve salvar sessão com execuções")
-//    void testSalvarSessao() {
-//        // Setup
-//        Exercicio exercicio = exercicioService.cadastrarExercicio(ID_USUARIO_TESTE, "Agachamento", "Desc", "/gif/ag.gif");
-//        PlanoTreino plano = planoTreinoService.criarPlano(ID_USUARIO_TESTE, "Treino Pernas");
-//        planoTreinoService.adicionarExercicioAoPlano(ID_USUARIO_TESTE, plano.getNome(), exercicio.getIdExercicio(), 100, 10);
-//
-//        // Inicia e executa sessão
-//        SessaoTreino sessao = sessaoTreinoService.iniciarSessao(ID_USUARIO_TESTE, plano.getIdPlano());
-//        sessaoTreinoService.registrarExecucao(sessao, exercicio.getIdExercicio(), 10, 100.0);
-//
-//        // Salva
-//        sessaoTreinoService.salvarSessao(sessao);
-//
-//        // Verifica persistência
-//        assertNotEquals(0, sessao.getIdSessao());
-//        Optional<SessaoTreino> sessaoSalva = sessaoRepository.buscarPorId(sessao.getIdSessao());
-//        assertTrue(sessaoSalva.isPresent());
-//        assertEquals(1, sessaoSalva.get().getItensExecutados().size());
-//    }
-//
-//    @Test
-//    @Order(6)
-//    @DisplayName("Integração: Não deve salvar sessão vazia")
-//    void testNaoSalvarSessaoVazia() {
-//        PlanoTreino plano = planoTreinoService.criarPlano(ID_USUARIO_TESTE, "Treino Vazio");
-//        SessaoTreino sessao = sessaoTreinoService.iniciarSessao(ID_USUARIO_TESTE, plano.getIdPlano());
-//
-//        // Tenta salvar sem adicionar execuções
-//        sessaoTreinoService.salvarSessao(sessao);
-//
-//        // Sessão vazia não deve ser salva (ID permanece 0)
-//        assertEquals(0, sessao.getIdSessao());
-//    }
-//
-//    @Test
-//    @Order(7)
-//    @DisplayName("Integração: Deve gerar sugestões quando execução difere do planejado")
-//    void testGerarSugestoesAlteracao() {
-//        // Setup: cria exercícios e plano
-//        Exercicio ex1 = exercicioService.cadastrarExercicio(ID_USUARIO_TESTE, "Ex1", "Desc", "/gif/1.gif");
-//        Exercicio ex2 = exercicioService.cadastrarExercicio(ID_USUARIO_TESTE, "Ex2", "Desc", "/gif/2.gif");
-//
-//        PlanoTreino plano = planoTreinoService.criarPlano(ID_USUARIO_TESTE, "Plano Original");
-//        planoTreinoService.adicionarExercicioAoPlano(ID_USUARIO_TESTE, plano.getNome(), ex1.getIdExercicio(), 80, 12);
-//        planoTreinoService.adicionarExercicioAoPlano(ID_USUARIO_TESTE, plano.getNome(), ex2.getIdExercicio(), 60, 10);
-//
-//        // Inicia sessão e executa com valores diferentes do planejado
-//        SessaoTreino sessao = sessaoTreinoService.iniciarSessao(ID_USUARIO_TESTE, plano.getIdPlano());
-//        sessaoTreinoService.registrarExecucao(sessao, ex1.getIdExercicio(), 15, 85.0); // Aumentou carga e reps
-//        sessaoTreinoService.registrarExecucao(sessao, ex2.getIdExercicio(), 8, 55.0);  // Diminuiu carga e reps
-//
-//        // Gera sugestões
-//        List<SessaoTreinoService.SugestaoAtualizacaoPlano> sugestoes =
-//                sessaoTreinoService.verificarAlteracoesEGerarSugestoes(sessao);
-//
-//        // Verifica sugestões
-//        assertEquals(2, sugestoes.size());
-//
-//        // Sugestão para ex1
-//        SessaoTreinoService.SugestaoAtualizacaoPlano sug1 = sugestoes.stream()
-//                .filter(s -> s.idExercicio == ex1.getIdExercicio())
-//                .findFirst()
-//                .orElse(null);
-//        assertNotNull(sug1);
-//        assertEquals(12, sug1.repPlanejadas);
-//        assertEquals(15, sug1.repRealizadas);
-//        assertEquals(80.0, sug1.cargaPlanejada);
-//        assertEquals(85.0, sug1.cargaRealizada);
-//
-//        // Sugestão para ex2
-//        SessaoTreinoService.SugestaoAtualizacaoPlano sug2 = sugestoes.stream()
-//                .filter(s -> s.idExercicio == ex2.getIdExercicio())
-//                .findFirst()
-//                .orElse(null);
-//        assertNotNull(sug2);
-//        assertEquals(10, sug2.repPlanejadas);
-//        assertEquals(8, sug2.repRealizadas);
-//        assertEquals(60.0, sug2.cargaPlanejada);
-//        assertEquals(55.0, sug2.cargaRealizada);
-//    }
-//
-//    @Test
-//    @Order(8)
-//    @DisplayName("Integração: Não deve gerar sugestões quando execução igual ao planejado")
-//    void testNaoGerarSugestoesQuandoIgual() {
-//        // Setup
-//        Exercicio exercicio = exercicioService.cadastrarExercicio(ID_USUARIO_TESTE, "ExIgual", "Desc", "/gif/ig.gif");
-//        PlanoTreino plano = planoTreinoService.criarPlano(ID_USUARIO_TESTE, "Plano Igual");
-//        planoTreinoService.adicionarExercicioAoPlano(ID_USUARIO_TESTE, plano.getNome(), exercicio.getIdExercicio(), 70, 12);
-//
-//        // Executa exatamente como planejado
-//        SessaoTreino sessao = sessaoTreinoService.iniciarSessao(ID_USUARIO_TESTE, plano.getIdPlano());
-//        sessaoTreinoService.registrarExecucao(sessao, exercicio.getIdExercicio(), 12, 70.0);
-//
-//        // Gera sugestões
-//        List<SessaoTreinoService.SugestaoAtualizacaoPlano> sugestoes =
-//                sessaoTreinoService.verificarAlteracoesEGerarSugestoes(sessao);
-//
-//        // Não deve haver sugestões
-//        assertTrue(sugestoes.isEmpty());
-//    }
-//
-//    @Test
-//    @Order(9)
-//    @DisplayName("Integração: Deve aplicar atualizações no plano baseado na sessão")
-//    void testAplicarAtualizacoesNoPlano() {
-//        // Setup
-//        Exercicio exercicio = exercicioService.cadastrarExercicio(ID_USUARIO_TESTE, "ExAtualizar", "Desc", "/gif/at.gif");
-//        PlanoTreino plano = planoTreinoService.criarPlano(ID_USUARIO_TESTE, "Plano Atualizar");
-//        planoTreinoService.adicionarExercicioAoPlano(ID_USUARIO_TESTE, plano.getNome(), exercicio.getIdExercicio(), 60, 10);
-//
-//        // Verifica valores originais
-//        Optional<PlanoTreino> planoOriginal = planoTreinoService.buscarPlanoPorNomeEUsuario(
-//                ID_USUARIO_TESTE, plano.getNome()
-//        );
-//        ItemPlanoTreino itemOriginal = planoOriginal.get().getItensTreino().get(0);
-//        assertEquals(60, itemOriginal.getCargaKg());
-//        assertEquals(10, itemOriginal.getRepeticoes());
-//
-//        // Aplica atualização
-//        sessaoTreinoService.aplicarAtualizacoesNoPlano(plano.getIdPlano(), exercicio.getIdExercicio(), 12, 65.0);
-//
-//        // Verifica atualização
-//        Optional<PlanoTreino> planoAtualizado = planoTreinoService.buscarPlanoPorNomeEUsuario(
-//                ID_USUARIO_TESTE, plano.getNome()
-//        );
-//        assertTrue(planoAtualizado.isPresent());
-//        ItemPlanoTreino itemAtualizado = planoAtualizado.get().getItensTreino().get(0);
-//        assertEquals(65, itemAtualizado.getCargaKg());
-//        assertEquals(12, itemAtualizado.getRepeticoes());
-//
-//        // Verifica persistência
-//        Optional<PlanoTreino> planoRecarregado = planoRepository.buscarPorId(plano.getIdPlano());
-//        assertTrue(planoRecarregado.isPresent());
-//        assertEquals(65, planoRecarregado.get().getItensTreino().get(0).getCargaKg());
-//        assertEquals(12, planoRecarregado.get().getItensTreino().get(0).getRepeticoes());
-//    }
-//
-//    @Test
-//    @Order(10)
-//    @DisplayName("Integração: Fluxo completo - criar plano, executar sessão e atualizar plano")
-//    void testFluxoCompletoSessaoTreino() {
-//        // 1. Criar exercícios
-//        Exercicio ex1 = exercicioService.cadastrarExercicio(ID_USUARIO_TESTE, "Supino Reto", "Peito", "/gif/sup.gif");
-//        Exercicio ex2 = exercicioService.cadastrarExercicio(ID_USUARIO_TESTE, "Supino Inclinado", "Peito", "/gif/inc.gif");
-//        Exercicio ex3 = exercicioService.cadastrarExercicio(ID_USUARIO_TESTE, "Crucifixo", "Peito", "/gif/cru.gif");
-//
-//        // 2. Criar plano de treino
-//        PlanoTreino plano = planoTreinoService.criarPlano(ID_USUARIO_TESTE, "Treino Peito Completo");
-//        planoTreinoService.adicionarExercicioAoPlano(ID_USUARIO_TESTE, plano.getNome(), ex1.getIdExercicio(), 80, 12);
-//        planoTreinoService.adicionarExercicioAoPlano(ID_USUARIO_TESTE, plano.getNome(), ex2.getIdExercicio(), 70, 12);
-//        planoTreinoService.adicionarExercicioAoPlano(ID_USUARIO_TESTE, plano.getNome(), ex3.getIdExercicio(), 30, 15);
-//
-//        // 3. Iniciar sessão de treino
-//        SessaoTreino sessao = sessaoTreinoService.iniciarSessao(ID_USUARIO_TESTE, plano.getIdPlano());
-//        assertNotNull(sessao);
-//
-//        // 4. Executar exercícios (com valores diferentes do planejado)
-//        sessaoTreinoService.registrarExecucao(sessao, ex1.getIdExercicio(), 12, 85.0); // Aumentou carga
-//        sessaoTreinoService.registrarExecucao(sessao, ex2.getIdExercicio(), 10, 70.0); // Diminuiu reps
-//        sessaoTreinoService.registrarExecucao(sessao, ex3.getIdExercicio(), 15, 32.0); // Aumentou carga
-//
-//        // 5. Salvar sessão
-//        sessaoTreinoService.salvarSessao(sessao);
-//        assertNotEquals(0, sessao.getIdSessao());
-//
-//        // 6. Verificar sugestões
-//        List<SessaoTreinoService.SugestaoAtualizacaoPlano> sugestoes =
-//                sessaoTreinoService.verificarAlteracoesEGerarSugestoes(sessao);
-//        assertEquals(3, sugestoes.size());
-//
-//        // 7. Aplicar atualizações no plano
-//        for (SessaoTreinoService.SugestaoAtualizacaoPlano sugestao : sugestoes) {
-//            sessaoTreinoService.aplicarAtualizacoesNoPlano(
-//                    plano.getIdPlano(),
-//                    sugestao.idExercicio,
-//                    sugestao.repRealizadas,
-//                    sugestao.cargaRealizada
-//            );
-//        }
-//
-//        // 8. Verificar que o plano foi atualizado
-//        Optional<PlanoTreino> planoAtualizado = planoTreinoService.buscarPlanoPorNomeEUsuario(
-//                ID_USUARIO_TESTE, plano.getNome()
-//        );
-//        assertTrue(planoAtualizado.isPresent());
-//
-//        List<ItemPlanoTreino> itens = planoAtualizado.get().getItensTreino();
-//        assertEquals(3, itens.size());
-//
-//        // Verifica item 1
-//        ItemPlanoTreino item1 = itens.stream()
-//                .filter(i -> i.getIdExercicio() == ex1.getIdExercicio())
-//                .findFirst()
-//                .orElse(null);
-//        assertNotNull(item1);
-//        assertEquals(85, item1.getCargaKg());
-//        assertEquals(12, item1.getRepeticoes());
-//
-//        // Verifica item 2
-//        ItemPlanoTreino item2 = itens.stream()
-//                .filter(i -> i.getIdExercicio() == ex2.getIdExercicio())
-//                .findFirst()
-//                .orElse(null);
-//        assertNotNull(item2);
-//        assertEquals(70, item2.getCargaKg());
-//        assertEquals(10, item2.getRepeticoes());
-//
-//        // Verifica item 3
-//        ItemPlanoTreino item3 = itens.stream()
-//                .filter(i -> i.getIdExercicio() == ex3.getIdExercicio())
-//                .findFirst()
-//                .orElse(null);
-//        assertNotNull(item3);
-//        assertEquals(32, item3.getCargaKg());
-//        assertEquals(15, item3.getRepeticoes());
-//
-//        // 9. Verificar persistência da sessão
-//        Optional<SessaoTreino> sessaoSalva = sessaoRepository.buscarPorId(sessao.getIdSessao());
-//        assertTrue(sessaoSalva.isPresent());
-//        assertEquals(3, sessaoSalva.get().getItensExecutados().size());
-//
-//        // 10. Verificar persistência do plano atualizado
-//        Optional<PlanoTreino> planoRecarregado = planoRepository.buscarPorId(plano.getIdPlano());
-//        assertTrue(planoRecarregado.isPresent());
-//        assertEquals(3, planoRecarregado.get().getItensTreino().size());
-//    }
-//
-//    @Test
-//    @Order(11)
-//    @DisplayName("Integração: Deve permitir múltiplas sessões do mesmo plano")
-//    void testMultiplasSessoesDoMesmoPlano() {
-//        // Cria exercício e plano
-//        Exercicio exercicio = exercicioService.cadastrarExercicio(ID_USUARIO_TESTE, "Agachamento Livre", "Pernas", "/gif/ag.gif");
-//        PlanoTreino plano = planoTreinoService.criarPlano(ID_USUARIO_TESTE, "Treino Pernas");
-//        planoTreinoService.adicionarExercicioAoPlano(ID_USUARIO_TESTE, plano.getNome(), exercicio.getIdExercicio(), 100, 10);
-//
-//        // Sessão 1
-//        SessaoTreino sessao1 = sessaoTreinoService.iniciarSessao(ID_USUARIO_TESTE, plano.getIdPlano());
-//        sessaoTreinoService.registrarExecucao(sessao1, exercicio.getIdExercicio(), 10, 100.0);
-//        sessaoTreinoService.salvarSessao(sessao1);
-//
-//        // Sessão 2
-//        SessaoTreino sessao2 = sessaoTreinoService.iniciarSessao(ID_USUARIO_TESTE, plano.getIdPlano());
-//        sessaoTreinoService.registrarExecucao(sessao2, exercicio.getIdExercicio(), 10, 105.0);
-//        sessaoTreinoService.salvarSessao(sessao2);
-//
-//        // Sessão 3
-//        SessaoTreino sessao3 = sessaoTreinoService.iniciarSessao(ID_USUARIO_TESTE, plano.getIdPlano());
-//        sessaoTreinoService.registrarExecucao(sessao3, exercicio.getIdExercicio(), 10, 110.0);
-//        sessaoTreinoService.salvarSessao(sessao3);
-//
-//        // Verifica que todas foram salvas
-//        assertNotEquals(0, sessao1.getIdSessao());
-//        assertNotEquals(0, sessao2.getIdSessao());
-//        assertNotEquals(0, sessao3.getIdSessao());
-//        assertNotEquals(sessao1.getIdSessao(), sessao2.getIdSessao());
-//        assertNotEquals(sessao2.getIdSessao(), sessao3.getIdSessao());
-//
-//        // Verifica persistência
-//        assertTrue(sessaoRepository.buscarPorId(sessao1.getIdSessao()).isPresent());
-//        assertTrue(sessaoRepository.buscarPorId(sessao2.getIdSessao()).isPresent());
-//        assertTrue(sessaoRepository.buscarPorId(sessao3.getIdSessao()).isPresent());
-//    }
-//}
-//
+package br.upe.integration;
+
+import br.upe.data.TipoUsuario;
+import br.upe.data.entities.*;
+import br.upe.test.dao.*;
+import br.upe.test.utils.TestConnectionFactory;
+import jakarta.persistence.EntityManager;
+import org.junit.jupiter.api.*;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+/**
+ * Testes de integração para o fluxo completo de sessões de treino
+ * Integra SessaoTreinoService + DAOs + banco H2 em memória
+ */
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+class SessaoTreinoIntegrationTest {
+
+    private TestSessaoTreinoDAO sessaoTreinoDAO;
+    private TestPlanoTreinoDAO planoTreinoDAO;
+    private TestExercicioDAO exercicioDAO;
+    private TestUsuarioDAO usuarioDAO;
+    private TestItemPlanoTreinoDAO itemPlanoTreinoDAO;
+    private TestItemSessaoTreinoDAO itemSessaoTreinoDAO;
+    private EntityManager em;
+    private Usuario usuarioTeste;
+
+    @BeforeEach
+    void setUp() {
+        em = TestConnectionFactory.getTestEntityManager();
+        TestConnectionFactory.clearDatabase(em);
+
+        sessaoTreinoDAO = new TestSessaoTreinoDAO();
+        planoTreinoDAO = new TestPlanoTreinoDAO();
+        exercicioDAO = new TestExercicioDAO();
+        usuarioDAO = new TestUsuarioDAO();
+        itemPlanoTreinoDAO = new TestItemPlanoTreinoDAO();
+        itemSessaoTreinoDAO = new TestItemSessaoTreinoDAO();
+
+        // Criar usuário de teste
+        usuarioTeste = new Usuario();
+        usuarioTeste.setNome("Usuário Teste Sessões");
+        usuarioTeste.setEmail("teste.sessoes@email.com");
+        usuarioTeste.setSenha("senha123");
+        usuarioTeste.setTipo(TipoUsuario.COMUM);
+        usuarioTeste = usuarioDAO.salvar(usuarioTeste);
+    }
+
+    @AfterEach
+    void tearDown() {
+        if (em != null && em.isOpen()) {
+            em.close();
+        }
+    }
+
+    @AfterAll
+    static void tearDownAll() {
+        TestConnectionFactory.closeFactory();
+    }
+
+    @Test
+    @Order(1)
+    @DisplayName("Integração: Deve iniciar sessão de treino baseada em plano")
+    void testIniciarSessao() {
+        // Cria plano
+        PlanoTreino plano = criarPlano("Treino A");
+
+        // Inicia sessão
+        SessaoTreino sessao = new SessaoTreino();
+        sessao.setUsuario(usuarioTeste);
+        sessao.setPlanoTreino(plano);
+        sessao.setDataSessao(LocalDate.now());
+        sessao = sessaoTreinoDAO.salvar(sessao);
+
+        // Verifica
+        assertNotNull(sessao);
+        assertNotNull(sessao.getId());
+        assertEquals(usuarioTeste.getId(), sessao.getUsuario().getId());
+        assertEquals(plano.getId(), sessao.getPlanoTreino().getId());
+        assertEquals(LocalDate.now(), sessao.getDataSessao());
+    }
+
+    @Test
+    @Order(2)
+    @DisplayName("Integração: Deve registrar execuções de exercícios na sessão")
+    void testRegistrarExecucoes() {
+        // Setup: cria exercícios e plano
+        Exercicio ex1 = criarExercicio("Supino");
+        Exercicio ex2 = criarExercicio("Crucifixo");
+
+        PlanoTreino plano = criarPlano("Treino Peito");
+        adicionarItemAoPlano(plano, ex1, 80, 12);
+        adicionarItemAoPlano(plano, ex2, 30, 15);
+
+        // Inicia sessão
+        SessaoTreino sessao = criarSessao(plano);
+
+        // Registra execuções
+        registrarExecucao(sessao, ex1, 12, 80.0);
+        registrarExecucao(sessao, ex2, 15, 30.0);
+
+        // Verifica
+        List<ItemSessaoTreino> itensExecutados = itemSessaoTreinoDAO.listarPorSessao(sessao.getId());
+        assertEquals(2, itensExecutados.size());
+
+        ItemSessaoTreino item1 = itensExecutados.stream()
+                .filter(i -> i.getExercicio().getId().equals(ex1.getId()))
+                .findFirst()
+                .orElse(null);
+        assertNotNull(item1);
+        assertEquals(12, item1.getRepeticoesRealizadas());
+        assertEquals(80.0, item1.getCargaRealizada());
+
+        ItemSessaoTreino item2 = itensExecutados.stream()
+                .filter(i -> i.getExercicio().getId().equals(ex2.getId()))
+                .findFirst()
+                .orElse(null);
+        assertNotNull(item2);
+        assertEquals(15, item2.getRepeticoesRealizadas());
+        assertEquals(30.0, item2.getCargaRealizada());
+    }
+
+    @Test
+    @Order(3)
+    @DisplayName("Integração: Deve buscar sessões por usuário")
+    void testBuscarSessoesPorUsuario() {
+        // Criar segundo usuário
+        Usuario usuario2 = new Usuario();
+        usuario2.setNome("Usuário 2");
+        usuario2.setEmail("usuario2@email.com");
+        usuario2.setSenha("senha123");
+        usuario2.setTipo(TipoUsuario.COMUM);
+        usuario2 = usuarioDAO.salvar(usuario2);
+
+        // Cria planos
+        PlanoTreino planoUser1 = criarPlano("Plano User1");
+        PlanoTreino planoUser2 = criarPlanoParaUsuario("Plano User2", usuario2);
+
+        // Cria sessões para usuário 1
+        criarSessao(planoUser1);
+        criarSessao(planoUser1);
+
+        // Cria sessão para usuário 2
+        SessaoTreino sessaoUser2 = new SessaoTreino();
+        sessaoUser2.setUsuario(usuario2);
+        sessaoUser2.setPlanoTreino(planoUser2);
+        sessaoUser2.setDataSessao(LocalDate.now());
+        sessaoTreinoDAO.salvar(sessaoUser2);
+
+        // Verifica isolamento
+        List<SessaoTreino> sessoesUser1 = sessaoTreinoDAO.buscarTodosDoUsuario(usuarioTeste.getId());
+        assertEquals(2, sessoesUser1.size());
+        assertTrue(sessoesUser1.stream().allMatch(s -> s.getUsuario().getId().equals(usuarioTeste.getId())));
+
+        List<SessaoTreino> sessoesUser2 = sessaoTreinoDAO.buscarTodosDoUsuario(usuario2.getId());
+        assertEquals(1, sessoesUser2.size());
+    }
+
+    @Test
+    @Order(4)
+    @DisplayName("Integração: Deve buscar sessões por período")
+    void testBuscarSessoesPorPeriodo() {
+        PlanoTreino plano = criarPlano("Plano Período");
+
+        // Cria sessões em diferentes datas
+        criarSessaoComData(plano, LocalDate.of(2024, 1, 15));
+        criarSessaoComData(plano, LocalDate.of(2024, 2, 15));
+        criarSessaoComData(plano, LocalDate.of(2024, 3, 15));
+        criarSessaoComData(plano, LocalDate.of(2024, 4, 15));
+
+        // Busca por período jan-fev
+        List<SessaoTreino> sessoesPeriodo = sessaoTreinoDAO.buscarPorPeriodo(
+                usuarioTeste.getId(),
+                LocalDate.of(2024, 1, 1),
+                LocalDate.of(2024, 2, 28)
+        );
+
+        assertEquals(2, sessoesPeriodo.size());
+    }
+
+    @Test
+    @Order(5)
+    @DisplayName("Integração: Deve comparar execução com planejado")
+    void testCompararExecucaoComPlanejado() {
+        // Setup
+        Exercicio exercicio = criarExercicio("Agachamento");
+        PlanoTreino plano = criarPlano("Treino Pernas");
+        ItemPlanoTreino itemPlanejado = adicionarItemAoPlano(plano, exercicio, 100, 10);
+
+        // Executa com valores diferentes
+        SessaoTreino sessao = criarSessao(plano);
+        ItemSessaoTreino itemExecutado = registrarExecucao(sessao, exercicio, 12, 110.0);
+
+        // Compara
+        List<ItemPlanoTreino> itensPlanejados = itemPlanoTreinoDAO.listarPorPlano(plano.getId());
+        List<ItemSessaoTreino> itensExecutados = itemSessaoTreinoDAO.listarPorSessao(sessao.getId());
+
+        assertEquals(1, itensPlanejados.size());
+        assertEquals(1, itensExecutados.size());
+
+        ItemPlanoTreino planejado = itensPlanejados.get(0);
+        ItemSessaoTreino executado = itensExecutados.get(0);
+
+        // Verifica diferenças
+        assertEquals(100, planejado.getCargaKg());
+        assertEquals(110.0, executado.getCargaRealizada());
+        assertTrue(executado.getCargaRealizada() > planejado.getCargaKg());
+
+        assertEquals(10, planejado.getRepeticoes());
+        assertEquals(12, executado.getRepeticoesRealizadas());
+        assertTrue(executado.getRepeticoesRealizadas() > planejado.getRepeticoes());
+    }
+
+    @Test
+    @Order(6)
+    @DisplayName("Integração: Deve deletar sessão e seus itens")
+    void testDeletarSessao() {
+        // Setup
+        Exercicio exercicio = criarExercicio("Exercício Teste");
+        PlanoTreino plano = criarPlano("Plano Teste");
+        SessaoTreino sessao = criarSessao(plano);
+        registrarExecucao(sessao, exercicio, 10, 50.0);
+
+        // Verifica que existem
+        assertTrue(sessaoTreinoDAO.buscarPorId(sessao.getId()).isPresent());
+        assertEquals(1, itemSessaoTreinoDAO.listarPorSessao(sessao.getId()).size());
+
+        // Deleta itens primeiro
+        List<ItemSessaoTreino> itens = itemSessaoTreinoDAO.listarPorSessao(sessao.getId());
+        for (ItemSessaoTreino item : itens) {
+            itemSessaoTreinoDAO.deletar(item.getId());
+        }
+
+        // Deleta sessão
+        sessaoTreinoDAO.deletar(sessao.getId());
+
+        // Verifica deleção
+        assertFalse(sessaoTreinoDAO.buscarPorId(sessao.getId()).isPresent());
+        assertEquals(0, itemSessaoTreinoDAO.listarPorSessao(sessao.getId()).size());
+    }
+
+    @Test
+    @Order(7)
+    @DisplayName("Integração: Deve manter histórico completo de sessões")
+    void testHistoricoSessoes() {
+        // Setup: cria plano com exercícios
+        Exercicio ex1 = criarExercicio("Supino");
+        Exercicio ex2 = criarExercicio("Rosca");
+        PlanoTreino plano = criarPlano("Treino Completo");
+        adicionarItemAoPlano(plano, ex1, 60, 12);
+        adicionarItemAoPlano(plano, ex2, 20, 15);
+
+        // Simula 3 semanas de treino
+        // Semana 1
+        SessaoTreino sessao1 = criarSessaoComData(plano, LocalDate.of(2024, 1, 8));
+        registrarExecucao(sessao1, ex1, 12, 60.0);
+        registrarExecucao(sessao1, ex2, 15, 20.0);
+
+        // Semana 2 - aumentou carga
+        SessaoTreino sessao2 = criarSessaoComData(plano, LocalDate.of(2024, 1, 15));
+        registrarExecucao(sessao2, ex1, 12, 65.0);
+        registrarExecucao(sessao2, ex2, 15, 22.0);
+
+        // Semana 3 - aumentou carga novamente
+        SessaoTreino sessao3 = criarSessaoComData(plano, LocalDate.of(2024, 1, 22));
+        registrarExecucao(sessao3, ex1, 12, 70.0);
+        registrarExecucao(sessao3, ex2, 15, 24.0);
+
+        // Verifica histórico
+        List<SessaoTreino> historico = sessaoTreinoDAO.buscarTodosDoUsuario(usuarioTeste.getId());
+        assertEquals(3, historico.size());
+
+        // Verifica evolução de carga (busca itens de cada sessão)
+        List<ItemSessaoTreino> itensSessao1 = itemSessaoTreinoDAO.listarPorSessao(sessao1.getId());
+        List<ItemSessaoTreino> itensSessao3 = itemSessaoTreinoDAO.listarPorSessao(sessao3.getId());
+
+        double cargaSupinoSemana1 = itensSessao1.stream()
+                .filter(i -> i.getExercicio().getId().equals(ex1.getId()))
+                .findFirst()
+                .map(ItemSessaoTreino::getCargaRealizada)
+                .orElse(0.0);
+
+        double cargaSupinoSemana3 = itensSessao3.stream()
+                .filter(i -> i.getExercicio().getId().equals(ex1.getId()))
+                .findFirst()
+                .map(ItemSessaoTreino::getCargaRealizada)
+                .orElse(0.0);
+
+        assertEquals(60.0, cargaSupinoSemana1);
+        assertEquals(70.0, cargaSupinoSemana3);
+        assertTrue(cargaSupinoSemana3 > cargaSupinoSemana1, "Deve ter evolução de carga");
+    }
+
+    // Métodos auxiliares
+    private Exercicio criarExercicio(String nome) {
+        Exercicio exercicio = new Exercicio();
+        exercicio.setUsuario(usuarioTeste);
+        exercicio.setNome(nome);
+        exercicio.setDescricao("Descrição do " + nome);
+        exercicio.setCaminhoGif("/gif/test.gif");
+        return exercicioDAO.salvar(exercicio);
+    }
+
+    private PlanoTreino criarPlano(String nome) {
+        PlanoTreino plano = new PlanoTreino();
+        plano.setUsuario(usuarioTeste);
+        plano.setNome(nome);
+        return planoTreinoDAO.salvar(plano);
+    }
+
+    private PlanoTreino criarPlanoParaUsuario(String nome, Usuario usuario) {
+        PlanoTreino plano = new PlanoTreino();
+        plano.setUsuario(usuario);
+        plano.setNome(nome);
+        return planoTreinoDAO.salvar(plano);
+    }
+
+    private ItemPlanoTreino adicionarItemAoPlano(PlanoTreino plano, Exercicio exercicio, int carga, int repeticoes) {
+        ItemPlanoTreino item = new ItemPlanoTreino();
+        item.setPlanoTreino(plano);
+        item.setExercicio(exercicio);
+        item.setCargaKg(carga);
+        item.setRepeticoes(repeticoes);
+        return itemPlanoTreinoDAO.salvar(item);
+    }
+
+    private SessaoTreino criarSessao(PlanoTreino plano) {
+        SessaoTreino sessao = new SessaoTreino();
+        sessao.setUsuario(usuarioTeste);
+        sessao.setPlanoTreino(plano);
+        sessao.setDataSessao(LocalDate.now());
+        return sessaoTreinoDAO.salvar(sessao);
+    }
+
+    private SessaoTreino criarSessaoComData(PlanoTreino plano, LocalDate data) {
+        SessaoTreino sessao = new SessaoTreino();
+        sessao.setUsuario(usuarioTeste);
+        sessao.setPlanoTreino(plano);
+        sessao.setDataSessao(data);
+        return sessaoTreinoDAO.salvar(sessao);
+    }
+
+    private ItemSessaoTreino registrarExecucao(SessaoTreino sessao, Exercicio exercicio, int repeticoes, double carga) {
+        ItemSessaoTreino item = new ItemSessaoTreino();
+        item.setSessaoTreino(sessao);
+        item.setExercicio(exercicio);
+        item.setRepeticoesRealizadas(repeticoes);
+        item.setCargaRealizada(carga);
+        return itemSessaoTreinoDAO.salvar(item);
+    }
+}
+
