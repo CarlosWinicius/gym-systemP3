@@ -1,7 +1,7 @@
 package br.upe.controller.business;
 
 import br.upe.data.dao.ExercicioDAO;
-import br.upe.data.dao.UsuarioDAO; // Assumindo que você tem esse DAO
+import br.upe.data.dao.UsuarioDAO;
 import br.upe.data.entities.Exercicio;
 import br.upe.data.entities.Usuario;
 import br.upe.data.interfaces.IExercicioRepository;

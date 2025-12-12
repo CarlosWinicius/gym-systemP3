@@ -8,7 +8,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -16,7 +15,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
-class PlanoTreinoTest {
+class PlanoTreinoBeanTest {
 
     @Mock
     private ItemPlanoTreino itemMock;
@@ -27,37 +26,37 @@ class PlanoTreinoTest {
     private List<ItemPlanoTreino> listaVazia;
 
     @InjectMocks
-    private PlanoTreino planoTreino;
-    private PlanoTreino planoVazio;
+    private PlanoTreinoBean planoTreinoBean;
+    private PlanoTreinoBean planoVazio;
 
     @BeforeEach
     void setUp() {
         listaMock = new ArrayList<>(Arrays.asList(itemMock, itemMock2));
         listaVazia = new ArrayList<>();
-        planoTreino = new PlanoTreino(1,100,"Jão",listaMock);
-        planoVazio = new PlanoTreino(2, 101, "Ana", listaVazia);
+        planoTreinoBean = new PlanoTreinoBean(1,100,"Jão",listaMock);
+        planoVazio = new PlanoTreinoBean(2, 101, "Ana", listaVazia);
     }
 
     //testar construtor
     @Test
     @DisplayName("Teste do construtor de PlanoTreino")
     void testConstrutor() {
-        assertNotNull(planoTreino);
-        assertSame(listaMock, planoTreino.getItensTreino());
+        assertNotNull(planoTreinoBean);
+        assertSame(listaMock, planoTreinoBean.getItensTreino());
     }
     //testar getters e setters
     @Test
     @DisplayName("Teste dos getters e setters de PlanoTreino")
     void testGettersAndSetters() {
-        planoTreino.setIdPlano(2);
-        assertEquals(2, planoTreino.getIdPlano());
-        planoTreino.setIdUsuario(200);
-        assertEquals(200, planoTreino.getIdUsuario());
-        planoTreino.setNome("Maria");
-        assertEquals("Maria", planoTreino.getNome());
+        planoTreinoBean.setIdPlano(2);
+        assertEquals(2, planoTreinoBean.getIdPlano());
+        planoTreinoBean.setIdUsuario(200);
+        assertEquals(200, planoTreinoBean.getIdUsuario());
+        planoTreinoBean.setNome("Maria");
+        assertEquals("Maria", planoTreinoBean.getNome());
         List<ItemPlanoTreino> novaLista = new ArrayList<>();
-        planoTreino.setItensTreino(novaLista);
-        assertSame(novaLista, planoTreino.getItensTreino());
+        planoTreinoBean.setItensTreino(novaLista);
+        assertSame(novaLista, planoTreinoBean.getItensTreino());
     }
 
     //testar adicionar item ao plano
@@ -65,8 +64,8 @@ class PlanoTreinoTest {
     @DisplayName("Teste do método adicionarItem de PlanoTreino")
     void testAdicionarItem() {
         ItemPlanoTreino novoItem = new ItemPlanoTreino(1, 3, 10);
-        planoTreino.adicionarItem(novoItem);
-        assertTrue(planoTreino.getItensTreino().contains(novoItem));
+        planoTreinoBean.adicionarItem(novoItem);
+        assertTrue(planoTreinoBean.getItensTreino().contains(novoItem));
     }
 
     //testar toString
@@ -80,7 +79,7 @@ class PlanoTreinoTest {
                 .append("  Exercícios no Plano:\n")
                 .append("    ").append(1).append(". ").append(itemMock.toString()).append("\n")
                 .append("    ").append(2).append(". ").append(itemMock2.toString()).append("\n");
-        assertEquals(expected.toString(), planoTreino.toString());
+        assertEquals(expected.toString(), planoTreinoBean.toString());
     }
 
     //testar toString com lista vazia
