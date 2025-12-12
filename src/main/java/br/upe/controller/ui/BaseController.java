@@ -19,10 +19,21 @@ public abstract class BaseController {
 
     protected final Logger logger = Logger.getLogger(getClass().getName());
 
+    public void setUsuarioLogado(Usuario usuario) {
+        usuarioLogado = usuario;
+    }
+
 
     protected void navigateTo(Node eventSource, String fxmlFile) {
         try {
-            loadScene(eventSource, fxmlFile);
+            FXMLLoader loader = loadScene(eventSource, fxmlFile);
+
+            // INJETAR USUÁRIO AQUI
+            BaseController controller = loader.getController();
+            if (controller != null) {
+                controller.setUsuarioLogado(usuarioLogado);
+            }
+
         } catch (IOException e) {
             handleNavigationError(e, fxmlFile);
         }
@@ -33,12 +44,21 @@ public abstract class BaseController {
         try {
             FXMLLoader loader = loadScene(eventSource, fxmlFile);
 
-            return loader.getController();
+            T controller = loader.getController();
+
+
+            if (controller instanceof BaseController base) {
+                base.setUsuarioLogado(usuarioLogado);
+            }
+
+            return controller;
+
         } catch (IOException e) {
             handleNavigationError(e, fxmlFile);
             return null;
         }
     }
+
 
     private FXMLLoader loadScene(Node eventSource, String fxmlFile) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlFile));

@@ -24,6 +24,19 @@ public class Usuario {
     @Column(nullable = false)
     private TipoUsuario tipo;
 
+    @Lob
+    @Column(name="foto_perfil")
+    private byte[] fotoPerfil;
+
+    public byte[] getFotoPerfil() {
+        return fotoPerfil;
+    }
+
+    public void setFotoPerfil(byte[] fotoPerfil) {
+        this.fotoPerfil = fotoPerfil;
+    }
+
+
     public Usuario() {}
 
     public Usuario(String nome, String email, String senha, TipoUsuario tipo) {

@@ -102,4 +102,17 @@ public class UsuarioDAO implements IUsuarioRepository {
         // com a estratégia IDENTITY. Não precisamos mais calcular isso manualmente.
         return 0;
     }
+
+    public static void atualizarFoto(Integer id, byte[] foto) {
+        EntityManager em = ConnectionFactory.getConnection();
+        try {
+            em.getTransaction().begin();
+            Usuario u = em.find(Usuario.class, id);
+            u.setFotoPerfil(foto);
+            em.getTransaction().commit();
+        } finally {
+            em.close();
+        }
+    }
+
 }

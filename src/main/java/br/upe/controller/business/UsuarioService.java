@@ -11,7 +11,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class UsuarioService implements IUsuarioService {
-    // CORREÇÃO: Variável renomeada para minúsculo para corresponder ao uso nos métodos
+
     private final IUsuarioRepository usuarioRepository;
     private static final Logger LOGGER = Logger.getLogger(UsuarioService.class.getName());
 
@@ -20,7 +20,7 @@ public class UsuarioService implements IUsuarioService {
     }
 
     public UsuarioService() {
-        // Se você não tiver o arquivo UsuarioDAO.java, essa linha dará erro
+
         this.usuarioRepository = new UsuarioDAO();
     }
 
@@ -162,4 +162,10 @@ public class UsuarioService implements IUsuarioService {
         }
         usuarioRepository.deletar(id);
     }
+
+    @Override
+    public void atualizarFoto(Integer id, byte[] foto) {
+        UsuarioDAO.atualizarFoto(id, foto);
+    }
+
 }

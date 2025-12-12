@@ -59,18 +59,18 @@
                                         <Font name="System Bold" size="17.0" />
                                     </font>
                                 </Text>
-                                <TextField fx:id="nome" layoutX="409.0" layoutY="179.0" prefHeight="26.0" prefWidth="318.0" />
-                                <TextField fx:id="altura" layoutX="409.0" layoutY="247.0" />
-                                <TextField fx:id="peso" layoutX="397.0" layoutY="309.0" />
-                                <TextField fx:id="percentualGordura" layoutX="278.0" layoutY="376.0" />
-                                <TextField fx:id="percentualMM" layoutX="310.0" layoutY="427.0" />
-                                <TextField fx:id="imc" layoutX="128.0" layoutY="472.0" />
+                                <TextField fx:id="nome" layoutX="409.0" layoutY="179.0" prefHeight="26.0" prefWidth="318.0" editable="false" focusTraversable="false" />
+                                <TextField fx:id="altura" layoutX="409.0" layoutY="247.0" editable="false" focusTraversable="false" />
+                                <TextField fx:id="peso" layoutX="397.0" layoutY="309.0" editable="false" focusTraversable="false" />
+                                <TextField fx:id="percentualGordura" layoutX="278.0" layoutY="376.0" editable="false" focusTraversable="false"  />
+                                <TextField fx:id="percentualMM" layoutX="310.0" layoutY="427.0" editable="false" focusTraversable="false"  />
+                                <TextField fx:id="imc" layoutX="128.0" layoutY="472.0" editable="false" focusTraversable="false" />
                                 <ImageView fitHeight="204.0" fitWidth="255.0" layoutX="83.0" layoutY="147.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
                                         <Image url="@../images/rectangleperfil.png" />
                                     </image>
                                 </ImageView>
-                                <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="116.0" layoutY="196.0" pickOnBounds="true" preserveRatio="true">
+                                <ImageView fx:id="foto" fitHeight="150.0" fitWidth="200.0" layoutX="116.0" layoutY="196.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
                                         <Image url="@../images/perfildesign.png" />
                                     </image>

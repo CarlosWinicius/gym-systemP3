@@ -1,68 +1,78 @@
 package br.upe.controller.ui;
 
 import br.upe.controller.business.CalculadoraIMC;
-import br.upe.controller.business.IUsuarioService;
 import br.upe.controller.business.IndicadorBiomedicoService;
-import br.upe.controller.business.UsuarioService;
 import br.upe.data.entity.Usuario;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
-import javafx.scene.image.*;
-import javafx.stage.FileChooser;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 
-import java.io.File;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.logging.Level;
 
 public class PerfilController extends BaseController {
 
-    @FXML
-    private TextField nome;
-    @FXML
-    private TextField altura;
-    @FXML
-    private TextField peso;
-    @FXML
-    private TextField percentualGordura;
-    @FXML
-    private TextField percentualMM;
-    @FXML
-    private TextField imc;
-    @FXML
-    private Label categoriaIMC;
-    @FXML
-    private Button salvar;
-    @FXML
-    private Button escolherImagem;
-    @FXML
-    private ImageView foto;
+    @FXML private TextField nome;
+    @FXML private TextField altura;
+    @FXML private TextField peso;
+    @FXML private TextField percentualGordura;
+    @FXML private TextField percentualMM;
+    @FXML private TextField imc;
+    @FXML private Label categoriaIMC;
+    @FXML private ImageView foto;
 
-    private final IUsuarioService usuarioService = new UsuarioService();
     private final IndicadorBiomedicoService indicadorService = new IndicadorBiomedicoService();
 
-    private boolean editavel = false;
-
-    private void setCamposEditaveis(boolean editavel) {
-        nome.setEditable(editavel);
-        altura.setEditable(editavel);
-        peso.setEditable(editavel);
-        percentualGordura.setEditable(editavel);
-        percentualMM.setEditable(editavel);
-        imc.setEditable(false);
+    public void setUsuarioLogado(Usuario usuarioLogado) {
+        this.usuarioLogado = usuarioLogado;
+        carregarDadosNaTela();
     }
 
     @FXML
     protected void initialize() {
+        // Não faz nada pesado aqui, porque o usuarioLogado pode ainda não estar setado.
+    }
+
+    private void carregarDadosNaTela() {
+        if (usuarioLogado == null) return;
+
+        // Campos sempre só leitura nesta tela
+        nome.setMouseTransparent(true);
+        nome.setFocusTraversable(false);
+
+        altura.setMouseTransparent(true);
+        altura.setFocusTraversable(false);
+
+        peso.setMouseTransparent(true);
+        peso.setFocusTraversable(false);
+
+        percentualGordura.setMouseTransparent(true);
+        percentualGordura.setFocusTraversable(false);
+
+        percentualMM.setMouseTransparent(true);
+        percentualMM.setFocusTraversable(false);
+
+        imc.setMouseTransparent(true);
+        imc.setFocusTraversable(false);
+
         nome.setText(usuarioLogado.getNome());
+
+        if (usuarioLogado.getFotoPerfil() != null) {
+            foto.setImage(new Image(new ByteArrayInputStream(usuarioLogado.getFotoPerfil())));
+        } else {
+            foto.setImage(null);
+        }
 
         try {
             var lista = indicadorService.listarTodosDoUsuario(usuarioLogado.getId());
-
             if (!lista.isEmpty()) {
                 var ultimo = lista.get(lista.size() - 1);
                 altura.setText(String.valueOf(ultimo.getAlturaCm()));
@@ -79,122 +89,12 @@ public class PerfilController extends BaseController {
                 imc.setText("");
                 categoriaIMC.setText("");
             }
-        } catch (Exception e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Erro ao carregar dados");
-            alert.setHeaderText("Não foi possível carregar os dados biomédicos do usuário.");
-            alert.setContentText(e.getMessage());
-            alert.showAndWait();
-        }
-
-        preencherPercentual();
-        atualizarIMC();
-
-        setCamposEditaveis(editavel);
-    }
-
-    private void atualizarIMC() {
-        try {
-            if (!altura.getText().isEmpty() && !peso.getText().isEmpty()) {
-                double alturaValor = Double.parseDouble(altura.getText());
-                double pesoValor = Double.parseDouble(peso.getText());
-
-                double resultadoIMC = CalculadoraIMC.calcular(pesoValor, alturaValor);
-                imc.setText(String.format("%.2f", resultadoIMC));
-
-                String classificacao = CalculadoraIMC.classificarImc(resultadoIMC);
-                categoriaIMC.setText(classificacao);
-            }
-        } catch (NumberFormatException e) {
-            imc.setText("Erro");
-            categoriaIMC.setText("Erro");
-        }
-    }
-
-    private void preencherPercentual() {
-        try {
-            if (!percentualMM.getText().isEmpty() && !percentualGordura.getText().isEmpty()) {
-                Double.parseDouble(percentualMM.getText());
-                Double.parseDouble(percentualGordura.getText());
-            }
-        } catch (NumberFormatException e) {
-            percentualGordura.setText("Erro");
-            percentualMM.setText("Erro");
-        }
-    }
-
-    @FXML
-    protected void salvarDados() {
-        try {
-            String novoNome = nome.getText().trim();
-
-            if (novoNome.isEmpty()) {
-                throw new IllegalArgumentException("O nome não pode estar vazio.");
-            }
-
-            usuarioLogado.setNome(novoNome);
-
-            usuarioService.atualizarUsuario(
-                    usuarioLogado.getId(),
-                    novoNome,
-                    usuarioLogado.getEmail(),
-                    usuarioLogado.getSenha(),
-                    usuarioLogado.getTipo()
-            );
-
-            double alturaValor = Double.parseDouble(altura.getText());
-            double pesoValor = Double.parseDouble(peso.getText());
-            double percentualGorduraValor = Double.parseDouble(percentualGordura.getText());
-            double percentualMMValor = Double.parseDouble(percentualMM.getText());
-
-            double resultadoIMC = CalculadoraIMC.calcular(pesoValor, alturaValor);
-
-            imc.setText(String.format("%.2f", resultadoIMC));
-            categoriaIMC.setText(CalculadoraIMC.classificarImc(resultadoIMC));
-
-            indicadorService.cadastrarIndicador(
-                    usuarioLogado.getId(),
-                    java.time.LocalDate.now(),
-                    pesoValor,
-                    alturaValor,
-                    percentualGorduraValor,
-                    percentualMMValor
-            );
-
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Sucesso");
-            alert.setHeaderText("Dados salvos com sucesso!");
-            alert.setContentText("As informações foram atualizadas corretamente.");
-            alert.showAndWait();
-
-        } catch (NumberFormatException e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Erro de formato");
-            alert.setHeaderText("Erro nos dados numéricos");
-            alert.setContentText("Verifique se altura, peso e percentuais são números válidos.");
-            alert.showAndWait();
 
         } catch (Exception e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Erro");
-            alert.setHeaderText("Erro ao salvar os dados!");
-            alert.setContentText(e.getMessage());
-            alert.showAndWait();
+            logger.log(Level.SEVERE, "Erro ao carregar indicadores do usuário", e);
         }
-    }
-    public void setUsuarioLogado(Usuario usuarioLogado) {
-        this.usuarioLogado = usuarioLogado;
-    }
-
-    @FXML
-    private void voltarTela(javafx.event.ActionEvent event) {
-        try {
-            Parent root = FXMLLoader.load(getClass().getResource("/ui/PerfilScreen.fxml"));
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.setScene(new Scene(root));
-            stage.show();
-        } catch (IOException e) {
-            logger.log(Level.SEVERE, "Erro ao carregar a tela de perfil", e);
+        if (usuarioLogado != null && usuarioLogado.getFotoPerfil() != null) {
+            foto.setImage(new Image(new ByteArrayInputStream(usuarioLogado.getFotoPerfil())));
         }
     }
 
@@ -203,34 +103,17 @@ public class PerfilController extends BaseController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/ui/PerfilEditScreen.fxml"));
             Parent root = loader.load();
-            PerfilController controller = loader.getController();
+
+            PerfilEditController controller = loader.getController();
             controller.setUsuarioLogado(usuarioLogado);
-            controller.editavel = true;
-            controller.setCamposEditaveis(true);
-            controller.nome.setText(usuarioLogado.getNome());
-            controller.altura.setText(altura.getText());
-            controller.peso.setText(peso.getText());
-            controller.percentualGordura.setText(percentualGordura.getText());
-            controller.percentualMM.setText(percentualMM.getText());
-            controller.atualizarIMC();
+
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.show();
         } catch (IOException e) {
-            logger.log(Level.SEVERE, "Erro ao carregar a tela de edição de perfil", e);
+            logger.log(Level.SEVERE, "Erro ao abrir tela de edição", e);
         }
     }
 
-    @FXML
-    private void escolherImagem() {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Imagens", "*.png", "*.jpg", "*.jpeg"));
 
-        File file = fileChooser.showOpenDialog(null);
-
-        if (file != null) {
-            Image image = new Image(file.toURI().toString());
-            foto.setImage(image);
-        }
-    }
 }
