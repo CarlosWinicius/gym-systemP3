@@ -1,6 +1,6 @@
 package br.upe.controller.business;
 
-import br.upe.data.beans.Exercicio;
+import br.upe.data.entities.Exercicio;
 
 import java.util.List;
 import java.util.Optional;
