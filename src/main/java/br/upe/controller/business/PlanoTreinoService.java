@@ -11,13 +11,12 @@ import br.upe.data.dao.UsuarioDAO;
 import java.util.List;
 import java.util.Optional;
 
-public class PlanoTreinoService implements IPlanoTreinoService { // implements IPlanoTreinoService (se existir)
+public class PlanoTreinoService implements IPlanoTreinoService {
 
-    // Usando as classes DAO concretas que criamos
     private final PlanoTreinoDAO planoTreinoDAO;
     private final ExercicioDAO exercicioDAO;
-    private final UsuarioDAO usuarioDAO;      // Necessário para vincular o Usuário ao criar Plano
-    private final ItemPlanoTreinoDAO itemDAO; // Necessário para adicionar itens, já que o Plano não tem lista direta
+    private final UsuarioDAO usuarioDAO;
+    private final ItemPlanoTreinoDAO itemDAO;
 
     public PlanoTreinoService() {
         this.planoTreinoDAO = new PlanoTreinoDAO();
@@ -26,22 +25,18 @@ public class PlanoTreinoService implements IPlanoTreinoService { // implements I
         this.itemDAO = new ItemPlanoTreinoDAO();
     }
 
-    // Verifica as condições e cria plano de treino
+    @Override
     public PlanoTreino criarPlano(int idUsuario, String nome) {
         if (nome == null || nome.trim().isEmpty()) {
             throw new IllegalArgumentException("Nome do plano não pode ser vazio.");
         }
 
-        // Validação: Busca plano por nome (assumindo que você criou esse método no PlanoTreinoDAO, senão precisa filtrar na lista)
-        // Se não tiver o método específico no DAO, teria que listar todos e filtrar com stream.
-        // Vou assumir a lógica original:
         Optional<PlanoTreino> planoExistente = buscarPlanoPorNomeEUsuario(idUsuario, nome);
 
         if (planoExistente.isPresent()) {
             throw new IllegalArgumentException("Você já possui um plano com o nome '" + nome + "'.");
         }
 
-        // JPA: Precisa buscar o objeto Usuario, não só o ID
         Usuario usuario = usuarioDAO.buscarPorId(idUsuario)
                 .orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado."));
 
@@ -49,27 +44,24 @@ public class PlanoTreinoService implements IPlanoTreinoService { // implements I
         novoPlano.setUsuario(usuario);
         novoPlano.setNome(nome.trim());
 
-        planoTreinoDAO.salvar(novoPlano);
-        return novoPlano;
+        // CORREÇÃO: Deve retornar a entidade gerenciada/atualizada pelo DAO.
+        return planoTreinoDAO.salvar(novoPlano);
     }
 
-    // Verifica as condições e adiciona exercicios ao plano
+    @Override
     public void adicionarExercicioAoPlano(int idUsuario, String nomePlano, int idExercicio, int cargaKg, int repeticoes) {
         Optional<PlanoTreino> planoOpt = buscarPlanoPorNomeEUsuario(idUsuario, nomePlano);
-        if (planoOpt.isEmpty()) { // .isEmpty() é o jeito novo do !isPresent()
+        if (planoOpt.isEmpty()) {
             throw new IllegalArgumentException("Plano '" + nomePlano + "' não encontrado ou não pertence a você.");
         }
         PlanoTreino plano = planoOpt.get();
 
         Optional<Exercicio> exercicioOpt = exercicioDAO.buscarPorId(idExercicio);
-        // Observação: A entidade Exercicio nova não tinha idUsuario, se tiver, mantenha a verificação.
-        // Removi a verificação de dono do exercício para focar na lógica principal, adicione se necessário.
         if (exercicioOpt.isEmpty()) {
             throw new IllegalArgumentException("Exercício com ID " + idExercicio + " não encontrado.");
         }
         Exercicio exercicio = exercicioOpt.get();
 
-        // Verifica se já existe usando o DAO de itens
         List<ItemPlanoTreino> itensAtuais = itemDAO.listarPorPlano(plano.getId());
         boolean exercicioJaNoPlano = itensAtuais.stream()
                 .anyMatch(item -> item.getExercicio().getId() == idExercicio);
@@ -78,17 +70,15 @@ public class PlanoTreinoService implements IPlanoTreinoService { // implements I
             throw new IllegalArgumentException("Exercício já adicionado a este plano. Considere editá-lo.");
         }
 
-        // Criação do item no padrão JPA (Vinculando os objetos pais)
         ItemPlanoTreino newItem = new ItemPlanoTreino();
         newItem.setPlanoTreino(plano);
         newItem.setExercicio(exercicio);
         newItem.setCargaKg(cargaKg);
         newItem.setRepeticoes(repeticoes);
-        // Se tiver o campo series, defina um padrão ou receba no parametro
         itemDAO.salvar(newItem);
     }
 
-    // Remove exercicios do plano pelo id
+    @Override
     public void removerExercicioDoPlano(int idUsuario, String nomePlano, int idExercicio) {
         Optional<PlanoTreino> planoOpt = buscarPlanoPorNomeEUsuario(idUsuario, nomePlano);
         if (planoOpt.isEmpty()) {
@@ -96,7 +86,6 @@ public class PlanoTreinoService implements IPlanoTreinoService { // implements I
         }
         PlanoTreino plano = planoOpt.get();
 
-        // Busca os itens do banco para encontrar o ID correto do ItemPlanoTreino
         List<ItemPlanoTreino> itens = itemDAO.listarPorPlano(plano.getId());
 
         Optional<ItemPlanoTreino> itemParaRemover = itens.stream()
@@ -107,33 +96,28 @@ public class PlanoTreinoService implements IPlanoTreinoService { // implements I
             throw new IllegalArgumentException("Exercício com ID " + idExercicio + " não encontrado neste plano.");
         }
 
-        // Deleta usando o DAO do item
         itemDAO.deletar(itemParaRemover.get().getId());
     }
 
-    // Lista o plano pelo usuario
+    @Override
     public List<PlanoTreino> listarMeusPlanos(int idUsuario) {
-        // Adaptação: Se o PlanoTreinoDAO não tiver buscarTodosDoUsuario, usamos JPQL
-        // Estou assumindo que você vai criar esse método no DAO ou usar filtro
-        // Aqui vai uma implementação manual segura caso o método não exista no DAO genérico:
         List<PlanoTreino> todos = planoTreinoDAO.listarTodos();
         return todos.stream()
                 .filter(p -> p.getUsuario().getId() == idUsuario)
                 .toList();
     }
 
-    // Lista o plano do usuario pelo nome
+    @Override
     public Optional<PlanoTreino> buscarPlanoPorNomeEUsuario(int idUsuario, String nomePlano) {
         if (nomePlano == null || nomePlano.trim().isEmpty()) {
             return Optional.empty();
         }
-        // Adaptação: Listar e filtrar (mesma lógica acima)
         return planoTreinoDAO.listarTodos().stream()
                 .filter(p -> p.getUsuario().getId() == idUsuario && p.getNome().equalsIgnoreCase(nomePlano.trim()))
                 .findFirst();
     }
 
-    // Altera o plano do usuario pelo nome
+    @Override
     public void editarPlano(int idUsuario, String nomeAtualPlano, String novoNome) {
         Optional<PlanoTreino> planoOpt = buscarPlanoPorNomeEUsuario(idUsuario, nomeAtualPlano);
         if (planoOpt.isEmpty()) {
@@ -151,21 +135,27 @@ public class PlanoTreinoService implements IPlanoTreinoService { // implements I
         }
     }
 
-    // Deleta o plano
+    @Override
     public boolean deletarPlano(int idUsuario, String nomePlano) {
         Optional<PlanoTreino> planoOpt = buscarPlanoPorNomeEUsuario(idUsuario, nomePlano);
         if (planoOpt.isEmpty()) {
             return false;
         }
-        // Dica JPA: Se não tiver CascadeType.REMOVE na entidade PlanoTreino -> itens,
-        // você precisaria deletar os itens manualmente antes.
-        // Assumindo que o banco resolve ou o Hibernate tem cascade:
+
         planoTreinoDAO.deletar(planoOpt.get().getId());
         return true;
     }
 
-    // Lista o plano pelo id
+    @Override
     public Optional<PlanoTreino> buscarPlanoPorId(int idPlanoEscolhido) {
         return planoTreinoDAO.buscarPorId(idPlanoEscolhido);
+    }
+
+    @Override
+    public void atualizarItemTreino(ItemPlanoTreino item) {
+        if (item == null || item.getId() == null) {
+            throw new IllegalArgumentException("Item inválido para atualização.");
+        }
+        itemDAO.editar(item);
     }
 }

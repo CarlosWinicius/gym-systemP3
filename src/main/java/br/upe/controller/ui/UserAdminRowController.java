@@ -15,18 +15,16 @@ import javafx.scene.layout.HBox;
 
 public class UserAdminRowController extends BaseController {
 
-    @FXML
-    private HBox rootPane;
-    @FXML
-    private Label nameLabel;
-    @FXML
-    private ComboBox<TipoUsuario> userTypeComboBox;
-    @FXML
-    private Button deleteButton;
+    @FXML private HBox rootPane;
+    @FXML private Label nameLabel;
+    @FXML private ComboBox<TipoUsuario> userTypeComboBox;
+    @FXML private Button deleteButton;
 
     private Usuario usuario;
     private UserAdminScreenController adminScreenController;
     private final IUsuarioService usuarioService = new UsuarioService();
+
+    private static final String EMAIL_SUPER_ADMIN = "adm@email.com";
 
     @FXML
     public void initialize() {
@@ -41,28 +39,40 @@ public class UserAdminRowController extends BaseController {
     public void setData(Usuario usuario, UserAdminScreenController adminScreenController) {
         this.usuario = usuario;
         this.adminScreenController = adminScreenController;
+
         nameLabel.setText(usuario.getNome());
         userTypeComboBox.setValue(usuario.getTipo());
 
-        if (usuario.getId() == 1) {
-            deleteButton.setDisable(true);
-            userTypeComboBox.setDisable(true);
+
+        if (EMAIL_SUPER_ADMIN.equalsIgnoreCase(usuario.getEmail())) {
+            deleteButton.setDisable(true);      // Não pode clicar
+            deleteButton.setVisible(false);     // Nem vê o botão
+            userTypeComboBox.setDisable(true);  // Não pode mudar o cargo
+
+            nameLabel.setStyle("-fx-text-fill: #c0392b; -fx-font-weight: bold;");
+        } else {
+            deleteButton.setDisable(false);
+            deleteButton.setVisible(true);
+            userTypeComboBox.setDisable(false);
+            nameLabel.setStyle("");
         }
     }
 
     private void updateUserRole(TipoUsuario newRole) {
         try {
             usuarioService.atualizarUsuario(usuario.getId(), null, null, null, newRole);
-            showAlert(Alert.AlertType.INFORMATION, "Sucesso", "Permissão do usuário " + usuario.getNome() + " atualizada.");
             usuario.setTipo(newRole);
+            showAlert(Alert.AlertType.INFORMATION, "Sucesso", "Permissão atualizada.");
         } catch (Exception e) {
-            showAlert(Alert.AlertType.ERROR, "Erro", "Não foi possível alterar a permissão: " + e.getMessage());
+            showAlert(Alert.AlertType.ERROR, "Erro", e.getMessage());
             userTypeComboBox.setValue(usuario.getTipo());
         }
     }
 
     @FXML
     private void handleDeleteUser(ActionEvent event) {
-        adminScreenController.handleDeleteUser(usuario);
+        if (adminScreenController != null) {
+            adminScreenController.handleDeleteUser(usuario);
+        }
     }
 }
