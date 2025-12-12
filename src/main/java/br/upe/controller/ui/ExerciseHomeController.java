@@ -17,8 +17,15 @@ import javafx.stage.Stage;
 import java.io.File;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ExerciseHomeController {
+
+    // Logger para substituir o printStackTrace (Sonar adora isso)
+    private static final Logger LOGGER = Logger.getLogger(ExerciseHomeController.class.getName());
+    private static final String STYLE_BUTTON_PADRAO = "button-padrao";
+    private static final String DEFAULT_VALUE_ZERO = "0";
 
     @FXML private ImageView exerciseImage;
     @FXML private Label exerciseName;
@@ -26,31 +33,33 @@ public class ExerciseHomeController {
     @FXML private TextField cargaField;
     @FXML private TextField repsField;
 
-    @FXML private Button btnSalvar;  // Botão "Próximo" / "Finalizar"
-    @FXML private Button btnRemover; // Botão "Anterior"
+    @FXML private Button btnSalvar;
+    @FXML private Button btnRemover;
 
     private Stage dialogStage;
 
-    // Serviço para salvar no banco
+    // Dependência injetada ou instanciada (usando Interface para desacoplamento)
     private final IPlanoTreinoService planoService = new PlanoTreinoService();
 
-    // Controle da lista e estado
     private List<ItemPlanoTreino> listaExercicios;
     private int indiceAtual = 0;
-
-    // Variáveis para guardar os valores originais do item atual (para comparação)
     private int cargaOriginal;
     private int repsOriginal;
 
     @FXML
     public void initialize() {
         repsField.setEditable(false);
-        // Filtro de números
+
+        // Validação de entrada numérica
         cargaField.textProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue.matches("\\d*")) {
                 cargaField.setText(newValue.replaceAll("[^\\d]", ""));
             }
         });
+
+        // Aplica o estilo CSS via código para garantir (em vez de setStyle manual)
+        btnSalvar.getStyleClass().add(STYLE_BUTTON_PADRAO);
+        btnRemover.getStyleClass().add(STYLE_BUTTON_PADRAO);
     }
 
     public void setDialogStage(Stage dialogStage) {
@@ -70,105 +79,95 @@ public class ExerciseHomeController {
         ItemPlanoTreino itemAtual = listaExercicios.get(indiceAtual);
         Exercicio exercicio = itemAtual.getExercicio();
 
-        // 1. Guarda os valores originais do banco/memória para comparar depois
         this.cargaOriginal = itemAtual.getCargaKg();
         this.repsOriginal = itemAtual.getRepeticoes();
 
-        // 2. Preenche a tela
         exerciseName.setText(exercicio.getNome());
         cargaField.setText(String.valueOf(this.cargaOriginal));
         repsField.setText(String.valueOf(this.repsOriginal));
-        exerciseName1.setText("Exercício " + (indiceAtual + 1) + " / " + listaExercicios.size());
+
+        // Atualiza o contador (Ex: Exercício 1 / 5)
+        exerciseName1.setText(String.format("Exercício %d / %d", (indiceAtual + 1), listaExercicios.size()));
 
         carregarImagem(exercicio);
         configurarBotoes();
     }
 
     private void configurarBotoes() {
-        // Anterior
         btnRemover.setVisible(indiceAtual > 0);
 
-        // Próximo / Finalizar
+        // Define apenas o texto. A cor vem da classe CSS 'button-padrao'
         if (indiceAtual == listaExercicios.size() - 1) {
             btnSalvar.setText("Finalizar");
-            // MUDANÇA: Cor #8A806F conforme solicitado
-            btnSalvar.setStyle("-fx-background-color: #8A806F; -fx-text-fill: white; -fx-cursor: hand; -fx-border-radius: 5; -fx-font-weight: bold;");
         } else {
             btnSalvar.setText("Próximo");
-            btnSalvar.setStyle("-fx-background-color: #8A806F; -fx-text-fill: white; -fx-cursor: hand; -fx-border-radius: 5; -fx-font-weight: bold;");
         }
     }
 
-    /**
-     * Verifica se houve mudança na carga ou repetições.
-     * Se houve, abre o Pop-up.
-     * Retorna TRUE se pode prosseguir (navegar), FALSE se o usuário cancelou.
-     */
     private boolean verificarSalvarAlteracoes() {
         try {
+            if (cargaField.getText().isBlank()) cargaField.setText(DEFAULT_VALUE_ZERO);
+
             int cargaAtual = Integer.parseInt(cargaField.getText());
             int repsAtual = Integer.parseInt(repsField.getText());
 
-            // Se nada mudou, segue a vida
+            // Se não houve alteração, prossegue sem perguntar
             if (cargaAtual == cargaOriginal && repsAtual == repsOriginal) {
                 return true;
             }
 
-            // Se mudou, mostra o Pop-up
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle("Alterações Detectadas");
-            alert.setHeaderText("Você alterou a carga ou repetições.");
-            alert.setContentText("Deseja salvar essas alterações no seu plano permanentemente?");
-
-            ButtonType btnSim = new ButtonType("Sim");
-            ButtonType btnNao = new ButtonType("Não");
-
-            // Remove botões padrão e adiciona os nossos
-            alert.getButtonTypes().setAll(btnSim, btnNao);
-
-            Optional<ButtonType> result = alert.showAndWait();
-
-            if (result.isPresent() && result.get() == btnSim) {
-                // --- USUÁRIO CLICOU EM SIM ---
-                // 1. Atualiza o objeto na memória
-                ItemPlanoTreino item = listaExercicios.get(indiceAtual);
-                item.setCargaKg(cargaAtual);
-                item.setRepeticoes(repsAtual);
-
-                // 2. Salva no Banco de Dados
-                try {
-                    // ATENÇÃO: Certifique-se de ter criado o método 'atualizarItemTreino' no Service conforme instrução anterior
-                    // Se o método no service tiver outro nome, ajuste aqui.
-                    // Exemplo de cast se o método não estiver na interface:
-                    if (planoService instanceof PlanoTreinoService) {
-                        ((PlanoTreinoService) planoService).atualizarItemTreino(item);
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace(); // Log de erro
-                }
-                return true; // Pode navegar
-
-            } else if (result.isPresent() && result.get() == btnNao) {
-                // --- USUÁRIO CLICOU EM NÃO ---
-                // Descartar é só não salvar. A tela vai recarregar o próximo item,
-                // e se ele voltar, vai carregar do objeto original (que não mexemos)
-                return true; // Pode navegar
-            } else {
-                // Fechou a janela ou cancelou
-                return false; // Não navega
-            }
+            return exibirDialogoConfirmacao(cargaAtual, repsAtual);
 
         } catch (NumberFormatException e) {
-            // Se tiver erro de número, restaura o original e segue
-            return true;
+            LOGGER.log(Level.WARNING, "Erro de formato numérico ao verificar alterações", e);
+            return true; // Prossegue ignorando erro de parse
         }
     }
 
-    // --- AÇÕES DE NAVEGAÇÃO ---
+    private boolean exibirDialogoConfirmacao(int cargaAtual, int repsAtual) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Alterações Detectadas");
+        alert.setHeaderText("Você alterou a carga ou repetições.");
+        alert.setContentText("Deseja salvar essas alterações no seu plano permanentemente?");
+
+        ButtonType btnSim = new ButtonType("Sim");
+        ButtonType btnNao = new ButtonType("Não");
+        alert.getButtonTypes().setAll(btnSim, btnNao);
+
+        Optional<ButtonType> result = alert.showAndWait();
+
+        if (result.isPresent() && result.get() == btnSim) {
+            salvarAlteracoesNoBanco(cargaAtual, repsAtual);
+            return true;
+        }
+
+        return result.isPresent() && result.get() == btnNao;
+    }
+
+    private void salvarAlteracoesNoBanco(int cargaAtual, int repsAtual) {
+        ItemPlanoTreino item = listaExercicios.get(indiceAtual);
+        item.setCargaKg(cargaAtual);
+        item.setRepeticoes(repsAtual);
+
+        try {
+            // Chamada limpa via Interface (sem casting feio)
+            planoService.atualizarItemTreino(item);
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Erro ao atualizar item de treino no banco", e);
+            mostrarErro("Não foi possível salvar a alteração.");
+        }
+    }
+
+    private void mostrarErro(String msg) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Erro");
+        alert.setHeaderText(null);
+        alert.setContentText(msg);
+        alert.showAndWait();
+    }
 
     @FXML
     private void handleProximo() {
-        // Só avança se o usuário confirmou (Sim ou Não) ou se não houve mudança
         if (verificarSalvarAlteracoes()) {
             if (indiceAtual < listaExercicios.size() - 1) {
                 indiceAtual++;
@@ -181,7 +180,6 @@ public class ExerciseHomeController {
 
     @FXML
     private void handleAnterior() {
-        // Só volta se verificar alterações
         if (verificarSalvarAlteracoes()) {
             if (indiceAtual > 0) {
                 indiceAtual--;
@@ -190,50 +188,55 @@ public class ExerciseHomeController {
         }
     }
 
-    // --- MÉTODOS AUXILIARES E DE IMAGEM ---
-
     private void carregarImagem(Exercicio exercicio) {
         try {
             String caminho = exercicio.getCaminhoGif();
             if (caminho != null && !caminho.isBlank()) {
+                // Tenta carregar o GIF específico
                 String fullPath = "/gif/" + new File(caminho).getName();
                 var url = getClass().getResource(fullPath);
+
                 if (url != null) {
                     exerciseImage.setImage(new Image(url.toString()));
-                } else {
-                    imagemPadrao();
+                    return;
                 }
-            } else {
-                imagemPadrao();
             }
+            // Se falhar ou não tiver caminho, carrega padrão
+            imagemPadrao();
         } catch (Exception e) {
+            LOGGER.log(Level.WARNING, "Erro ao carregar imagem do exercício: " + exercicio.getNome(), e);
             imagemPadrao();
         }
     }
 
     private void imagemPadrao() {
         try {
-            exerciseImage.setImage(new Image(getClass().getResourceAsStream("/images/no image.png")));
-        } catch (Exception ignored) {}
-    }
-
-    @FXML
-    private void incrementReps() {
-        try {
-            int val = Integer.parseInt(repsField.getText());
-            repsField.setText(String.valueOf(val + 1));
-        } catch (NumberFormatException e) {
-            repsField.setText("1");
+            var resource = getClass().getResourceAsStream("/images/no image.png");
+            if (resource != null) {
+                exerciseImage.setImage(new Image(resource));
+            }
+        } catch (Exception ignored) {
+            // Ignora silenciosamente se nem a imagem padrão existir
         }
     }
 
     @FXML
+    private void incrementReps() {
+        alterarRepeticoes(1);
+    }
+
+    @FXML
     private void decrementReps() {
+        alterarRepeticoes(-1);
+    }
+
+    private void alterarRepeticoes(int delta) {
         try {
             int val = Integer.parseInt(repsField.getText());
-            if (val > 0) repsField.setText(String.valueOf(val - 1));
+            int novoValor = Math.max(0, val + delta); // Evita números negativos
+            repsField.setText(String.valueOf(novoValor));
         } catch (NumberFormatException e) {
-            repsField.setText("0");
+            repsField.setText(delta > 0 ? "1" : "0");
         }
     }
 }
