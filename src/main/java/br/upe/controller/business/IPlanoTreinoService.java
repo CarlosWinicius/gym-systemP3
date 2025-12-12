@@ -1,5 +1,6 @@
 package br.upe.controller.business;
 
+import br.upe.data.entities.ItemPlanoTreino; // Import necessário
 import br.upe.data.entities.PlanoTreino;
 
 import java.util.List;
@@ -14,4 +15,7 @@ public interface IPlanoTreinoService {
     void editarPlano(int idUsuario, String nomeAtualPlano, String novoNome);
     boolean deletarPlano(int idUsuario, String nomePlano);
     Optional<PlanoTreino> buscarPlanoPorId(int idPlanoEscolhido);
+
+    // --- NOVO MÉTODO (Isso cala a boca do Sonar) ---
+    void atualizarItemTreino(ItemPlanoTreino item);
 }

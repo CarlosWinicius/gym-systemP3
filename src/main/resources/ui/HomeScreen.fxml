@@ -1,22 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.VBox?>
 
-<BorderPane prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.upe.controller.ui.HomeScreenController">
+<BorderPane prefHeight="600.0" prefWidth="900.0" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.upe.controller.ui.HomeScreenController">
     <left>
         <fx:include fx:id="sideMenu" source="SideMenu.fxml" />
     </left>
     <center>
-        <VBox spacing="20.0" alignment="TOP_LEFT">
+        <VBox alignment="TOP_LEFT" spacing="20.0" style="-fx-background-color: #FAFAFA;">
             <children>
-                <Label fx:id="welcomeLabel" text="Bem vindo, Usuário!" />
-                <FlowPane fx:id="plansContainer" hgap="20.0" vgap="20.0" prefWrapLength="700.0" />
+                <Label fx:id="welcomeLabel" styleClass="welcome-label" text="Bem vindo, Usuário!" />
+
+                <FlowPane fx:id="plansContainer" hgap="20.0" prefWrapLength="700.0" styleClass="plans-container" vgap="20.0" />
             </children>
             <padding>
-                <Insets left="20.0" top="20.0" />
+                <Insets left="30.0" top="40.0" />
             </padding>
         </VBox>
     </center>
