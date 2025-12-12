@@ -115,7 +115,7 @@ public class SessaoTreinoService {
         for (ItemPlanoTreino planejado : itensPlanejados) {
             // Procura o item executado correspondente ao exercicio planejado
             Optional<ItemSessaoTreino> executadoOpt = itensExecutados.stream()
-                    .filter(e -> e.getExercicio().getId() == planejado.getExercicio().getId())
+                    .filter(e -> e.getExercicio().getId().equals(planejado.getExercicio().getId()))
                     .findFirst();
 
             if (executadoOpt.isPresent()) {
