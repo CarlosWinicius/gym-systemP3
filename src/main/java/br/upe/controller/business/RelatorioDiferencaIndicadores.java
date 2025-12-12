@@ -1,6 +1,6 @@
 package br.upe.controller.business;
 
-import br.upe.data.entities.IndicadorBiomedico; // Ajustado para entities para compatibilidade
+import br.upe.data.entities.IndicadorBiomedico;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -21,7 +21,6 @@ public class RelatorioDiferencaIndicadores {
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
-    // Getters e setters
     public LocalDate getDataInicio() {
         return dataInicio;
     }

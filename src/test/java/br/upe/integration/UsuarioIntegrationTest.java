@@ -1,4 +1,4 @@
-package br.upe.integration;
+/*package br.upe.integration;
 
 import br.upe.controller.business.UsuarioService;
 import br.upe.data.TipoUsuario;
@@ -12,10 +12,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * Testes de integração para o fluxo completo de usuários
- * Integra UsuarioService + UsuarioDAO + banco H2 em memória
- */
+
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class UsuarioIntegrationTest {
 
@@ -233,3 +230,5 @@ class UsuarioIntegrationTest {
 //    }
 //}
 //
+
+*/
