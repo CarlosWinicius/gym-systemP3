@@ -18,11 +18,27 @@ public class SessaoTreinoService {
     private final IExercicioRepository exercicioRepo;
     private final IUsuarioRepository usuarioRepo;
 
-    private final GenericDAO<ItemSessaoTreino> itemSessaoRepo;
-    private final GenericDAO<ItemPlanoTreino> itemPlanoRepo;
+    private final ItemSessaoTreinoDAO itemSessaoRepo;
+    private final ItemPlanoTreinoDAO itemPlanoRepo;
 
     private static final Logger logger = Logger.getLogger(SessaoTreinoService.class.getName());
 
+    // Construtor com Injeção de Dependência completa (para testes)
+    public SessaoTreinoService(ISessaoTreinoRepository sessaoRepo,
+                               IPlanoTreinoRepository planoRepo,
+                               IExercicioRepository exercicioRepo,
+                               IUsuarioRepository usuarioRepo,
+                               ItemSessaoTreinoDAO itemSessaoRepo,
+                               ItemPlanoTreinoDAO itemPlanoRepo) {
+        this.sessaoRepo = sessaoRepo;
+        this.planoRepo = planoRepo;
+        this.exercicioRepo = exercicioRepo;
+        this.usuarioRepo = usuarioRepo;
+        this.itemSessaoRepo = itemSessaoRepo;
+        this.itemPlanoRepo = itemPlanoRepo;
+    }
+
+    // Construtor parcial (mantido para compatibilidade)
     public SessaoTreinoService(ISessaoTreinoRepository sessaoRepo,
                                IPlanoTreinoRepository planoRepo,
                                IExercicioRepository exercicioRepo,
@@ -35,6 +51,7 @@ public class SessaoTreinoService {
         this.itemPlanoRepo = new ItemPlanoTreinoDAO();
     }
 
+    // Construtor Padrão
     public SessaoTreinoService() {
         this.sessaoRepo = new SessaoTreinoDAO();
         this.planoRepo = new PlanoTreinoDAO();
@@ -87,10 +104,10 @@ public class SessaoTreinoService {
 
     public List<SugestaoAtualizacaoPlano> verificarAlteracoesEGerarSugestoes(SessaoTreino sessao) {
 
-        List<ItemPlanoTreino> itensPlanejados = ((ItemPlanoTreinoDAO)itemPlanoRepo).listarPorPlano(sessao.getPlanoTreino().getId());
+        List<ItemPlanoTreino> itensPlanejados = itemPlanoRepo.listarPorPlano(sessao.getPlanoTreino().getId());
 
         // 2. Busca itens executados na sessão atual
-        List<ItemSessaoTreino> itensExecutados = ((ItemSessaoTreinoDAO)itemSessaoRepo).listarPorSessao(sessao.getId());
+        List<ItemSessaoTreino> itensExecutados = itemSessaoRepo.listarPorSessao(sessao.getId());
 
         List<SugestaoAtualizacaoPlano> sugestoes = new ArrayList<>();
 
@@ -98,7 +115,7 @@ public class SessaoTreinoService {
         for (ItemPlanoTreino planejado : itensPlanejados) {
             // Procura o item executado correspondente ao exercicio planejado
             Optional<ItemSessaoTreino> executadoOpt = itensExecutados.stream()
-                    .filter(e -> e.getExercicio().getId() == planejado.getExercicio().getId())
+                    .filter(e -> e.getExercicio().getId().equals(planejado.getExercicio().getId()))
                     .findFirst();
 
             if (executadoOpt.isPresent()) {
@@ -124,7 +141,7 @@ public class SessaoTreinoService {
     }
 
     public void aplicarAtualizacoesNoPlano(int idPlano, int idExercicio, int novasRepeticoes, double novaCarga) {
-        List<ItemPlanoTreino> itens = ((ItemPlanoTreinoDAO)itemPlanoRepo).listarPorPlano(idPlano);
+        List<ItemPlanoTreino> itens = itemPlanoRepo.listarPorPlano(idPlano);
 
         Optional<ItemPlanoTreino> itemOpt = itens.stream()
                 .filter(i -> i.getExercicio().getId() == idExercicio)

@@ -8,17 +8,30 @@ import br.upe.data.dao.ExercicioDAO;
 import br.upe.data.dao.PlanoTreinoDAO;
 import br.upe.data.dao.ItemPlanoTreinoDAO;
 import br.upe.data.dao.UsuarioDAO;
+import br.upe.data.interfaces.IExercicioRepository;
+import br.upe.data.interfaces.IPlanoTreinoRepository;
+import br.upe.data.interfaces.IUsuarioRepository;
 import java.util.List;
 import java.util.Optional;
 
 public class PlanoTreinoService implements IPlanoTreinoService { // implements IPlanoTreinoService (se existir)
 
-    // Usando as classes DAO concretas que criamos
-    private final PlanoTreinoDAO planoTreinoDAO;
-    private final ExercicioDAO exercicioDAO;
-    private final UsuarioDAO usuarioDAO;      // Necessário para vincular o Usuário ao criar Plano
-    private final ItemPlanoTreinoDAO itemDAO; // Necessário para adicionar itens, já que o Plano não tem lista direta
+    // Usando interfaces para permitir injeção de dependência nos testes
+    private final IPlanoTreinoRepository planoTreinoDAO;
+    private final IExercicioRepository exercicioDAO;
+    private final IUsuarioRepository usuarioDAO;
+    private final ItemPlanoTreinoDAO itemDAO;
 
+    // Construtor com Injeção de Dependência (para testes)
+    public PlanoTreinoService(IPlanoTreinoRepository planoTreinoDAO, IExercicioRepository exercicioDAO,
+                              IUsuarioRepository usuarioDAO, ItemPlanoTreinoDAO itemDAO) {
+        this.planoTreinoDAO = planoTreinoDAO;
+        this.exercicioDAO = exercicioDAO;
+        this.usuarioDAO = usuarioDAO;
+        this.itemDAO = itemDAO;
+    }
+
+    // Construtor Padrão
     public PlanoTreinoService() {
         this.planoTreinoDAO = new PlanoTreinoDAO();
         this.exercicioDAO = new ExercicioDAO();
