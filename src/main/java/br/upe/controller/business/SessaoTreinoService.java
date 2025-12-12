@@ -160,12 +160,12 @@ public class SessaoTreinoService {
     }
 
     public static class SugestaoAtualizacaoPlano {
-        public final int idExercicio;
-        public final String nomeExercicio;
-        public final int repPlanejadas;
-        public final int repRealizadas;
-        public final double cargaPlanejada;
-        public final double cargaRealizada;
+        private final int idExercicio;
+        private final String nomeExercicio;
+        private final int repPlanejadas;
+        private final int repRealizadas;
+        private final double cargaPlanejada;
+        private final double cargaRealizada;
 
         public SugestaoAtualizacaoPlano(int idExercicio, String nomeExercicio, int repPlanejadas, int repRealizadas, double cargaPlanejada, double cargaRealizada) {
             this.idExercicio = idExercicio;
@@ -174,6 +174,30 @@ public class SessaoTreinoService {
             this.repRealizadas = repRealizadas;
             this.cargaPlanejada = cargaPlanejada;
             this.cargaRealizada = cargaRealizada;
+        }
+
+        public int getIdExercicio() {
+            return idExercicio;
+        }
+
+        public String getNomeExercicio() {
+            return nomeExercicio;
+        }
+
+        public int getRepPlanejadas() {
+            return repPlanejadas;
+        }
+
+        public int getRepRealizadas() {
+            return repRealizadas;
+        }
+
+        public double getCargaPlanejada() {
+            return cargaPlanejada;
+        }
+
+        public double getCargaRealizada() {
+            return cargaRealizada;
         }
     }
 }
