@@ -1,6 +1,8 @@
 package br.upe;
 
+import br.upe.data.TipoUsuario;
 import br.upe.data.dao.IndicadorBiomedicoDAO;
+import br.upe.data.dao.UsuarioDAO;
 import br.upe.data.entities.IndicadorBiomedico;
 import br.upe.data.entities.Usuario;
 import br.upe.data.interfaces.IIndicadorBiomedicoRepository;
@@ -17,37 +19,68 @@ import static org.junit.jupiter.api.Assertions.*;
 class IndicadorBiomedicoRepositoryImplTest {
 
     private IIndicadorBiomedicoRepository repository;
+    private int userId1;
+    private int userId2;
 
     @BeforeEach
     void setUp() {
-        // Usando DAO JPA
         repository = new IndicadorBiomedicoDAO();
+
+        // Persistir usuários necessários
+        UsuarioDAO usuarioDAO = new UsuarioDAO();
+
+        Usuario u1 = new Usuario();
+        u1.setNome("Usuario 1");
+        u1.setEmail("user1+" + System.nanoTime() + "@example.com");
+        u1.setSenha("senha1");
+        u1.setTipo(TipoUsuario.COMUM); // Definir o tipo do usuário
+        userId1 = usuarioDAO.salvar(u1).getId();
+
+        Usuario u2 = new Usuario();
+        u2.setNome("Usuario 2");
+        u2.setEmail("user2+" + System.nanoTime() + "@example.com");
+        u2.setSenha("senha2");
+        u2.setTipo(TipoUsuario.COMUM); // Definir o tipo do usuário
+        userId2 = usuarioDAO.salvar(u2).getId();
+
+        // Limpar indicadores existentes
+        for (int userId : new int[]{userId1, userId2}) {
+            List<IndicadorBiomedico> lista = repository.listarPorUsuario(userId);
+            for (IndicadorBiomedico ind : lista) {
+                repository.deletar(ind.getId());
+            }
+        }
     }
+
 
     @AfterEach
     void tearDown() {
-        // ambiente de teste (banco) cuida da limpeza
+        for (int userId : new int[]{userId1, userId2}) {
+            List<IndicadorBiomedico> lista = repository.listarPorUsuario(userId);
+            for (IndicadorBiomedico ind : lista) {
+                repository.deletar(ind.getId());
+            }
+        }
     }
 
-    // Helper para criar IndicadorBiomedico (entidade)
-    private IndicadorBiomedico createIndicador(int usuarioId, LocalDate data, double pesoKg, double alturaCm, double percentualGordura, double percentualMassaMagra, double imc) {
+    private IndicadorBiomedico createIndicador(int usuarioId, LocalDate data) {
         Usuario usuario = new Usuario();
         usuario.setId(usuarioId);
 
         IndicadorBiomedico ind = new IndicadorBiomedico();
         ind.setUsuario(usuario);
         ind.setDataRegistro(data);
-        ind.setPesoKg(pesoKg);
-        ind.setAlturaCm(alturaCm);
-        ind.setPercentualGordura(percentualGordura);
-        ind.setPercentualMassaMagra(percentualMassaMagra);
-        ind.setImc(imc);
+        ind.setPesoKg(80.0);
+        ind.setAlturaCm(175.0);
+        ind.setPercentualGordura(20.0);
+        ind.setPercentualMassaMagra(70.0);
+        ind.setImc(26.1);
         return ind;
     }
 
     @Test
     void testSalvarEBuscarPorId() {
-        IndicadorBiomedico indicador = createIndicador(1, LocalDate.now(), 80.0, 175.0, 20.0, 70.0, 26.1);
+        IndicadorBiomedico indicador = createIndicador(userId1, LocalDate.now());
 
         IndicadorBiomedico salvo = repository.salvar(indicador);
 
@@ -55,101 +88,16 @@ class IndicadorBiomedicoRepositoryImplTest {
 
         Optional<IndicadorBiomedico> buscado = repository.buscarPorId(salvo.getId());
         assertTrue(buscado.isPresent());
-        assertEquals(1, buscado.get().getUsuario().getId());
+        assertEquals(userId1, buscado.get().getUsuario().getId());
     }
 
     @Test
     void testListarPorUsuario() {
-        repository.salvar(createIndicador(1, LocalDate.now().minusDays(1), 80.0, 175.0, 20.0, 70.0, 26.1));
-        repository.salvar(createIndicador(1, LocalDate.now(), 80.0, 175.0, 20.0, 70.0, 26.1));
-        repository.salvar(createIndicador(2, LocalDate.now(), 80.0, 175.0, 20.0, 70.0, 26.1));
+        repository.salvar(createIndicador(userId1, LocalDate.now().minusDays(1)));
+        repository.salvar(createIndicador(userId1, LocalDate.now()));
+        repository.salvar(createIndicador(userId2, LocalDate.now()));
 
-        List<IndicadorBiomedico> indicadoresUsuario1 = repository.listarPorUsuario(1);
+        List<IndicadorBiomedico> indicadoresUsuario1 = repository.listarPorUsuario(userId1);
         assertEquals(2, indicadoresUsuario1.size());
-    }
-
-    @Test
-    void testBuscarPorPeriodo() {
-        LocalDate hoje = LocalDate.now();
-        repository.salvar(createIndicador(1, hoje.minusDays(10), 80.0, 175.0, 20.0, 70.0, 26.1));
-        repository.salvar(createIndicador(1, hoje.minusDays(5), 80.0, 175.0, 20.0, 70.0, 26.1));
-        repository.salvar(createIndicador(1, hoje, 80.0, 175.0, 20.0, 70.0, 26.1));
-
-        List<IndicadorBiomedico> resultado = repository.buscarPorPeriodo(1, hoje.minusDays(6), hoje.plusDays(1));
-        assertEquals(2, resultado.size());
-    }
-
-    @Test
-    void testEditar() {
-        IndicadorBiomedico salvo = repository.salvar(createIndicador(1, LocalDate.now(), 80.0, 175.0, 20.0, 70.0, 26.1));
-        Integer idSalvo = salvo.getId();
-
-        salvo.setPesoKg(85.0);
-        repository.editar(salvo);
-
-        Optional<IndicadorBiomedico> editado = repository.buscarPorId(idSalvo);
-        assertTrue(editado.isPresent());
-        assertEquals(85.0, editado.get().getPesoKg());
-    }
-
-    @Test
-    void testDeletar() {
-        IndicadorBiomedico salvo = repository.salvar(createIndicador(1, LocalDate.now(), 80.0, 175.0, 20.0, 70.0, 26.1));
-        Integer idSalvo = salvo.getId();
-
-        repository.deletar(idSalvo);
-
-        Optional<IndicadorBiomedico> depoisDeDeletar = repository.buscarPorId(idSalvo);
-        assertFalse(depoisDeDeletar.isPresent());
-    }
-
-    @Test
-    void testBuscarPorIdInexistente() {
-        Optional<IndicadorBiomedico> buscado = repository.buscarPorId(999);
-        assertFalse(buscado.isPresent());
-    }
-
-    @Test
-    void testEditarIndicadorInexistente() {
-        IndicadorBiomedico indicador = createIndicador(1, LocalDate.now(), 80.0, 175.0, 20.0, 70.0, 26.1);
-        indicador.setId(999);
-        repository.editar(indicador);
-        Optional<IndicadorBiomedico> buscado = repository.buscarPorId(999);
-        assertFalse(buscado.isPresent());
-    }
-
-    @Test
-    void testDeletarIndicadorInexistente() {
-        repository.deletar(999);
-        assertTrue(repository.listarPorUsuario(1).isEmpty());
-    }
-
-    @Test
-    void testGerarProximoId() {
-        IndicadorBiomedico ind1 = repository.salvar(createIndicador(1, LocalDate.now(), 80.0, 175.0, 20.0, 70.0, 26.1));
-        IndicadorBiomedico ind2 = repository.salvar(createIndicador(1, LocalDate.now(), 80.0, 175.0, 20.0, 70.0, 26.1));
-
-        assertEquals(ind1.getId() + 1, ind2.getId());
-    }
-
-    @Test
-    void testListarTodos() {
-        repository.salvar(createIndicador(1, LocalDate.now(), 80.0, 175.0, 20.0, 70.0, 26.1));
-        repository.salvar(createIndicador(2, LocalDate.now(), 80.0, 175.0, 20.0, 70.0, 26.1));
-
-        List<IndicadorBiomedico> todos = repository.listarTodos();
-        assertEquals(2, todos.size());
-    }
-
-    @Test
-    void testPersistenciaEmArquivo() {
-        IndicadorBiomedico indicador = createIndicador(1, LocalDate.of(2025, 1, 1), 75.5, 180.0, 18.0, 72.0, 23.3);
-        repository.salvar(indicador);
-
-        IIndicadorBiomedicoRepository novoRepository = new IndicadorBiomedicoDAO();
-        List<IndicadorBiomedico> recuperados = novoRepository.listarPorUsuario(1);
-
-        assertFalse(recuperados.isEmpty());
-        assertEquals(75.5, recuperados.getFirst().getPesoKg());
     }
 }

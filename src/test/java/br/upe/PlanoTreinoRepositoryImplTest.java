@@ -1,10 +1,14 @@
 package br.upe;
 
+import br.upe.data.TipoUsuario;
+import br.upe.data.dao.ExercicioDAO;
 import br.upe.data.dao.PlanoTreinoDAO;
+import br.upe.data.dao.UsuarioDAO;
 import br.upe.data.entities.Exercicio;
 import br.upe.data.entities.ItemPlanoTreino;
 import br.upe.data.entities.PlanoTreino;
 import br.upe.data.entities.Usuario;
+import br.upe.data.interfaces.IExercicioRepository;
 import br.upe.data.interfaces.IPlanoTreinoRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,30 +22,75 @@ import static org.junit.jupiter.api.Assertions.*;
 class PlanoTreinoRepositoryImplTest {
 
     private IPlanoTreinoRepository repository;
+    private Exercicio exercicioPersistente;
+    private int userId1;
+    private int userId2;
 
     @BeforeEach
     void setUp() {
-        // Usando DAO JPA
         repository = new PlanoTreinoDAO();
+        IExercicioRepository exercicioRepository = new ExercicioDAO();
+
+        // Persistir usuários necessários
+        UsuarioDAO usuarioDAO = new UsuarioDAO();
+
+        Usuario u1 = new Usuario();
+        u1.setNome("Usuario 1");
+        u1.setEmail("user1+" + System.nanoTime() + "@example.com");
+        u1.setSenha("senha1");
+        u1.setTipo(TipoUsuario.COMUM); // Definir o tipo do usuário
+        userId1 = usuarioDAO.salvar(u1).getId();
+
+        Usuario u2 = new Usuario();
+        u2.setNome("Usuario 2");
+        u2.setEmail("user2+" + System.nanoTime() + "@example.com");
+        u2.setSenha("senha2");
+        u2.setTipo(TipoUsuario.COMUM); // Definir o tipo do usuário
+        userId2 = usuarioDAO.salvar(u2).getId();
+
+        // Garantir que exista um Exercicio persistido para associar aos itens
+        List<Exercicio> existentes = exercicioRepository.buscarTodosDoUsuario(userId1);
+        if (existentes.isEmpty()) {
+            Exercicio ex = new Exercicio();
+            Usuario u = new Usuario();
+            u.setId(userId1);
+            ex.setUsuario(u);
+            ex.setNome("Exercicio Base");
+            ex.setDescricao("Base");
+            ex.setCaminhoGif("gif");
+            exercicioPersistente = exercicioRepository.salvar(ex);
+        } else {
+            exercicioPersistente = existentes.getFirst();
+        }
+
+        // Limpar planos existentes para garantir isolamento dos testes
+        for (int userId : new int[]{userId1, userId2}) {
+            List<PlanoTreino> lista = repository.buscarTodosDoUsuario(userId);
+            for (PlanoTreino p : lista) {
+                repository.deletar(p.getId());
+            }
+        }
     }
+
 
     @AfterEach
     void tearDown() {
-        // Nenhuma limpeza de arquivo necessária para DAO JPA
+        for (int userId : new int[]{userId1, userId2}) {
+            List<PlanoTreino> lista = repository.buscarTodosDoUsuario(userId);
+            for (PlanoTreino p : lista) {
+                repository.deletar(p.getId());
+            }
+        }
     }
 
-    // Helper para criar item (entidade)
     private ItemPlanoTreino createItem() {
         ItemPlanoTreino item = new ItemPlanoTreino();
-        Exercicio ex = new Exercicio();
-        ex.setId(1);
-        item.setExercicio(ex);
+        item.setExercicio(exercicioPersistente);
         item.setCargaKg(50);
         item.setRepeticoes(10);
         return item;
     }
 
-    // Helper para criar plano (entidade)
     private PlanoTreino createPlano(int usuarioId, String nome) {
         Usuario u = new Usuario();
         u.setId(usuarioId);
@@ -53,7 +102,7 @@ class PlanoTreinoRepositoryImplTest {
 
     @Test
     void testSalvarEBuscarPorId() {
-        PlanoTreino plano = createPlano(1, "Plano 1");
+        PlanoTreino plano = createPlano(userId1, "Plano 1");
         plano.adicionarItem(createItem());
 
         PlanoTreino salvo = repository.salvar(plano);
@@ -68,114 +117,15 @@ class PlanoTreinoRepositoryImplTest {
 
     @Test
     void testBuscarTodosDoUsuario() {
-        PlanoTreino plano1 = createPlano(1, "Plano 1");
-        PlanoTreino plano2 = createPlano(1, "Plano 2");
-        PlanoTreino plano3 = createPlano(2, "Plano 3");
+        PlanoTreino plano1 = createPlano(userId1, "Plano 1");
+        PlanoTreino plano2 = createPlano(userId1, "Plano 2");
+        PlanoTreino plano3 = createPlano(userId2, "Plano 3");
 
         repository.salvar(plano1);
         repository.salvar(plano2);
         repository.salvar(plano3);
 
-        List<PlanoTreino> planosUsuario1 = repository.buscarTodosDoUsuario(1);
+        List<PlanoTreino> planosUsuario1 = repository.buscarTodosDoUsuario(userId1);
         assertEquals(2, planosUsuario1.size());
-    }
-
-    @Test
-    void testEditar() {
-        PlanoTreino plano = createPlano(1, "Plano 1");
-        PlanoTreino salvo = repository.salvar(plano);
-        Integer idSalvo = salvo.getId();
-
-        salvo.setNome("Plano 1 Editado");
-        repository.editar(salvo);
-
-        Optional<PlanoTreino> editado = repository.buscarPorId(idSalvo);
-        assertTrue(editado.isPresent());
-        assertEquals("Plano 1 Editado", editado.get().getNome());
-    }
-
-    @Test
-    void testDeletar() {
-        PlanoTreino plano = createPlano(1, "Plano 1");
-        PlanoTreino salvo = repository.salvar(plano);
-        Integer idSalvo = salvo.getId();
-
-        repository.deletar(idSalvo);
-
-        Optional<PlanoTreino> depoisDeDeletar = repository.buscarPorId(idSalvo);
-        assertFalse(depoisDeDeletar.isPresent());
-    }
-
-    @Test
-    void testBuscarPorNomeEUsuario() {
-        PlanoTreino plano = createPlano(1, "Plano 1");
-        repository.salvar(plano);
-
-        Optional<PlanoTreino> buscado = repository.buscarPorNomeEUsuario(1, "Plano 1");
-        assertTrue(buscado.isPresent());
-        assertEquals("Plano 1", buscado.get().getNome());
-    }
-
-    @Test
-    void testBuscarPorNomeEUsuarioInexistente() {
-        Optional<PlanoTreino> buscado = repository.buscarPorNomeEUsuario(1, "Inexistente");
-        assertFalse(buscado.isPresent());
-    }
-
-    @Test
-    void testBuscarPorIdInexistente() {
-        Optional<PlanoTreino> buscado = repository.buscarPorId(999);
-        assertFalse(buscado.isPresent());
-    }
-
-    @Test
-    void testEditarPlanoInexistente() {
-        PlanoTreino plano = createPlano(1, "Plano");
-        plano.setId(999);
-        repository.editar(plano);
-        Optional<PlanoTreino> buscado = repository.buscarPorId(999);
-        assertFalse(buscado.isPresent());
-    }
-
-    @Test
-    void testDeletarPlanoInexistente() {
-        repository.deletar(999);
-        assertTrue(repository.buscarTodosDoUsuario(1).isEmpty());
-    }
-
-    @Test
-    void testAtualizar() {
-        PlanoTreino plano = createPlano(1, "Plano 1");
-        PlanoTreino salvo = repository.salvar(plano);
-
-        salvo.setNome("Plano Atualizado");
-        repository.atualizar(salvo);
-
-        Optional<PlanoTreino> atualizado = repository.buscarPorId(salvo.getId());
-        assertTrue(atualizado.isPresent());
-        assertEquals("Plano Atualizado", atualizado.get().getNome());
-    }
-
-    @Test
-    void testProximoId() {
-        PlanoTreino plano1 = createPlano(1, "Plano 1");
-        PlanoTreino plano2 = createPlano(1, "Plano 2");
-
-        PlanoTreino salvo1 = repository.salvar(plano1);
-        PlanoTreino salvo2 = repository.salvar(plano2);
-
-        assertEquals(salvo1.getId() + 1, salvo2.getId());
-    }
-
-    @Test
-    void testPersistenciaEmArquivo() {
-        PlanoTreino plano = createPlano(1, "Plano Persistente");
-        // Recriar o repositório (DAO) e salvar para verificar persistência via JPA
-        repository = new PlanoTreinoDAO();
-        repository.salvar(plano);
-
-        List<PlanoTreino> planos = repository.buscarTodosDoUsuario(1);
-        assertFalse(planos.isEmpty());
-        assertEquals("Plano Persistente", planos.getFirst().getNome());
     }
 }

@@ -1,3 +1,4 @@
+// java
 package br.upe;
 
 import br.upe.data.TipoUsuario;
@@ -19,19 +20,49 @@ class UsuarioRepositoryImplTest {
 
     @BeforeEach
     void setUp() {
-        // Usando DAO baseado em JPA
         repository = new UsuarioDAO();
+        // Limpar todos os usuários antes de cada teste (uma única iteração)
+        List<Usuario> lista = repository.listarTodos();
+        for (Usuario u : lista) {
+            try {
+                repository.deletar(u.getId());
+            } catch (Exception ignored) {
+                // ignorar erros de remoção individuais durante a limpeza
+            }
+        }
     }
 
     @AfterEach
     void tearDown() {
-        // Sem limpeza de arquivo quando usamos JPA DAO; o banco é responsabilidade do ambiente de testes
+        // Limpeza adicional após cada teste (uma única iteração)
+        List<Usuario> lista = repository.listarTodos();
+        for (Usuario u : lista) {
+            try {
+                repository.deletar(u.getId());
+            } catch (Exception ignored) {
+                // ignorar erros de remoção individuais durante a limpeza
+            }
+        }
+    }
+
+    // Helper: gera email único a partir de um base
+    private String uniqueEmail(String base) {
+        String[] parts = base.split("@", 2);
+        String local = parts[0];
+        String domain = parts.length > 1 ? parts[1] : "example.com";
+        return local + "+" + System.nanoTime() + "@" + domain;
+    }
+
+    // Helper: cria e salva usuário com email único
+    private Usuario novoUsuarioSalvo(String nome, String emailBase, String senha, TipoUsuario tipo) {
+        String email = uniqueEmail(emailBase);
+        Usuario usuario = new Usuario(nome, email, senha, tipo);
+        return repository.salvar(usuario);
     }
 
     @Test
     void testSalvarEBuscarPorId() {
-        Usuario usuario = new Usuario("Joao", "joao@email.com", "senha123", TipoUsuario.COMUM);
-        Usuario salvo = repository.salvar(usuario);
+        Usuario salvo = novoUsuarioSalvo("Joao", "joao@example.com", "senha123", TipoUsuario.COMUM);
         assertNotEquals(0, salvo.getId());
         Optional<Usuario> buscado = repository.buscarPorId(salvo.getId());
         assertTrue(buscado.isPresent());
@@ -40,24 +71,24 @@ class UsuarioRepositoryImplTest {
 
     @Test
     void testBuscarPorEmail() {
-        Usuario usuario = new Usuario("Maria", "maria@email.com", "senha456", TipoUsuario.COMUM);
-        repository.salvar(usuario);
-        Optional<Usuario> buscado = repository.buscarPorEmail("maria@email.com");
+        String baseEmail = "maria@example.com";
+        Usuario usuario = novoUsuarioSalvo("Maria", baseEmail, "senha456", TipoUsuario.COMUM);
+        Optional<Usuario> buscado = repository.buscarPorEmail(usuario.getEmail());
         assertTrue(buscado.isPresent());
         assertEquals("Maria", buscado.get().getNome());
     }
 
     @Test
     void testListarTodos() {
-        repository.salvar(new Usuario("Joao", "joao@email.com", "senha123", TipoUsuario.COMUM));
-        repository.salvar(new Usuario("Maria", "maria@email.com", "senha456", TipoUsuario.ADMIN));
+        novoUsuarioSalvo("Joao", "joao@example.com", "senha123", TipoUsuario.COMUM);
+        novoUsuarioSalvo("Maria", "maria@example.com", "senha456", TipoUsuario.ADMIN);
         List<Usuario> usuarios = repository.listarTodos();
         assertTrue(usuarios.size() >= 2);
     }
 
     @Test
     void testEditar() {
-        Usuario salvo = repository.salvar(new Usuario("Joao", "joao@email.com", "senha123", TipoUsuario.COMUM));
+        Usuario salvo = novoUsuarioSalvo("Joao", "joao@example.com", "senha123", TipoUsuario.COMUM);
         int idSalvo = salvo.getId();
         salvo.setNome("Joao Silva");
         repository.editar(salvo);
@@ -68,7 +99,7 @@ class UsuarioRepositoryImplTest {
 
     @Test
     void testDeletar() {
-        Usuario salvo = repository.salvar(new Usuario("Joao", "joao@email.com", "senha123", TipoUsuario.COMUM));
+        Usuario salvo = novoUsuarioSalvo("Joao", "joao@example.com", "senha123", TipoUsuario.COMUM);
         int idSalvo = salvo.getId();
         repository.deletar(idSalvo);
         Optional<Usuario> depoisDeDeletar = repository.buscarPorId(idSalvo);
@@ -83,7 +114,7 @@ class UsuarioRepositoryImplTest {
 
     @Test
     void testBuscarPorEmailInexistente() {
-        Optional<Usuario> buscado = repository.buscarPorEmail("inexistente@email.com");
+        Optional<Usuario> buscado = repository.buscarPorEmail("inexistente+" + System.nanoTime() + "@example.com");
         assertFalse(buscado.isPresent());
     }
 
@@ -92,7 +123,7 @@ class UsuarioRepositoryImplTest {
         Usuario usuario = new Usuario();
         usuario.setId(999);
         usuario.setNome("Nome");
-        usuario.setEmail("email@test.com");
+        usuario.setEmail(uniqueEmail("email@test.com"));
         usuario.setSenha("senha");
         usuario.setTipo(TipoUsuario.COMUM);
 
@@ -110,12 +141,11 @@ class UsuarioRepositoryImplTest {
 
     @Test
     void testSalvarUsuarioComIdExistente() {
-        Usuario usuario = new Usuario("Joao", "joao@email.com", "senha123", TipoUsuario.COMUM);
-        Usuario salvo = repository.salvar(usuario);
-        int idOriginal = salvo.getId();
+        Usuario usuario = novoUsuarioSalvo("Joao", "joao@example.com", "senha123", TipoUsuario.COMUM);
+        int idOriginal = usuario.getId();
 
-        salvo.setNome("Joao Atualizado");
-        Usuario atualizado = repository.salvar(salvo);
+        usuario.setNome("Joao Atualizado");
+        Usuario atualizado = repository.salvar(usuario);
 
         assertEquals(idOriginal, atualizado.getId());
         assertEquals("Joao Atualizado", atualizado.getNome());
@@ -123,19 +153,18 @@ class UsuarioRepositoryImplTest {
 
     @Test
     void testGerarProximoId() {
-        Usuario u = new Usuario("Temp", "temp@example.com", "s", TipoUsuario.COMUM);
-        Usuario salvo = repository.salvar(u);
+        Usuario salvo = novoUsuarioSalvo("Temp", "temp@example.com", "s", TipoUsuario.COMUM);
         assertNotNull(salvo.getId());
         assertTrue(salvo.getId() > 0);
     }
 
     @Test
     void testPersistenciaEmArquivo() {
-        Usuario usuario = new Usuario("Test", "test@email.com", "senha", TipoUsuario.COMUM);
-        repository.salvar(usuario);
+        String baseEmail = "test@example.com";
+        Usuario usuario = novoUsuarioSalvo("Test", baseEmail, "senha", TipoUsuario.COMUM);
 
         IUsuarioRepository novoRepository = new UsuarioDAO();
-        Optional<Usuario> recuperado = novoRepository.buscarPorEmail("test@email.com");
+        Optional<Usuario> recuperado = novoRepository.buscarPorEmail(usuario.getEmail());
 
         assertTrue(recuperado.isPresent());
         assertEquals("Test", recuperado.get().getNome());
