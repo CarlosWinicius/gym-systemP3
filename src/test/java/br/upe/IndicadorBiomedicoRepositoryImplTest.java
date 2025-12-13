@@ -76,6 +76,7 @@ class IndicadorBiomedicoRepositoryImplTest {
         ind.setPercentualMassaMagra(70.0);
         ind.setImc(26.1);
         return ind;
+
     }
 
     @Test
